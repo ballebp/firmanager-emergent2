@@ -1393,18 +1393,6 @@ async def update_my_organization(
     await db.organizations.replace_one({"id": current_user.organization_id}, doc)
     return updated_org
 
-@api_router.get("/organizations/users", response_model=List[User])
-async def get_organization_users(current_user: User = Depends(get_current_user)):
-    """Get all users in current organization (admin only)"""
-    if current_user.role != "admin":
-        raise HTTPException(status_code=403, detail="Only admins can view organization users")
-    
-    users = await db.users.find({"organization_id": current_user.organization_id}, {"_id": 0, "password_hash": 0}).to_list(100)
-    for user in users:
-        if isinstance(user['created_at'], str):
-            user['created_at'] = datetime.fromisoformat(user['created_at'])
-    return [User(**user) for user in users]
-
 @api_router.post("/organizations/users", response_model=User)
 async def create_organization_user(
     user_input: UserCreate,
@@ -1434,6 +1422,18 @@ async def create_organization_user(
     
     await db.users.insert_one(user_doc)
     return new_user
+
+@api_router.get("/organizations/users", response_model=List[User])
+async def get_organization_users(current_user: User = Depends(get_current_user)):
+    """Get all users in current organization (admin only)"""
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Only admins can view organization users")
+    
+    users = await db.users.find({"organization_id": current_user.organization_id}, {"_id": 0, "password_hash": 0}).to_list(100)
+    for user in users:
+        if isinstance(user['created_at'], str):
+            user['created_at'] = datetime.fromisoformat(user['created_at'])
+    return [User(**user) for user in users]
 
 @api_router.put("/organizations/users/{user_id}/role")
 async def update_user_role(
