@@ -1452,6 +1452,153 @@ async def remove_organization_user(
         raise HTTPException(status_code=404, detail="User not found")
     return {"message": "User removed successfully"}
 
+# ==================== SEED DATABASE ENDPOINT ====================
+
+@api_router.post("/seed-database")
+async def seed_database_endpoint(secret: str):
+    """Seed database with multi-tenancy test data (protected by secret key)"""
+    # Check secret key
+    expected_secret = os.environ.get('SEED_SECRET', 'your-secret-seed-key-change-in-production')
+    if secret != expected_secret:
+        raise HTTPException(status_code=403, detail="Invalid secret key")
+    
+    try:
+        # Import seed functionality
+        import random
+        
+        # Clean existing data
+        collections = ['organizations', 'users', 'customers', 'employees', 'workorders', 'internalorders', 
+                      'products', 'routes', 'hms_risk_assessments', 'hms_incidents', 
+                      'hms_training', 'hms_equipment', 'payouts', 'services', 'supplier_pricing']
+        
+        for collection in collections:
+            await db[collection].delete_many({})
+        
+        # Create organizations
+        vmp_org_id = str(uuid.uuid4())
+        biovac_org_id = str(uuid.uuid4())
+        
+        await db.organizations.insert_many([
+            {
+                "id": vmp_org_id,
+                "name": "VMP",
+                "subscription_tier": "admin",
+                "created_at": datetime.now().isoformat(),
+                "trial_ends_at": None,
+                "settings": {}
+            },
+            {
+                "id": biovac_org_id,
+                "name": "Biovac",
+                "subscription_tier": "admin",
+                "created_at": datetime.now().isoformat(),
+                "trial_ends_at": None,
+                "settings": {}
+            }
+        ])
+        
+        # Create users
+        admin_password = get_password_hash("admin123")
+        user_password = get_password_hash("user123")
+        
+        users = [
+            {"id": str(uuid.uuid4()), "email": "admin@vmp.no", "name": "VMP Admin", "organization_id": vmp_org_id, "role": "admin", "password_hash": admin_password, "created_at": datetime.now().isoformat()},
+            {"id": str(uuid.uuid4()), "email": "user1@vmp.no", "name": "VMP User 1", "organization_id": vmp_org_id, "role": "user", "password_hash": user_password, "created_at": datetime.now().isoformat()},
+            {"id": str(uuid.uuid4()), "email": "user2@vmp.no", "name": "VMP User 2", "organization_id": vmp_org_id, "role": "user", "password_hash": user_password, "created_at": datetime.now().isoformat()},
+            {"id": str(uuid.uuid4()), "email": "admin@biovac.no", "name": "Biovac Admin", "organization_id": biovac_org_id, "role": "admin", "password_hash": admin_password, "created_at": datetime.now().isoformat()},
+            {"id": str(uuid.uuid4()), "email": "user1@biovac.no", "name": "Biovac User 1", "organization_id": biovac_org_id, "role": "user", "password_hash": user_password, "created_at": datetime.now().isoformat()},
+            {"id": str(uuid.uuid4()), "email": "user2@biovac.no", "name": "Biovac User 2", "organization_id": biovac_org_id, "role": "user", "password_hash": user_password, "created_at": datetime.now().isoformat()},
+            {"id": str(uuid.uuid4()), "email": "user3@biovac.no", "name": "Biovac User 3", "organization_id": biovac_org_id, "role": "user", "password_hash": user_password, "created_at": datetime.now().isoformat()},
+            {"id": str(uuid.uuid4()), "email": "user4@biovac.no", "name": "Biovac User 4", "organization_id": biovac_org_id, "role": "user", "password_hash": user_password, "created_at": datetime.now().isoformat()},
+            {"id": str(uuid.uuid4()), "email": "user5@biovac.no", "name": "Biovac User 5", "organization_id": biovac_org_id, "role": "user", "password_hash": user_password, "created_at": datetime.now().isoformat()},
+        ]
+        await db.users.insert_many(users)
+        
+        # Create sample data for each organization
+        for org_id, org_name in [(vmp_org_id, "VMP"), (biovac_org_id, "Biovac")]:
+            # Employees
+            employees = []
+            for i in range(random.randint(4, 6)):
+                employees.append({
+                    "id": str(uuid.uuid4()),
+                    "organization_id": org_id,
+                    "initialer": f"U{i}",
+                    "navn": f"Employee {i+1}",
+                    "epost": f"emp{i+1}@{org_name.lower()}.no",
+                    "telefon": f"+47 400 {random.randint(10, 99)} {random.randint(100, 999)}",
+                    "stilling": "Tekniker",
+                    "intern_sats": 600.0,
+                    "faktura_sats": 1000.0,
+                    "pa_service_sats": 800.0,
+                    "pa_montering_sats": 850.0,
+                    "pa_timesats": 900.0,
+                    "pa_kjoresats": 500.0,
+                    "pa_km_sats": 7.5,
+                    "created_at": datetime.now().isoformat()
+                })
+            await db.employees.insert_many(employees)
+            
+            # Customers
+            customers = []
+            for i in range(random.randint(10, 15)):
+                customers.append({
+                    "id": str(uuid.uuid4()),
+                    "organization_id": org_id,
+                    "anleggsnr": f"{random.randint(1000, 9999)}",
+                    "kundennr": f"K{random.randint(100, 999)}",
+                    "kundnavn": f"{org_name} Kunde {i+1}",
+                    "typenr": random.choice(["T001", "T002", "T003"]),
+                    "typenavn": "Standard",
+                    "kommune": "Oslo",
+                    "adresse": f"Gate {i+1}",
+                    "postnr": "0150",
+                    "poststed": "Oslo",
+                    "service_intervall": "Årlig",
+                    "uke": str(random.randint(1, 52)),
+                    "serviceansvarlig": f"Employee {random.randint(1, len(employees))}",
+                    "telefon1": f"+47 22 {random.randint(10, 99)} {random.randint(10, 99)} {random.randint(10, 99)}",
+                    "epost": f"kunde{i+1}@example.no",
+                    "created_at": datetime.now().isoformat()
+                })
+            await db.customers.insert_many(customers)
+            
+            # Services
+            services = [
+                {"id": str(uuid.uuid4()), "organization_id": org_id, "tjenestenr": "T001", "tjeneste_navn": "Standard Service", "pris": 1200.0, "t1_ekstraservice": 950.0, "t2_ekstraservice_50": 1425.0, "t3_ekstraservice_100": 1900.0, "t4_ekstraarbeid": 1000.0, "t5_kjoretid": 800.0, "t6_km_godtgjorelse": 6.5, "created_at": datetime.now().isoformat()},
+                {"id": str(uuid.uuid4()), "organization_id": org_id, "tjenestenr": "T002", "tjeneste_navn": "Premium Service", "pris": 1800.0, "t1_ekstraservice": 1200.0, "t2_ekstraservice_50": 1800.0, "t3_ekstraservice_100": 2400.0, "t4_ekstraarbeid": 1300.0, "t5_kjoretid": 1000.0, "t6_km_godtgjorelse": 8.0, "created_at": datetime.now().isoformat()},
+                {"id": str(uuid.uuid4()), "organization_id": org_id, "tjenestenr": "T003", "tjeneste_navn": "Basic Service", "pris": 800.0, "t1_ekstraservice": 700.0, "t2_ekstraservice_50": 1050.0, "t3_ekstraservice_100": 1400.0, "t4_ekstraarbeid": 750.0, "t5_kjoretid": 600.0, "t6_km_godtgjorelse": 5.0, "created_at": datetime.now().isoformat()}
+            ]
+            await db.services.insert_many(services)
+            
+            # Products
+            products = []
+            for i in range(random.randint(5, 10)):
+                products.append({
+                    "id": str(uuid.uuid4()),
+                    "organization_id": org_id,
+                    "produktnr": f"P{1000 + i}",
+                    "navn": f"Produkt {i+1}",
+                    "beskrivelse": f"Beskrivelse for produkt {i+1}",
+                    "kategori": random.choice(["Brannsikkerhet", "Ventilasjon", "Varme"]),
+                    "kundepris": random.randint(500, 5000),
+                    "pa_lager": random.randint(0, 50),
+                    "created_at": datetime.now().isoformat()
+                })
+            await db.products.insert_many(products)
+        
+        return {
+            "message": "Database seeded successfully",
+            "organizations": ["VMP", "Biovac"],
+            "credentials": {
+                "VMP": "admin@vmp.no / admin123",
+                "Biovac": "admin@biovac.no / admin123"
+            }
+        }
+    
+    except Exception as e:
+        logging.error(f"Seed error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Seed failed: {str(e)}")
+
 # ==================== APP SETUP ====================
 
 @app.get("/")
