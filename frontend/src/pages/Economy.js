@@ -267,6 +267,7 @@ const Economy = () => {
       setImporting(false);
       e.target.value = '';
     }
+  };
 
   const resetServiceForm = () => {
     setServiceFormData({
