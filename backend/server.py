@@ -38,19 +38,36 @@ api_router = APIRouter(prefix="/api")
 
 # ==================== MODELS ====================
 
+# Organization Models
+class Organization(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    subscription_tier: str = "free"  # free, trial, user, admin
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    trial_ends_at: Optional[datetime] = None
+    settings: dict = {}
+
+class OrganizationCreate(BaseModel):
+    name: str
+    subscription_tier: str = "trial"
+
 # User & Auth Models
 class User(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     email: EmailStr
     name: str
-    role: str = "user"  # user, admin, manager
+    organization_id: str
+    role: str = "user"  # admin, user, trial, free
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
     name: str
+    organization_id: Optional[str] = None  # If None, create new organization
+    organization_name: Optional[str] = None  # For creating new organization
     role: str = "user"
 
 class UserLogin(BaseModel):
@@ -61,11 +78,13 @@ class Token(BaseModel):
     access_token: str
     token_type: str
     user: User
+    organization: Organization
 
 # Customer Models
 class Customer(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    organization_id: str
     anleggsnr: str  # An.nr.
     kundennr: str  # Knr
     kundnavn: str  # Kunde
@@ -114,6 +133,7 @@ class CustomerCreate(BaseModel):
 class Employee(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    organization_id: str
     initialer: str
     navn: str
     epost: Optional[str] = None
@@ -146,6 +166,7 @@ class EmployeeCreate(BaseModel):
 class WorkOrder(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    organization_id: str
     customer_id: str
     employee_id: str
     date: datetime
@@ -172,6 +193,7 @@ class WorkOrderCreate(BaseModel):
 class InternalOrder(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    organization_id: str
     avdeling: str
     date: datetime
     employee_id: str
@@ -194,6 +216,7 @@ class InternalOrderCreate(BaseModel):
 class Product(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    organization_id: str
     produktnr: str
     navn: str
     beskrivelse: Optional[str] = None
@@ -216,6 +239,7 @@ class ProductCreate(BaseModel):
 class Route(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    organization_id: str
     date: datetime
     anleggsnr_list: List[str]
     optimized: bool = False
@@ -229,6 +253,7 @@ class RouteCreate(BaseModel):
 class HMSRiskAssessment(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    organization_id: str
     tittel: str
     beskrivelse: str
     dato: datetime
@@ -248,6 +273,7 @@ class HMSRiskAssessmentCreate(BaseModel):
 class HMSIncident(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    organization_id: str
     dato: datetime
     beskrivelse: str
     type: str = "ulykke"  # ulykke, nestenulykke, observasjon
@@ -265,6 +291,7 @@ class HMSIncidentCreate(BaseModel):
 class HMSTraining(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    organization_id: str
     navn: str
     beskrivelse: str
     dato: datetime
@@ -284,6 +311,7 @@ class HMSTrainingCreate(BaseModel):
 class HMSEquipment(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    organization_id: str
     navn: str
     control_date: datetime
     next_control: datetime
@@ -300,6 +328,7 @@ class HMSEquipmentCreate(BaseModel):
 class Payout(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    organization_id: str
     employee_id: str
     type: str  # lonn, bonus, pensjon, feriepenger
     amount: float
@@ -315,6 +344,7 @@ class PayoutCreate(BaseModel):
 class Service(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    organization_id: str
     tjenestenr: str
     tjeneste_navn: str
     beskrivelse: Optional[str] = None
@@ -346,6 +376,7 @@ class ServiceCreate(BaseModel):
 class SupplierPricing(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    organization_id: str
     name: str  # Produsent navn
     arbeidstid_rate: float = 0.0
     kjoretid_rate: float = 0.0
@@ -392,20 +423,48 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     
     return User(**user)
 
+def check_organization_access(item_org_id: str, user_org_id: str):
+    """Verify user has access to item in their organization"""
+    if item_org_id != user_org_id:
+        raise HTTPException(status_code=403, detail="Access denied: Not authorized to access this organization's data")
+
 # ==================== AUTH ENDPOINTS ====================
 
-@api_router.post("/auth/register", response_model=User)
+@api_router.post("/auth/register", response_model=Token)
 async def register(user_input: UserCreate):
     # Check if user exists
     existing_user = await db.users.find_one({"email": user_input.email})
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     
+    # Create or get organization
+    if user_input.organization_id:
+        # User joining existing organization
+        org = await db.organizations.find_one({"id": user_input.organization_id}, {"_id": 0})
+        if not org:
+            raise HTTPException(status_code=404, detail="Organization not found")
+        organization = Organization(**org)
+    else:
+        # Create new organization
+        org_name = user_input.organization_name or f"{user_input.name}'s Organization"
+        organization = Organization(
+            name=org_name,
+            subscription_tier="trial",  # Start with trial
+            trial_ends_at=datetime.now(timezone.utc) + timedelta(days=30)
+        )
+        org_doc = organization.model_dump()
+        org_doc['created_at'] = org_doc['created_at'].isoformat()
+        if org_doc.get('trial_ends_at'):
+            org_doc['trial_ends_at'] = org_doc['trial_ends_at'].isoformat()
+        await db.organizations.insert_one(org_doc)
+        user_input.role = "admin"  # First user becomes admin
+    
     # Create user
     hashed_password = get_password_hash(user_input.password)
     user = User(
         email=user_input.email,
         name=user_input.name,
+        organization_id=organization.id,
         role=user_input.role
     )
     
@@ -414,7 +473,10 @@ async def register(user_input: UserCreate):
     user_doc['created_at'] = user_doc['created_at'].isoformat()
     
     await db.users.insert_one(user_doc)
-    return user
+    
+    # Generate token
+    access_token = create_access_token(data={"sub": user.id})
+    return Token(access_token=access_token, token_type="bearer", user=user, organization=organization)
 
 @api_router.post("/auth/login", response_model=Token)
 async def login(credentials: UserLogin):
@@ -427,9 +489,21 @@ async def login(credentials: UserLogin):
         user_doc['created_at'] = datetime.fromisoformat(user_doc['created_at'])
     
     user = User(**user_doc)
+    
+    # Get organization
+    org_doc = await db.organizations.find_one({"id": user.organization_id}, {"_id": 0})
+    if not org_doc:
+        raise HTTPException(status_code=404, detail="Organization not found")
+    
+    if isinstance(org_doc['created_at'], str):
+        org_doc['created_at'] = datetime.fromisoformat(org_doc['created_at'])
+    if org_doc.get('trial_ends_at') and isinstance(org_doc['trial_ends_at'], str):
+        org_doc['trial_ends_at'] = datetime.fromisoformat(org_doc['trial_ends_at'])
+    
+    organization = Organization(**org_doc)
     access_token = create_access_token(data={"sub": user.id})
     
-    return Token(access_token=access_token, token_type="bearer", user=user)
+    return Token(access_token=access_token, token_type="bearer", user=user, organization=organization)
 
 @api_router.get("/auth/me", response_model=User)
 async def get_me(current_user: User = Depends(get_current_user)):
@@ -439,7 +513,7 @@ async def get_me(current_user: User = Depends(get_current_user)):
 
 @api_router.post("/customers", response_model=Customer)
 async def create_customer(customer_input: CustomerCreate, current_user: User = Depends(get_current_user)):
-    customer = Customer(**customer_input.model_dump())
+    customer = Customer(organization_id=current_user.organization_id, **customer_input.model_dump())
     doc = customer.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
     await db.customers.insert_one(doc)
@@ -450,20 +524,18 @@ async def get_customers(
     search: Optional[str] = None,
     current_user: User = Depends(get_current_user)
 ):
-    query = {}
+    query = {"organization_id": current_user.organization_id}
     if search:
-        query = {
-            "$or": [
-                {"kundnavn": {"$regex": search, "$options": "i"}},
-                {"anleggsnr": {"$regex": search, "$options": "i"}},
-                {"kundennr": {"$regex": search, "$options": "i"}},
-                {"poststed": {"$regex": search, "$options": "i"}},
-                {"postnr": {"$regex": search, "$options": "i"}},
-                {"kommune": {"$regex": search, "$options": "i"}},
-                {"adresse": {"$regex": search, "$options": "i"}},
-                {"typenavn": {"$regex": search, "$options": "i"}}
-            ]
-        }
+        query["$or"] = [
+            {"kundnavn": {"$regex": search, "$options": "i"}},
+            {"anleggsnr": {"$regex": search, "$options": "i"}},
+            {"kundennr": {"$regex": search, "$options": "i"}},
+            {"poststed": {"$regex": search, "$options": "i"}},
+            {"postnr": {"$regex": search, "$options": "i"}},
+            {"kommune": {"$regex": search, "$options": "i"}},
+            {"adresse": {"$regex": search, "$options": "i"}},
+            {"typenavn": {"$regex": search, "$options": "i"}}
+        ]
     
     customers = await db.customers.find(query, {"_id": 0}).to_list(2000)
     for customer in customers:
@@ -476,6 +548,7 @@ async def get_customer(customer_id: str, current_user: User = Depends(get_curren
     customer = await db.customers.find_one({"id": customer_id}, {"_id": 0})
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
+    check_organization_access(customer['organization_id'], current_user.organization_id)
     if isinstance(customer['created_at'], str):
         customer['created_at'] = datetime.fromisoformat(customer['created_at'])
     return Customer(**customer)
@@ -489,9 +562,11 @@ async def update_customer(
     existing = await db.customers.find_one({"id": customer_id})
     if not existing:
         raise HTTPException(status_code=404, detail="Customer not found")
+    check_organization_access(existing['organization_id'], current_user.organization_id)
     
     updated_customer = Customer(
         id=customer_id,
+        organization_id=existing['organization_id'],
         created_at=datetime.fromisoformat(existing['created_at']) if isinstance(existing['created_at'], str) else existing['created_at'],
         **customer_input.model_dump()
     )
@@ -503,6 +578,9 @@ async def update_customer(
 
 @api_router.delete("/customers/{customer_id}")
 async def delete_customer(customer_id: str, current_user: User = Depends(get_current_user)):
+    existing = await db.customers.find_one({"id": customer_id})
+    if existing:
+        check_organization_access(existing['organization_id'], current_user.organization_id)
     result = await db.customers.delete_one({"id": customer_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Customer not found")
@@ -535,13 +613,14 @@ async def import_customers(
             except:
                 return str(val).strip() if val else None
         
-        # Delete existing customers
-        await db.customers.delete_many({})
+        # Delete existing customers FOR THIS ORGANIZATION ONLY
+        await db.customers.delete_many({"organization_id": current_user.organization_id})
         
         customers = []
         for _, row in df.iterrows():
             customer = {
                 "id": str(uuid.uuid4()),
+                "organization_id": current_user.organization_id,  # Add organization_id
                 "anleggsnr": safe_int_str(row.get('An.nr.')) or "",
                 "kundennr": safe_int_str(row.get('Knr')) or "",
                 "kundnavn": safe_str(row.get('Kunde')) or "",
@@ -579,7 +658,7 @@ async def import_customers(
 
 @api_router.post("/employees", response_model=Employee)
 async def create_employee(employee_input: EmployeeCreate, current_user: User = Depends(get_current_user)):
-    employee = Employee(**employee_input.model_dump())
+    employee = Employee(organization_id=current_user.organization_id, **employee_input.model_dump())
     doc = employee.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
     await db.employees.insert_one(doc)
@@ -587,7 +666,7 @@ async def create_employee(employee_input: EmployeeCreate, current_user: User = D
 
 @api_router.get("/employees", response_model=List[Employee])
 async def get_employees(current_user: User = Depends(get_current_user)):
-    employees = await db.employees.find({}, {"_id": 0}).to_list(1000)
+    employees = await db.employees.find({"organization_id": current_user.organization_id}, {"_id": 0}).to_list(1000)
     for employee in employees:
         if isinstance(employee['created_at'], str):
             employee['created_at'] = datetime.fromisoformat(employee['created_at'])
@@ -598,6 +677,7 @@ async def get_employee(employee_id: str, current_user: User = Depends(get_curren
     employee = await db.employees.find_one({"id": employee_id}, {"_id": 0})
     if not employee:
         raise HTTPException(status_code=404, detail="Employee not found")
+    check_organization_access(employee['organization_id'], current_user.organization_id)
     if isinstance(employee['created_at'], str):
         employee['created_at'] = datetime.fromisoformat(employee['created_at'])
     return Employee(**employee)
@@ -611,9 +691,11 @@ async def update_employee(
     existing = await db.employees.find_one({"id": employee_id})
     if not existing:
         raise HTTPException(status_code=404, detail="Employee not found")
+    check_organization_access(existing['organization_id'], current_user.organization_id)
     
     updated_employee = Employee(
         id=employee_id,
+        organization_id=existing['organization_id'],
         created_at=datetime.fromisoformat(existing['created_at']) if isinstance(existing['created_at'], str) else existing['created_at'],
         **employee_input.model_dump()
     )
@@ -625,6 +707,9 @@ async def update_employee(
 
 @api_router.delete("/employees/{employee_id}")
 async def delete_employee(employee_id: str, current_user: User = Depends(get_current_user)):
+    existing = await db.employees.find_one({"id": employee_id})
+    if existing:
+        check_organization_access(existing['organization_id'], current_user.organization_id)
     result = await db.employees.delete_one({"id": employee_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Employee not found")
@@ -634,7 +719,7 @@ async def delete_employee(employee_id: str, current_user: User = Depends(get_cur
 
 @api_router.post("/workorders", response_model=WorkOrder)
 async def create_workorder(workorder_input: WorkOrderCreate, current_user: User = Depends(get_current_user)):
-    workorder = WorkOrder(**workorder_input.model_dump())
+    workorder = WorkOrder(organization_id=current_user.organization_id, **workorder_input.model_dump())
     doc = workorder.model_dump()
     doc['date'] = doc['date'].isoformat()
     doc['created_at'] = doc['created_at'].isoformat()
@@ -648,7 +733,7 @@ async def get_workorders(
     employee_id: Optional[str] = None,
     current_user: User = Depends(get_current_user)
 ):
-    query = {}
+    query = {"organization_id": current_user.organization_id}
     if status:
         query['status'] = status
     if order_type:
@@ -669,6 +754,7 @@ async def get_workorder(workorder_id: str, current_user: User = Depends(get_curr
     workorder = await db.workorders.find_one({"id": workorder_id}, {"_id": 0})
     if not workorder:
         raise HTTPException(status_code=404, detail="Work order not found")
+    check_organization_access(workorder['organization_id'], current_user.organization_id)
     if isinstance(workorder['date'], str):
         workorder['date'] = datetime.fromisoformat(workorder['date'])
     if isinstance(workorder['created_at'], str):
@@ -684,9 +770,11 @@ async def update_workorder(
     existing = await db.workorders.find_one({"id": workorder_id})
     if not existing:
         raise HTTPException(status_code=404, detail="Work order not found")
+    check_organization_access(existing['organization_id'], current_user.organization_id)
     
     updated_wo = WorkOrder(
         id=workorder_id,
+        organization_id=existing['organization_id'],
         created_at=datetime.fromisoformat(existing['created_at']) if isinstance(existing['created_at'], str) else existing['created_at'],
         **workorder_input.model_dump()
     )
@@ -699,6 +787,9 @@ async def update_workorder(
 
 @api_router.delete("/workorders/{workorder_id}")
 async def delete_workorder(workorder_id: str, current_user: User = Depends(get_current_user)):
+    existing = await db.workorders.find_one({"id": workorder_id})
+    if existing:
+        check_organization_access(existing['organization_id'], current_user.organization_id)
     result = await db.workorders.delete_one({"id": workorder_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Work order not found")
@@ -708,7 +799,7 @@ async def delete_workorder(workorder_id: str, current_user: User = Depends(get_c
 
 @api_router.post("/internalorders", response_model=InternalOrder)
 async def create_internalorder(order_input: InternalOrderCreate, current_user: User = Depends(get_current_user)):
-    order = InternalOrder(**order_input.model_dump())
+    order = InternalOrder(organization_id=current_user.organization_id, **order_input.model_dump())
     doc = order.model_dump()
     doc['date'] = doc['date'].isoformat()
     doc['created_at'] = doc['created_at'].isoformat()
@@ -717,7 +808,7 @@ async def create_internalorder(order_input: InternalOrderCreate, current_user: U
 
 @api_router.get("/internalorders", response_model=List[InternalOrder])
 async def get_internalorders(current_user: User = Depends(get_current_user)):
-    orders = await db.internalorders.find({}, {"_id": 0}).to_list(1000)
+    orders = await db.internalorders.find({"organization_id": current_user.organization_id}, {"_id": 0}).to_list(1000)
     for order in orders:
         if isinstance(order['date'], str):
             order['date'] = datetime.fromisoformat(order['date'])
@@ -727,6 +818,9 @@ async def get_internalorders(current_user: User = Depends(get_current_user)):
 
 @api_router.delete("/internalorders/{order_id}")
 async def delete_internalorder(order_id: str, current_user: User = Depends(get_current_user)):
+    existing = await db.internalorders.find_one({"id": order_id})
+    if existing:
+        check_organization_access(existing['organization_id'], current_user.organization_id)
     result = await db.internalorders.delete_one({"id": order_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Internal order not found")
@@ -737,9 +831,11 @@ async def update_internalorder(order_id: str, order_input: InternalOrderCreate, 
     existing = await db.internalorders.find_one({"id": order_id}, {"_id": 0})
     if not existing:
         raise HTTPException(status_code=404, detail="Internal order not found")
+    check_organization_access(existing['organization_id'], current_user.organization_id)
     
     update_data = order_input.model_dump()
     update_data['id'] = order_id
+    update_data['organization_id'] = existing['organization_id']
     update_data['created_at'] = existing.get('created_at', datetime.now(timezone.utc).isoformat())
     
     await db.internalorders.replace_one({"id": order_id}, update_data)
@@ -753,7 +849,7 @@ async def update_internalorder(order_id: str, order_input: InternalOrderCreate, 
 
 @api_router.post("/products", response_model=Product)
 async def create_product(product_input: ProductCreate, current_user: User = Depends(get_current_user)):
-    product = Product(**product_input.model_dump())
+    product = Product(organization_id=current_user.organization_id, **product_input.model_dump())
     doc = product.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
     await db.products.insert_one(doc)
@@ -761,7 +857,7 @@ async def create_product(product_input: ProductCreate, current_user: User = Depe
 
 @api_router.get("/products", response_model=List[Product])
 async def get_products(current_user: User = Depends(get_current_user)):
-    products = await db.products.find({}, {"_id": 0}).to_list(1000)
+    products = await db.products.find({"organization_id": current_user.organization_id}, {"_id": 0}).to_list(1000)
     for product in products:
         if isinstance(product['created_at'], str):
             product['created_at'] = datetime.fromisoformat(product['created_at'])
@@ -776,9 +872,11 @@ async def update_product(
     existing = await db.products.find_one({"id": product_id})
     if not existing:
         raise HTTPException(status_code=404, detail="Product not found")
+    check_organization_access(existing['organization_id'], current_user.organization_id)
     
     updated_product = Product(
         id=product_id,
+        organization_id=existing['organization_id'],
         created_at=datetime.fromisoformat(existing['created_at']) if isinstance(existing['created_at'], str) else existing['created_at'],
         **product_input.model_dump()
     )
@@ -790,6 +888,9 @@ async def update_product(
 
 @api_router.delete("/products/{product_id}")
 async def delete_product(product_id: str, current_user: User = Depends(get_current_user)):
+    existing = await db.products.find_one({"id": product_id})
+    if existing:
+        check_organization_access(existing['organization_id'], current_user.organization_id)
     result = await db.products.delete_one({"id": product_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Product not found")
@@ -805,6 +906,7 @@ async def upload_product_image(
     existing = await db.products.find_one({"id": product_id})
     if not existing:
         raise HTTPException(status_code=404, detail="Product not found")
+    check_organization_access(existing['organization_id'], current_user.organization_id)
     
     # Validate file type
     allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
@@ -850,7 +952,7 @@ async def get_product_image(filename: str):
 async def create_route(route_input: RouteCreate, current_user: User = Depends(get_current_user)):
     # Get customers to optimize by postal code
     customers = await db.customers.find(
-        {"anleggsnr": {"$in": route_input.anleggsnr_list}},
+        {"anleggsnr": {"$in": route_input.anleggsnr_list}, "organization_id": current_user.organization_id},
         {"_id": 0, "anleggsnr": 1, "postnr": 1, "adresse": 1}
     ).to_list(1000)
     
@@ -859,6 +961,7 @@ async def create_route(route_input: RouteCreate, current_user: User = Depends(ge
     optimized_list = [c['anleggsnr'] for c in customers_sorted]
     
     route = Route(
+        organization_id=current_user.organization_id,
         date=route_input.date,
         anleggsnr_list=optimized_list,
         optimized=True
@@ -879,7 +982,7 @@ async def create_route_from_anleggsnr(
 
 @api_router.get("/routes", response_model=List[Route])
 async def get_routes(current_user: User = Depends(get_current_user)):
-    routes = await db.routes.find({}, {"_id": 0}).to_list(1000)
+    routes = await db.routes.find({"organization_id": current_user.organization_id}, {"_id": 0}).to_list(1000)
     for route in routes:
         if isinstance(route['date'], str):
             route['date'] = datetime.fromisoformat(route['date'])
@@ -891,7 +994,7 @@ async def get_routes(current_user: User = Depends(get_current_user)):
 
 @api_router.post("/hms/riskassessments", response_model=HMSRiskAssessment)
 async def create_risk_assessment(input: HMSRiskAssessmentCreate, current_user: User = Depends(get_current_user)):
-    assessment = HMSRiskAssessment(**input.model_dump())
+    assessment = HMSRiskAssessment(organization_id=current_user.organization_id, **input.model_dump())
     doc = assessment.model_dump()
     doc['dato'] = doc['dato'].isoformat()
     doc['created_at'] = doc['created_at'].isoformat()
@@ -900,7 +1003,7 @@ async def create_risk_assessment(input: HMSRiskAssessmentCreate, current_user: U
 
 @api_router.get("/hms/riskassessments", response_model=List[HMSRiskAssessment])
 async def get_risk_assessments(current_user: User = Depends(get_current_user)):
-    assessments = await db.hms_risk_assessments.find({}, {"_id": 0}).to_list(1000)
+    assessments = await db.hms_risk_assessments.find({"organization_id": current_user.organization_id}, {"_id": 0}).to_list(1000)
     for a in assessments:
         if isinstance(a['dato'], str):
             a['dato'] = datetime.fromisoformat(a['dato'])
@@ -910,7 +1013,7 @@ async def get_risk_assessments(current_user: User = Depends(get_current_user)):
 
 @api_router.post("/hms/incidents", response_model=HMSIncident)
 async def create_incident(input: HMSIncidentCreate, current_user: User = Depends(get_current_user)):
-    incident = HMSIncident(**input.model_dump())
+    incident = HMSIncident(organization_id=current_user.organization_id, **input.model_dump())
     doc = incident.model_dump()
     doc['dato'] = doc['dato'].isoformat()
     doc['created_at'] = doc['created_at'].isoformat()
@@ -919,7 +1022,7 @@ async def create_incident(input: HMSIncidentCreate, current_user: User = Depends
 
 @api_router.get("/hms/incidents", response_model=List[HMSIncident])
 async def get_incidents(current_user: User = Depends(get_current_user)):
-    incidents = await db.hms_incidents.find({}, {"_id": 0}).to_list(1000)
+    incidents = await db.hms_incidents.find({"organization_id": current_user.organization_id}, {"_id": 0}).to_list(1000)
     for i in incidents:
         if isinstance(i['dato'], str):
             i['dato'] = datetime.fromisoformat(i['dato'])
@@ -929,7 +1032,7 @@ async def get_incidents(current_user: User = Depends(get_current_user)):
 
 @api_router.post("/hms/training", response_model=HMSTraining)
 async def create_training(input: HMSTrainingCreate, current_user: User = Depends(get_current_user)):
-    training = HMSTraining(**input.model_dump())
+    training = HMSTraining(organization_id=current_user.organization_id, **input.model_dump())
     doc = training.model_dump()
     doc['dato'] = doc['dato'].isoformat()
     if doc['expires_at']:
@@ -940,7 +1043,7 @@ async def create_training(input: HMSTrainingCreate, current_user: User = Depends
 
 @api_router.get("/hms/training", response_model=List[HMSTraining])
 async def get_training(current_user: User = Depends(get_current_user)):
-    training = await db.hms_training.find({}, {"_id": 0}).to_list(1000)
+    training = await db.hms_training.find({"organization_id": current_user.organization_id}, {"_id": 0}).to_list(1000)
     for t in training:
         if isinstance(t['dato'], str):
             t['dato'] = datetime.fromisoformat(t['dato'])
@@ -952,7 +1055,7 @@ async def get_training(current_user: User = Depends(get_current_user)):
 
 @api_router.post("/hms/equipment", response_model=HMSEquipment)
 async def create_equipment(input: HMSEquipmentCreate, current_user: User = Depends(get_current_user)):
-    equipment = HMSEquipment(**input.model_dump())
+    equipment = HMSEquipment(organization_id=current_user.organization_id, **input.model_dump())
     doc = equipment.model_dump()
     doc['control_date'] = doc['control_date'].isoformat()
     doc['next_control'] = doc['next_control'].isoformat()
@@ -962,7 +1065,7 @@ async def create_equipment(input: HMSEquipmentCreate, current_user: User = Depen
 
 @api_router.get("/hms/equipment", response_model=List[HMSEquipment])
 async def get_equipment(current_user: User = Depends(get_current_user)):
-    equipment = await db.hms_equipment.find({}, {"_id": 0}).to_list(1000)
+    equipment = await db.hms_equipment.find({"organization_id": current_user.organization_id}, {"_id": 0}).to_list(1000)
     for e in equipment:
         if isinstance(e['control_date'], str):
             e['control_date'] = datetime.fromisoformat(e['control_date'])
@@ -976,7 +1079,7 @@ async def get_equipment(current_user: User = Depends(get_current_user)):
 
 @api_router.post("/economy/payouts", response_model=Payout)
 async def create_payout(input: PayoutCreate, current_user: User = Depends(get_current_user)):
-    payout = Payout(**input.model_dump())
+    payout = Payout(organization_id=current_user.organization_id, **input.model_dump())
     doc = payout.model_dump()
     doc['date'] = doc['date'].isoformat()
     doc['created_at'] = doc['created_at'].isoformat()
@@ -985,7 +1088,7 @@ async def create_payout(input: PayoutCreate, current_user: User = Depends(get_cu
 
 @api_router.get("/economy/payouts", response_model=List[Payout])
 async def get_payouts(current_user: User = Depends(get_current_user)):
-    payouts = await db.payouts.find({}, {"_id": 0}).to_list(1000)
+    payouts = await db.payouts.find({"organization_id": current_user.organization_id}, {"_id": 0}).to_list(1000)
     for p in payouts:
         if isinstance(p['date'], str):
             p['date'] = datetime.fromisoformat(p['date'])
@@ -995,7 +1098,7 @@ async def get_payouts(current_user: User = Depends(get_current_user)):
 
 @api_router.post("/economy/services", response_model=Service)
 async def create_service(input: ServiceCreate, current_user: User = Depends(get_current_user)):
-    service = Service(**input.model_dump())
+    service = Service(organization_id=current_user.organization_id, **input.model_dump())
     doc = service.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
     await db.services.insert_one(doc)
@@ -1003,7 +1106,7 @@ async def create_service(input: ServiceCreate, current_user: User = Depends(get_
 
 @api_router.get("/economy/services", response_model=List[Service])
 async def get_services(current_user: User = Depends(get_current_user)):
-    services = await db.services.find({}, {"_id": 0}).to_list(1000)
+    services = await db.services.find({"organization_id": current_user.organization_id}, {"_id": 0}).to_list(1000)
     for s in services:
         if isinstance(s['created_at'], str):
             s['created_at'] = datetime.fromisoformat(s['created_at'])
@@ -1014,6 +1117,7 @@ async def get_service(service_id: str, current_user: User = Depends(get_current_
     service = await db.services.find_one({"id": service_id}, {"_id": 0})
     if not service:
         raise HTTPException(status_code=404, detail="Service not found")
+    check_organization_access(service['organization_id'], current_user.organization_id)
     if isinstance(service['created_at'], str):
         service['created_at'] = datetime.fromisoformat(service['created_at'])
     return Service(**service)
@@ -1027,9 +1131,11 @@ async def update_service(
     existing = await db.services.find_one({"id": service_id})
     if not existing:
         raise HTTPException(status_code=404, detail="Service not found")
+    check_organization_access(existing['organization_id'], current_user.organization_id)
     
     updated_service = Service(
         id=service_id,
+        organization_id=existing['organization_id'],
         created_at=datetime.fromisoformat(existing['created_at']) if isinstance(existing['created_at'], str) else existing['created_at'],
         **service_input.model_dump()
     )
@@ -1041,6 +1147,9 @@ async def update_service(
 
 @api_router.delete("/economy/services/{service_id}")
 async def delete_service(service_id: str, current_user: User = Depends(get_current_user)):
+    existing = await db.services.find_one({"id": service_id})
+    if existing:
+        check_organization_access(existing['organization_id'], current_user.organization_id)
     result = await db.services.delete_one({"id": service_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Service not found")
@@ -1090,13 +1199,14 @@ async def import_services(
         beskrivelse_col = find_column(df, ['beskrivelse', 'description', 'beskrivning'])
         leverandor_col = find_column(df, ['leverandør', 'leverandor', 'supplier'])
         
-        # Delete existing services
-        await db.services.delete_many({})
+        # Delete existing services FOR THIS ORGANIZATION ONLY
+        await db.services.delete_many({"organization_id": current_user.organization_id})
         
         services = []
         for _, row in df.iterrows():
             service = {
                 "id": str(uuid.uuid4()),
+                "organization_id": current_user.organization_id,
                 "tjenestenr": safe_str(row.get(tjenestenr_col)) if tjenestenr_col else "",
                 "tjeneste_navn": safe_str(row.get(tjeneste_navn_col)) if tjeneste_navn_col else "",
                 "beskrivelse": safe_str(row.get(beskrivelse_col)) if beskrivelse_col else "",
@@ -1130,7 +1240,7 @@ async def import_services(
 @api_router.get("/customers/{anleggsnr}/service-pricing")
 async def get_service_pricing_for_customer(anleggsnr: str, current_user: User = Depends(get_current_user)):
     # Find customer by anleggsnr
-    customer = await db.customers.find_one({"anleggsnr": anleggsnr}, {"_id": 0})
+    customer = await db.customers.find_one({"anleggsnr": anleggsnr, "organization_id": current_user.organization_id}, {"_id": 0})
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
     
@@ -1139,7 +1249,7 @@ async def get_service_pricing_for_customer(anleggsnr: str, current_user: User = 
     if not service_nr:
         return {"customer": customer, "service": None, "message": "No service type (typenr) assigned to customer"}
     
-    service = await db.services.find_one({"tjenestenr": service_nr}, {"_id": 0})
+    service = await db.services.find_one({"tjenestenr": service_nr, "organization_id": current_user.organization_id}, {"_id": 0})
     if not service:
         return {"customer": customer, "service": None, "message": f"Service with tjenestenr {service_nr} not found"}
     
@@ -1155,7 +1265,7 @@ async def get_service_pricing_for_customer(anleggsnr: str, current_user: User = 
 
 @api_router.post("/economy/supplier-pricing", response_model=SupplierPricing)
 async def create_supplier_pricing(input: SupplierPricingCreate, current_user: User = Depends(get_current_user)):
-    pricing = SupplierPricing(**input.model_dump())
+    pricing = SupplierPricing(organization_id=current_user.organization_id, **input.model_dump())
     doc = pricing.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
     doc['updated_at'] = doc['updated_at'].isoformat()
@@ -1164,7 +1274,7 @@ async def create_supplier_pricing(input: SupplierPricingCreate, current_user: Us
 
 @api_router.get("/economy/supplier-pricing", response_model=List[SupplierPricing])
 async def get_supplier_pricing(current_user: User = Depends(get_current_user)):
-    pricing = await db.supplier_pricing.find({}, {"_id": 0}).to_list(1000)
+    pricing = await db.supplier_pricing.find({"organization_id": current_user.organization_id}, {"_id": 0}).to_list(1000)
     for p in pricing:
         if isinstance(p['created_at'], str):
             p['created_at'] = datetime.fromisoformat(p['created_at'])
@@ -1184,9 +1294,11 @@ async def update_supplier_pricing(
     existing = await db.supplier_pricing.find_one({"id": pricing_id})
     if not existing:
         raise HTTPException(status_code=404, detail="Supplier pricing not found")
+    check_organization_access(existing['organization_id'], current_user.organization_id)
     
     updated_pricing = SupplierPricing(
         id=pricing_id,
+        organization_id=existing['organization_id'],
         created_at=datetime.fromisoformat(existing['created_at']) if isinstance(existing['created_at'], str) else existing['created_at'],
         updated_at=datetime.now(timezone.utc),
         **pricing_input.model_dump()
@@ -1200,6 +1312,9 @@ async def update_supplier_pricing(
 
 @api_router.delete("/economy/supplier-pricing/{pricing_id}")
 async def delete_supplier_pricing(pricing_id: str, current_user: User = Depends(get_current_user)):
+    existing = await db.supplier_pricing.find_one({"id": pricing_id})
+    if existing:
+        check_organization_access(existing['organization_id'], current_user.organization_id)
     result = await db.supplier_pricing.delete_one({"id": pricing_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Supplier pricing not found")
@@ -1209,13 +1324,14 @@ async def delete_supplier_pricing(pricing_id: str, current_user: User = Depends(
 
 @api_router.get("/dashboard/stats")
 async def get_dashboard_stats(current_user: User = Depends(get_current_user)):
-    total_customers = await db.customers.count_documents({})
-    total_workorders = await db.workorders.count_documents({})
-    planned_workorders = await db.workorders.count_documents({"status": "planlagt"})
-    total_products = await db.products.count_documents({})
+    org_filter = {"organization_id": current_user.organization_id}
+    total_customers = await db.customers.count_documents(org_filter)
+    total_workorders = await db.workorders.count_documents(org_filter)
+    planned_workorders = await db.workorders.count_documents({**org_filter, "status": "planlagt"})
+    total_products = await db.products.count_documents(org_filter)
     
     # Get work orders by type
-    workorders = await db.workorders.find({}, {"_id": 0, "order_type": 1, "arbeidstid": 1, "kjoretid": 1, "kjorte_km": 1}).to_list(1000)
+    workorders = await db.workorders.find(org_filter, {"_id": 0, "order_type": 1, "arbeidstid": 1, "kjoretid": 1, "kjorte_km": 1}).to_list(1000)
     
     stats_by_type = {}
     for wo in workorders:
@@ -1233,6 +1349,108 @@ async def get_dashboard_stats(current_user: User = Depends(get_current_user)):
         "total_products": total_products,
         "stats_by_type": stats_by_type
     }
+
+# ==================== ORGANIZATION ENDPOINTS ====================
+
+@api_router.get("/organizations/me", response_model=Organization)
+async def get_my_organization(current_user: User = Depends(get_current_user)):
+    """Get current user's organization details"""
+    org = await db.organizations.find_one({"id": current_user.organization_id}, {"_id": 0})
+    if not org:
+        raise HTTPException(status_code=404, detail="Organization not found")
+    if isinstance(org['created_at'], str):
+        org['created_at'] = datetime.fromisoformat(org['created_at'])
+    if org.get('trial_ends_at') and isinstance(org['trial_ends_at'], str):
+        org['trial_ends_at'] = datetime.fromisoformat(org['trial_ends_at'])
+    return Organization(**org)
+
+@api_router.put("/organizations/me", response_model=Organization)
+async def update_my_organization(
+    org_input: OrganizationCreate,
+    current_user: User = Depends(get_current_user)
+):
+    """Update current user's organization (admin only)"""
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Only admins can update organization settings")
+    
+    existing = await db.organizations.find_one({"id": current_user.organization_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Organization not found")
+    
+    updated_org = Organization(
+        id=existing['id'],
+        name=org_input.name,
+        subscription_tier=org_input.subscription_tier,
+        created_at=datetime.fromisoformat(existing['created_at']) if isinstance(existing['created_at'], str) else existing['created_at'],
+        trial_ends_at=datetime.fromisoformat(existing['trial_ends_at']) if existing.get('trial_ends_at') and isinstance(existing['trial_ends_at'], str) else existing.get('trial_ends_at'),
+        settings=existing.get('settings', {})
+    )
+    doc = updated_org.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    if doc.get('trial_ends_at'):
+        doc['trial_ends_at'] = doc['trial_ends_at'].isoformat()
+    
+    await db.organizations.replace_one({"id": current_user.organization_id}, doc)
+    return updated_org
+
+@api_router.get("/organizations/users", response_model=List[User])
+async def get_organization_users(current_user: User = Depends(get_current_user)):
+    """Get all users in current organization (admin only)"""
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Only admins can view organization users")
+    
+    users = await db.users.find({"organization_id": current_user.organization_id}, {"_id": 0, "password_hash": 0}).to_list(100)
+    for user in users:
+        if isinstance(user['created_at'], str):
+            user['created_at'] = datetime.fromisoformat(user['created_at'])
+    return [User(**user) for user in users]
+
+@api_router.put("/organizations/users/{user_id}/role")
+async def update_user_role(
+    user_id: str,
+    role: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Update a user's role (admin only)"""
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Only admins can update user roles")
+    
+    if role not in ["admin", "user", "trial", "free"]:
+        raise HTTPException(status_code=400, detail="Invalid role")
+    
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    if user['organization_id'] != current_user.organization_id:
+        raise HTTPException(status_code=403, detail="Cannot update users from other organizations")
+    
+    await db.users.update_one({"id": user_id}, {"$set": {"role": role}})
+    return {"message": "User role updated successfully"}
+
+@api_router.delete("/organizations/users/{user_id}")
+async def remove_organization_user(
+    user_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Remove a user from organization (admin only)"""
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Only admins can remove users")
+    
+    if user_id == current_user.id:
+        raise HTTPException(status_code=400, detail="Cannot remove yourself")
+    
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    if user['organization_id'] != current_user.organization_id:
+        raise HTTPException(status_code=403, detail="Cannot remove users from other organizations")
+    
+    result = await db.users.delete_one({"id": user_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"message": "User removed successfully"}
 
 # ==================== APP SETUP ====================
 
