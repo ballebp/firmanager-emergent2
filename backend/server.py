@@ -1101,6 +1101,7 @@ async def import_services(
                 "tjeneste_navn": safe_str(row.get(tjeneste_navn_col)) if tjeneste_navn_col else "",
                 "beskrivelse": safe_str(row.get(beskrivelse_col)) if beskrivelse_col else "",
                 "leverandor": safe_str(row.get(leverandor_col)) if leverandor_col else "",
+                "produsent_id": None,
                 "pris": safe_float(row.get(pris_col)) if pris_col else 0.0,
                 "t1_ekstraservice": 0.0,
                 "t2_ekstraservice_50": 0.0,
