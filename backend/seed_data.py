@@ -15,8 +15,8 @@ from passlib.context import CryptContext
 import uuid
 
 # Database connection
-MONGO_URL = "mongodb://localhost:27017"
-DB_NAME = "firmanager"
+MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+DB_NAME = os.environ.get('DB_NAME', 'firmanager')
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
