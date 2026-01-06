@@ -1454,7 +1454,7 @@ async def remove_organization_user(
 
 # ==================== SEED DATABASE ENDPOINT ====================
 
-@api_router.post("/seed-database")
+@api_router.get("/seed-database")
 async def seed_database_endpoint(secret: str):
     """Seed database with multi-tenancy test data (protected by secret key)"""
     # Check secret key
