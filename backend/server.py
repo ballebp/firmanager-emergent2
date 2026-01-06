@@ -5,6 +5,7 @@ from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
+import traceback
 from pathlib import Path
 from pydantic import BaseModel, Field, EmailStr, ConfigDict
 from typing import List, Optional
@@ -1058,6 +1059,9 @@ async def import_services(
         contents = await file.read()
         df = pd.read_excel(BytesIO(contents))
         
+        # Log available columns for debugging
+        logging.info(f"Excel columns found: {list(df.columns)}")
+        
         def safe_str(val):
             if pd.isna(val):
                 return None
@@ -1071,6 +1075,21 @@ async def import_services(
             except:
                 return 0.0
         
+        # Helper to find column name (case-insensitive)
+        def find_column(df, possible_names):
+            cols_lower = {col.lower(): col for col in df.columns}
+            for name in possible_names:
+                if name.lower() in cols_lower:
+                    return cols_lower[name.lower()]
+            return None
+        
+        # Find column names flexibly
+        tjenestenr_col = find_column(df, ['tjenestenr', 'tjeneste nr', 'service nr'])
+        tjeneste_navn_col = find_column(df, ['tjeneste navn', 'tjenestenavn', 'service navn', 'navn'])
+        pris_col = find_column(df, ['leverandør pris', 'leverandørpris', 'pris', 'price'])
+        beskrivelse_col = find_column(df, ['beskrivelse', 'description', 'beskrivning'])
+        leverandor_col = find_column(df, ['leverandør', 'leverandor', 'supplier'])
+        
         # Delete existing services
         await db.services.delete_many({})
         
@@ -1078,11 +1097,11 @@ async def import_services(
         for _, row in df.iterrows():
             service = {
                 "id": str(uuid.uuid4()),
-                "tjenestenr": safe_str(row.get('tjenestenr')) or "",
-                "tjeneste_navn": safe_str(row.get('tjeneste navn')) or "",
-                "beskrivelse": "",
-                "leverandor": "",
-                "pris": safe_float(row.get('Leverandør pris')),
+                "tjenestenr": safe_str(row.get(tjenestenr_col)) if tjenestenr_col else "",
+                "tjeneste_navn": safe_str(row.get(tjeneste_navn_col)) if tjeneste_navn_col else "",
+                "beskrivelse": safe_str(row.get(beskrivelse_col)) if beskrivelse_col else "",
+                "leverandor": safe_str(row.get(leverandor_col)) if leverandor_col else "",
+                "pris": safe_float(row.get(pris_col)) if pris_col else 0.0,
                 "t1_ekstraservice": 0.0,
                 "t2_ekstraservice_50": 0.0,
                 "t3_ekstraservice_100": 0.0,
@@ -1096,10 +1115,14 @@ async def import_services(
         if services:
             await db.services.insert_many(services)
         
+        logging.info(f"Successfully imported {len(services)} services")
         return {"message": "Import successful", "imported_count": len(services)}
     
     except Exception as e:
         logging.error(f"Service import error: {str(e)}")
+        logging.error(f"Error type: {type(e).__name__}")
+        import traceback
+        logging.error(f"Traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=f"Import failed: {str(e)}")
 
 # Get service pricing by anleggsnr

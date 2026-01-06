@@ -252,7 +252,9 @@ const Economy = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Import feilet');
+        const errorData = await response.json().catch(() => ({}));
+        const errorMsg = errorData.detail || 'Import feilet';
+        throw new Error(errorMsg);
       }
 
       const result = await response.json();
@@ -260,12 +262,11 @@ const Economy = () => {
       loadData();
     } catch (error) {
       console.error('Service import failed:', error);
-      alert('Kunne ikke importere tjenester. Sjekk at filen har riktig format.');
+      alert(`Kunne ikke importere tjenester.\nFeil: ${error.message}\n\nForventet kolonner i Excel:\n- tjenestenr\n- tjeneste navn\n- Leverandør pris`);
     } finally {
       setImporting(false);
       e.target.value = '';
     }
-  };
 
   const resetServiceForm = () => {
     setServiceFormData({
