@@ -1,0 +1,15 @@
+name: firmanager-frontend
+static_sites:
+  - name: firmanager
+    github:
+      repo: your-username/firmanager-emergent
+      branch: main
+      deploy_on_push: true
+    build_command: npm install && npm run build
+    output_dir: /build
+    catchall_document: index.html
+    routes:
+      - path: /
+    envs:
+      - key: REACT_APP_BACKEND_URL
+        value: "https://your-backend-app.onrender.com"
