@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Users, Plus, Trash2, Shield, X } from 'lucide-react';
-import api from '../services/api';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
+
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
 
 const Settings = () => {
   const [users, setUsers] = useState([]);
@@ -18,8 +26,8 @@ const Settings = () => {
   const fetchData = async () => {
     try {
       const [orgResponse, usersResponse] = await Promise.all([
-        api.get('/organizations/me'),
-        api.get('/organizations/users')
+        axios.get(`${API}/organizations/me`, { headers: getAuthHeaders() }),
+        axios.get(`${API}/organizations/users`, { headers: getAuthHeaders() })
       ]);
       setOrganization(orgResponse.data);
       setUsers(usersResponse.data);
@@ -36,7 +44,7 @@ const Settings = () => {
     setSuccess('');
     
     try {
-      await api.post('/organizations/users', newUser);
+      await axios.post(`${API}/organizations/users`, newUser, { headers: getAuthHeaders() });
       setSuccess(`User ${newUser.email} added successfully!`);
       setNewUser({ email: '', name: '', role: 'user', password: 'user123' });
       setShowAddUser(false);
@@ -48,7 +56,7 @@ const Settings = () => {
 
   const handleUpdateRole = async (userId, newRole) => {
     try {
-      await api.put(`/organizations/users/${userId}/role?role=${newRole}`);
+      await axios.put(`${API}/organizations/users/${userId}/role?role=${newRole}`, {}, { headers: getAuthHeaders() });
       setSuccess('Role updated successfully');
       fetchData();
     } catch (err) {
@@ -59,7 +67,7 @@ const Settings = () => {
   const handleDeleteUser = async (userId, userEmail) => {
     if (window.confirm(`Are you sure you want to remove ${userEmail}?`)) {
       try {
-        await api.delete(`/organizations/users/${userId}`);
+        await axios.delete(`${API}/organizations/users/${userId}`, { headers: getAuthHeaders() });
         setSuccess('User removed successfully');
         fetchData();
       } catch (err) {
