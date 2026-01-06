@@ -996,7 +996,7 @@ const Economy = () => {
       )}
     </div>
   );
-}
 };
+}
 
 export default Economy;
