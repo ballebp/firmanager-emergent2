@@ -220,53 +220,53 @@ const Routes = () => {
         <title>Kjøreseddel - ${routeDate}</title>
         <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
-          body { font-family: Arial, sans-serif; padding: 15px; color: #333; font-size: 22px; }
+          body { font-family: Arial, sans-serif; padding: 15px; color: #333; font-size: 11px; }
           .header { text-align: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #333; }
-          .header h1 { font-size: 44px; margin-bottom: 5px; }
-          .header .date { font-size: 28px; color: #666; }
-          .header .info { font-size: 22px; color: #888; margin-top: 3px; }
+          .header h1 { font-size: 32px; margin-bottom: 5px; }
+          .header .date { font-size: 20px; color: #666; }
+          .header .info { font-size: 14px; color: #888; margin-top: 3px; }
           .stop { page-break-inside: avoid; margin-bottom: 15px; padding: 10px; border: 1px solid #333; border-radius: 4px; background: #fff; }
           .stop-header { display: flex; align-items: center; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid #333; background: #e8e8e8; margin: -10px -10px 10px -10px; padding: 8px 10px; border-radius: 3px 3px 0 0; }
-          .stop-number { width: 60px; height: 60px; background: #2563eb; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 28px; margin-right: 10px; flex-shrink: 0; }
-          .stop-title { font-size: 32px; font-weight: bold; }
-          .stop-subtitle { font-size: 28px; color: #333; font-weight: bold; }
-          .stop-subtitle .annr { font-size: 32px; color: #000; }
-          .stop-subtitle .knr { font-size: 32px; color: #000; }
+          .stop-number { width: 30px; height: 30px; background: #2563eb; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; margin-right: 10px; flex-shrink: 0; }
+          .stop-title { font-size: 22px; font-weight: bold; }
+          .stop-subtitle { font-size: 16px; color: #333; font-weight: bold; }
+          .stop-subtitle .annr { font-size: 20px; color: #000; }
+          .stop-subtitle .knr { font-size: 20px; color: #000; }
           .customer-info { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
           .detail-item { padding: 3px 0; }
           .detail-item.full-width { grid-column: span 4; }
           .detail-item.half-width { grid-column: span 2; }
-          .detail-label { font-size: 16px; color: #666; text-transform: uppercase; margin-bottom: 1px; font-weight: bold; }
-          .detail-value { font-size: 20px; font-weight: 500; }
+          .detail-label { font-size: 11px; color: #666; text-transform: uppercase; margin-bottom: 1px; font-weight: bold; }
+          .detail-value { font-size: 14px; font-weight: 500; }
           .info-box { margin-top: 8px; padding: 6px; border-radius: 3px; }
           .info-box.kundeinfo { background: #fff8dc; border: 1px solid #daa520; }
           .info-box.kommentar { background: #ffe4e1; border: 1px solid #cd5c5c; }
-          .info-box-label { font-size: 18px; font-weight: bold; color: #666; margin-bottom: 3px; text-transform: uppercase; }
-          .info-box-value { font-size: 20px; line-height: 1.3; }
+          .info-box-label { font-size: 12px; font-weight: bold; color: #666; margin-bottom: 3px; text-transform: uppercase; }
+          .info-box-value { font-size: 14px; line-height: 1.3; }
           .measurements { margin-top: 12px; padding-top: 10px; border-top: 2px solid #333; }
-          .measurements-title { font-size: 22px; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; background: #333; color: white; padding: 4px 8px; display: inline-block; }
+          .measurements-title { font-size: 15px; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; background: #333; color: white; padding: 4px 8px; display: inline-block; }
           .measurements-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
           .measurement-item { border-bottom: 1px dashed #999; padding-bottom: 3px; }
-          .measurement-label { font-size: 18px; color: #333; font-weight: bold; }
-          .measurement-value { height: 36px; border-bottom: 1px solid #666; margin-top: 2px; }
+          .measurement-label { font-size: 12px; color: #333; font-weight: bold; }
+          .measurement-value { height: 18px; border-bottom: 1px solid #666; margin-top: 2px; }
           .parts-section { margin-top: 12px; padding-top: 10px; border-top: 1px dashed #999; }
-          .parts-title { font-size: 20px; font-weight: bold; margin-bottom: 6px; }
+          .parts-title { font-size: 14px; font-weight: bold; margin-bottom: 6px; }
           .parts-table { width: 100%; border-collapse: collapse; }
-          .parts-table th, .parts-table td { border: 1px solid #999; padding: 4px; text-align: left; font-size: 18px; }
+          .parts-table th, .parts-table td { border: 1px solid #999; padding: 4px; text-align: left; font-size: 12px; }
           .parts-table th { background: #e8e8e8; font-weight: bold; }
-          .parts-table td { height: 40px; }
+          .parts-table td { height: 20px; }
           .status-section { margin-top: 10px; padding-top: 8px; border-top: 1px dashed #999; }
           .checkbox-row { display: flex; gap: 20px; margin-top: 6px; }
-          .checkbox-item { display: flex; align-items: center; gap: 5px; font-size: 20px; }
-          .checkbox { width: 28px; height: 28px; border: 2px solid #333; border-radius: 2px; }
+          .checkbox-item { display: flex; align-items: center; gap: 5px; font-size: 14px; }
+          .checkbox { width: 14px; height: 14px; border: 2px solid #333; border-radius: 2px; }
           .notes-row { margin-top: 8px; }
-          .notes-label { font-size: 18px; font-weight: bold; margin-bottom: 3px; }
-          .notes-box { width: 100%; height: 60px; border: 1px solid #999; border-radius: 3px; }
+          .notes-label { font-size: 12px; font-weight: bold; margin-bottom: 3px; }
+          .notes-box { width: 100%; height: 30px; border: 1px solid #999; border-radius: 3px; }
           .time-km-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; padding-top: 8px; border-top: 1px dashed #999; }
           .time-km-item { }
-          .time-km-label { font-size: 18px; font-weight: bold; }
-          .time-km-value { height: 36px; border-bottom: 1px solid #666; margin-top: 2px; }
-          .footer { margin-top: 20px; padding-top: 12px; border-top: 2px solid #333; text-align: center; font-size: 18px; color: #666; }
+          .time-km-label { font-size: 12px; font-weight: bold; }
+          .time-km-value { height: 18px; border-bottom: 1px solid #666; margin-top: 2px; }
+          .footer { margin-top: 20px; padding-top: 12px; border-top: 2px solid #333; text-align: center; font-size: 11px; color: #666; }
           @media print { .stop { page-break-inside: avoid; } }
         </style>
       </head>

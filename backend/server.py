@@ -1405,6 +1405,36 @@ async def get_organization_users(current_user: User = Depends(get_current_user))
             user['created_at'] = datetime.fromisoformat(user['created_at'])
     return [User(**user) for user in users]
 
+@api_router.post("/organizations/users", response_model=User)
+async def create_organization_user(
+    user_input: UserCreate,
+    current_user: User = Depends(get_current_user)
+):
+    """Create a new user in current organization (admin only)"""
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Only admins can create users")
+    
+    # Check if user exists
+    existing_user = await db.users.find_one({"email": user_input.email})
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # Create user in current organization
+    hashed_password = get_password_hash(user_input.password)
+    user = User(
+        email=user_input.email,
+        name=user_input.name,
+        organization_id=current_user.organization_id,
+        role=user_input.role or "user"
+    )
+    
+    user_doc = user.model_dump()
+    user_doc['password_hash'] = hashed_password
+    user_doc['created_at'] = user_doc['created_at'].isoformat()
+    
+    await db.users.insert_one(user_doc)
+    return user
+
 @api_router.put("/organizations/users/{user_id}/role")
 async def update_user_role(
     user_id: str,
