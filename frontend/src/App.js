@@ -13,6 +13,7 @@ import HMS from './pages/HMS';
 import Products from './pages/Products';
 import Results from './pages/Results';
 import Economy from './pages/Economy';
+import Settings from './pages/Settings';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
                     <Route path="/products" element={<Products />} />
                     <Route path="/results" element={<Results />} />
                     <Route path="/economy" element={<Economy />} />
+                    <Route path="/settings" element={<Settings />} />
                   </Routes>
                 </Layout>
               </ProtectedRoute>

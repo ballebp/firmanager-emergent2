@@ -11,6 +11,7 @@ import {
   Package,
   BarChart3,
   DollarSign,
+  Settings,
   LogOut
 } from 'lucide-react';
 
@@ -33,7 +34,8 @@ const Layout = ({ children }) => {
     { path: '/hms', icon: Shield, label: 'HMS' },
     { path: '/products', icon: Package, label: 'Produktkatalog' },
     { path: '/results', icon: BarChart3, label: 'Resultater' },
-    { path: '/economy', icon: DollarSign, label: 'Økonomi' }
+    { path: '/economy', icon: DollarSign, label: 'Økonomi' },
+    { path: '/settings', icon: Settings, label: 'Settings' }
   ];
 
   return (
