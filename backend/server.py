@@ -1393,7 +1393,7 @@ async def update_my_organization(
     await db.organizations.replace_one({"id": current_user.organization_id}, doc)
     return updated_org
 
-@api_router.post("/organizations/users", response_model=User)
+@api_router.post("/organizations/users/create", response_model=User)
 async def create_organization_user(
     user_input: UserCreate,
     current_user: User = Depends(get_current_user)

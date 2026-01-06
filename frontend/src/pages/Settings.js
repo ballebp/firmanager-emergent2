@@ -44,7 +44,7 @@ const Settings = () => {
     setSuccess('');
     
     try {
-      await axios.post(`${API}/organizations/users`, newUser, { headers: getAuthHeaders() });
+      await axios.post(`${API}/organizations/users/create`, newUser, { headers: getAuthHeaders() });
       setSuccess(`User ${newUser.email} added successfully!`);
       setNewUser({ email: '', name: '', role: 'user', password: 'user123' });
       setShowAddUser(false);
