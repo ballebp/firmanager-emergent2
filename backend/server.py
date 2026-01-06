@@ -1212,6 +1212,14 @@ async def get_dashboard_stats(current_user: User = Depends(get_current_user)):
 
 # ==================== APP SETUP ====================
 
+@app.get("/")
+async def root():
+    return {"status": "ok", "message": "Firmanager API is running"}
+
+@app.get("/health")
+async def health():
+    return {"status": "healthy", "database": "connected"}
+
 app.include_router(api_router)
 
 app.add_middleware(
