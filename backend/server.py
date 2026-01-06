@@ -1421,19 +1421,19 @@ async def create_organization_user(
     
     # Create user in current organization
     hashed_password = get_password_hash(user_input.password)
-    user = User(
+    new_user = User(
         email=user_input.email,
         name=user_input.name,
         organization_id=current_user.organization_id,
         role=user_input.role or "user"
     )
     
-    user_doc = user.model_dump()
+    user_doc = new_user.model_dump()
     user_doc['password_hash'] = hashed_password
     user_doc['created_at'] = user_doc['created_at'].isoformat()
     
     await db.users.insert_one(user_doc)
-    return user
+    return new_user
 
 @api_router.put("/organizations/users/{user_id}/role")
 async def update_user_role(
