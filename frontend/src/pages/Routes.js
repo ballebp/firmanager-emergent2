@@ -18,6 +18,8 @@ const Routes = () => {
   const [routeMode, setRouteMode] = useState('area'); // 'area' or 'anleggsnr'
   const [anleggsnrInput, setAnleggsnrInput] = useState('');
   const [parsedAnleggsnr, setParsedAnleggsnr] = useState([]);
+  const [stedFilter, setStedFilter] = useState('');
+  const [selectedSteds, setSelectedSteds] = useState([]);
 
   useEffect(() => {
     loadCustomers();
@@ -109,13 +111,45 @@ const Routes = () => {
   // Get customers matching parsed anleggsnr
   const matchedCustomers = useMemo(() => {
     if (parsedAnleggsnr.length === 0) return [];
-    return customers.filter(c => parsedAnleggsnr.includes(c.anleggsnr));
-  }, [customers, parsedAnleggsnr]);
+    let filtered = customers.filter(c => parsedAnleggsnr.includes(c.anleggsnr));
+    
+    // Apply sted filter if any selected
+    if (selectedSteds.length > 0) {
+      filtered = filtered.filter(c => selectedSteds.includes(c.poststed));
+    }
+    
+    return filtered;
+  }, [customers, parsedAnleggsnr, selectedSteds]);
 
   const unmatchedAnleggsnr = useMemo(() => {
     const matchedSet = new Set(matchedCustomers.map(c => c.anleggsnr));
     return parsedAnleggsnr.filter(a => !matchedSet.has(a));
   }, [parsedAnleggsnr, matchedCustomers]);
+  
+  // Get unique steds from matched customers (before sted filter)
+  const availableSteds = useMemo(() => {
+    if (parsedAnleggsnr.length === 0) return [];
+    const matchedBeforeFilter = customers.filter(c => parsedAnleggsnr.includes(c.anleggsnr));
+    const steds = [...new Set(matchedBeforeFilter.map(c => c.poststed).filter(s => s))];
+    return steds.sort();
+  }, [customers, parsedAnleggsnr]);
+  
+  const filteredStedOptions = useMemo(() => {
+    if (!stedFilter) return availableSteds;
+    const search = stedFilter.toLowerCase();
+    return availableSteds.filter(s => s.toLowerCase().includes(search));
+  }, [availableSteds, stedFilter]);
+  
+  const addSted = (sted) => {
+    if (!selectedSteds.includes(sted)) {
+      setSelectedSteds([...selectedSteds, sted]);
+    }
+    setStedFilter('');
+  };
+  
+  const removeSted = (sted) => {
+    setSelectedSteds(selectedSteds.filter(s => s !== sted));
+  };
 
   // Geo-optimize route based on coordinates/postnr
   const optimizeRoute = (customerList) => {
@@ -164,6 +198,8 @@ const Routes = () => {
       setSelectedCustomersForRoute(new Set());
       setAnleggsnrInput('');
       setParsedAnleggsnr([]);
+      setSelectedSteds([]);
+      setStedFilter('');
     } catch (error) {
       console.error('Failed to create route:', error);
       alert('Could not generate route');
@@ -482,15 +518,66 @@ const Routes = () => {
                   {parsedAnleggsnr.length > 0 && (
                     <div className="mt-3 space-y-2">
                       <div className="flex items-center gap-2 text-sm">
-                        <span className="text-green-400">{matchedCustomers.length} found</span>
+                        <span className="text-green-500">{matchedCustomers.length} found</span>
                         {unmatchedAnleggsnr.length > 0 && (
-                          <span className="text-red-400">{unmatchedAnleggsnr.length} not found</span>
+                          <span className="text-red-500">{unmatchedAnleggsnr.length} not found</span>
                         )}
                       </div>
                       
+                      {/* Location filter */}
+                      {availableSteds.length > 1 && (
+                        <div className="border-t border-gray-300 pt-3">
+                          <label className="block text-sm font-medium text-gray-900 mb-2">
+                            <Filter size={16} className="inline mr-2" />
+                            Filter by location (optional)
+                          </label>
+                          <input
+                            type="text"
+                            value={stedFilter}
+                            onChange={(e) => setStedFilter(e.target.value)}
+                            placeholder="Search locations..."
+                            className="w-full px-3 py-2 bg-white border border-gray-300 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
+                          />
+                          
+                          {stedFilter && filteredStedOptions.length > 0 && (
+                            <div className="max-h-32 overflow-y-auto bg-white border border-gray-300 rounded mb-2">
+                              {filteredStedOptions.map((sted, idx) => (
+                                <button
+                                  key={idx}
+                                  onClick={() => addSted(sted)}
+                                  className="w-full text-left px-3 py-2 hover:bg-gray-100 text-sm text-gray-900 border-b border-gray-200 last:border-0"
+                                >
+                                  {sted}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                          
+                          {selectedSteds.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mb-2">
+                              {selectedSteds.map((sted, idx) => (
+                                <span key={idx} className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                                  {sted}
+                                  <button onClick={() => removeSted(sted)} className="hover:bg-blue-200 rounded-full p-0.5">
+                                    <X size={14} />
+                                  </button>
+                                </span>
+                              ))}
+                              <button onClick={() => setSelectedSteds([])} className="text-xs text-gray-700 hover:text-gray-900 underline">
+                                Clear all
+                              </button>
+                            </div>
+                          )}
+                          
+                          {selectedSteds.length === 0 && availableSteds.length > 0 && (
+                            <p className="text-xs text-gray-600">Available locations: {availableSteds.join(', ')}</p>
+                          )}
+                        </div>
+                      )}
+                      
                       {unmatchedAnleggsnr.length > 0 && (
-                        <div className="p-2 bg-red-900/20 border border-red-800 rounded text-sm">
-                          <p className="text-red-400 mb-1">Following facility numbers were not found:</p>
+                        <div className="p-2 bg-red-50 border border-red-300 rounded text-sm">
+                          <p className="text-red-700 mb-1 font-medium">Following facility numbers were not found:</p>
                           <p className="text-gray-800 font-mono text-xs">{unmatchedAnleggsnr.join(', ')}</p>
                         </div>
                       )}

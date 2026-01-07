@@ -936,6 +936,68 @@ async def upload_product_image(
     
     return {"message": "Image uploaded successfully", "image_url": image_url}
 
+@api_router.post("/products/import")
+async def import_products(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user)
+):
+    """Import products from Excel file"""
+    if not file.filename.endswith(('.xlsx', '.xls')):
+        raise HTTPException(status_code=400, detail="Invalid file format. Please upload .xlsx or .xls file")
+    
+    try:
+        contents = await file.read()
+        df = pd.read_excel(BytesIO(contents))
+        
+        # Helper function to safely convert values
+        def safe_str(val):
+            if pd.isna(val):
+                return None
+            return str(val).strip() if val else None
+        
+        def safe_float(val):
+            if pd.isna(val):
+                return 0.0
+            try:
+                return float(val)
+            except:
+                return 0.0
+        
+        def safe_int(val):
+            if pd.isna(val):
+                return 0
+            try:
+                return int(val)
+            except:
+                return 0
+        
+        # Delete existing products FOR THIS ORGANIZATION ONLY
+        await db.products.delete_many({"organization_id": current_user.organization_id})
+        
+        products = []
+        for _, row in df.iterrows():
+            product = {
+                "id": str(uuid.uuid4()),
+                "organization_id": current_user.organization_id,
+                "produktnr": safe_str(row.get('Produktnr')) or safe_str(row.get('produktnr')) or "",
+                "navn": safe_str(row.get('Beskrivelse')) or safe_str(row.get('beskrivelse')) or safe_str(row.get('navn')) or safe_str(row.get('Navn')) or "",
+                "beskrivelse": safe_str(row.get('Kommentar')) or safe_str(row.get('kommentar')) or safe_str(row.get('beskrivelse')) or safe_str(row.get('Beskrivelse')) or "",
+                "kategori": safe_str(row.get('Kategori')) or safe_str(row.get('kategori')) or "",
+                "kundepris": safe_float(row.get('Pris')) or safe_float(row.get('pris')) or safe_float(row.get('kundepris')) or safe_float(row.get('Kundepris')) or 0.0,
+                "pa_lager": safe_int(row.get('Lager')) or safe_int(row.get('lager')) or safe_int(row.get('pa_lager')) or safe_int(row.get('På lager')) or 0,
+                "image_url": safe_str(row.get('Bilde link')) or safe_str(row.get('bilde link')) or safe_str(row.get('image_url')) or "",
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+            products.append(product)
+        
+        if products:
+            await db.products.insert_many(products)
+        
+        return {"imported_count": len(products), "message": f"{len(products)} products imported successfully"}
+    except Exception as e:
+        logging.error(f"Import failed: {traceback.format_exc()}")
+        raise HTTPException(status_code=400, detail=f"Could not process file: {str(e)}")
+
 # Serve uploaded files
 from fastapi.responses import FileResponse
 

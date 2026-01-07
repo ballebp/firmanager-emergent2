@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { getProducts, createProduct, updateProduct, deleteProduct } from '../services/api';
 import { Plus, Edit, Trash2, CheckSquare, Square, X, Image, Upload } from 'lucide-react';
+
+const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -9,6 +11,8 @@ const Products = () => {
   const [editingProduct, setEditingProduct] = useState(null);
   const [selectedProducts, setSelectedProducts] = useState(new Set());
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const fileInputRef = useRef(null);
   const [formData, setFormData] = useState({
     produktnr: '',
     navn: '',
@@ -129,6 +133,53 @@ const Products = () => {
     });
   };
 
+  // Import Excel file
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
+      alert('Please select an Excel file (.xlsx or .xls)');
+      return;
+    }
+
+    setImporting(true);
+    
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/api/products/import`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error('Import failed');
+      }
+
+      const result = await response.json();
+      alert(`Import completed! ${result.imported_count} products imported.`);
+      loadProducts();
+    } catch (error) {
+      console.error('Import failed:', error);
+      alert('Could not import products. Check that the file has the correct format.');
+    } finally {
+      setImporting(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file || !editingProduct) return;
@@ -177,21 +228,34 @@ const Products = () => {
               data-testid="delete-selected-products-button"
               className="flex items-center gap-2 px-4 py-2 bg-red-700 hover:bg-red-600 rounded transition-colors"
             >
-              <Trash2 size={20} />
-              Slett valgte ({selectedProducts.size})
+              <Trash2 size={18} />
+              Delete selected ({selectedProducts.size})
             </button>
           )}
           <button
-            onClick={() => {
-              resetForm();
-              setEditingProduct(null);
-              setShowModal(true);
-            }}
-            data-testid="add-product-button"
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded transition-colors"
+            onClick={handleImportClick}
+            disabled={importing}
+            className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-500 rounded transition-colors disabled:opacity-50"
           >
-            <Plus size={20} />
-            Nytt produkt
+            <Upload size={18} />
+            {importing ? 'Importing...' : 'Import Excel'}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".xlsx,.xls"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+          <button
+            onClick={() => {
+              setShowForm(true);
+              setEditingProduct(null);
+              resetForm();
+            }}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded transition-colors"
+          >
+            Register new
           </button>
         </div>
       </div>
