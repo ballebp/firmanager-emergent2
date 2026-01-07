@@ -2,8 +2,9 @@ services:
   - type: web
     name: firmanager-frontend
     env: static
-    buildCommand: cd frontend && npm install --legacy-peer-deps && npm run build
-    staticPublishPath: frontend/build
+    buildCommand: npm install --legacy-peer-deps && npm run build
+    staticPublishPath: build
+    rootDir: frontend
     envVars:
       - key: NODE_VERSION
         value: 18
