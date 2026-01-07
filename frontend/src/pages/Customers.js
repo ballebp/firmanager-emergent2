@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getCustomers, createCustomer, updateCustomer, deleteCustomer } from '../services/api';
-import { Plus, Search, Edit, Trash2, ChevronDown, ChevronUp, X, Upload, CheckSquare, Square } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, ChevronDown, ChevronUp, X, Upload, CheckSquare, Square, AlertCircle } from 'lucide-react';
+import { useLicense } from '../contexts/LicenseContext';
+import { canAddMore } from '../services/licenseService';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -14,6 +16,8 @@ const Customers = () => {
   const [selectedCustomers, setSelectedCustomers] = useState(new Set());
   const [importing, setImporting] = useState(false);
   const fileInputRef = useRef(null);
+  const { license, setShowLicenseModal } = useLicense();
+  const [showLimitWarning, setShowLimitWarning] = useState(false);
   
   const [formData, setFormData] = useState({
     anleggsnr: '',
@@ -55,6 +59,15 @@ const Customers = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Check license limit for new customers
+    if (!editingCustomer) {
+      if (!canAddMore(license, 'customers', customers.length)) {
+        setShowLimitWarning(true);
+        return;
+      }
+    }
+    
     try {
       if (editingCustomer) {
         await updateCustomer(editingCustomer.id, formData);
@@ -661,6 +674,41 @@ const Customers = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      
+      {/* License Limit Warning Modal */}
+      {showLimitWarning && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded p-6 w-full max-w-md">
+            <div className="flex items-center gap-3 mb-4">
+              <AlertCircle className="text-yellow-600" size={32} />
+              <h3 className="text-xl font-semibold text-gray-900">Customer Limit Reached</h3>
+            </div>
+            <p className="text-gray-700 mb-4">
+              You've reached your plan's limit of {license?.features?.max_customers || 0} customers.
+            </p>
+            <p className="text-gray-700 mb-6">
+              Upgrade to Professional for unlimited customers, routes, and products.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setShowLimitWarning(false)}
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded transition-colors text-gray-900"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowLimitWarning(false);
+                  setShowLicenseModal(true);
+                }}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
+              >
+                Upgrade Now
+              </button>
+            </div>
           </div>
         </div>
       )}

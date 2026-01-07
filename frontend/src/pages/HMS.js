@@ -9,7 +9,9 @@ import {
   getEquipment,
   createEquipment
 } from '../services/api';
-import { Plus, AlertTriangle, FileText, GraduationCap, Wrench, X } from 'lucide-react';
+import { Plus, AlertTriangle, FileText, GraduationCap, Wrench, X, Lock } from 'lucide-react';
+import { useLicense } from '../contexts/LicenseContext';
+import { hasFeature } from '../services/licenseService';
 
 const HMS = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -20,6 +22,10 @@ const HMS = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('');
+  const { license, setShowLicenseModal } = useLicense();
+  
+  // Check if HMS is enabled
+  const hmsEnabled = hasFeature(license, 'hms');
   
   // Form data states
   const [riskFormData, setRiskFormData] = useState({
@@ -172,23 +178,52 @@ const HMS = () => {
     <div data-testid="hms-page">
       <h1 className="text-3xl font-bold mb-6">HMS - Health, Environment and Safety</h1>
 
-      {/* Tabs */}
-      <div className="flex gap-2 mb-6 border-b border-gray-200">
-        {tabs.map(tab => (
+      {/* HMS License Gate */}
+      {!hmsEnabled ? (
+        <div className="bg-white rounded p-8 text-center max-w-2xl mx-auto mt-12 border-2 border-blue-200">
+          <div className="flex justify-center mb-4">
+            <Lock size={64} className="text-blue-600" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">HMS Module Not Available</h2>
+          <p className="text-gray-700 mb-6 text-lg">
+            The HMS (Health, Environment and Safety) module is available in Trial, Professional, and Enterprise plans.
+          </p>
+          <div className="bg-blue-50 border border-blue-200 rounded p-6 mb-6 text-left">
+            <p className="font-semibold text-gray-900 mb-3">HMS Features Include:</p>
+            <ul className="space-y-2 text-gray-700">
+              <li>✓ Risk Assessment Management</li>
+              <li>✓ Incident Tracking & Reporting</li>
+              <li>✓ Training & Certification Records</li>
+              <li>✓ Equipment Safety Documentation</li>
+              <li>✓ Compliance Monitoring</li>
+            </ul>
+          </div>
           <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            data-testid={`hms-tab-${tab.id}`}
-            className={`px-4 py-2 font-medium transition-colors ${
-              activeTab === tab.id
-                ? 'text-blue-400 border-b-2 border-blue-400'
-                : 'text-gray-800 hover:text-gray-900'
-            }`}
+            onClick={() => setShowLicenseModal(true)}
+            className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded text-lg font-semibold transition-colors"
           >
-            {tab.label}
+            Upgrade to Access HMS
           </button>
-        ))}
-      </div>
+        </div>
+      ) : (
+        <>
+          {/* Tabs */}
+          <div className="flex gap-2 mb-6 border-b border-gray-200">
+            {tabs.map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                data-testid={`hms-tab-${tab.id}`}
+                className={`px-4 py-2 font-medium transition-colors ${
+                  activeTab === tab.id
+                    ? 'text-blue-400 border-b-2 border-blue-400'
+                    : 'text-gray-800 hover:text-gray-900'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
 
       {/* Overview Tab */}
       {activeTab === 'overview' && (
@@ -686,6 +721,8 @@ const HMS = () => {
             </form>
           </div>
         </div>
+      )}
+      </>
       )}
     </div>
   );

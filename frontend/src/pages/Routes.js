@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { createRoute, getCustomers } from '../services/api';
-import { Plus, MapPin, Printer, Trash2, Filter, X, ClipboardPaste } from 'lucide-react';
+import { Plus, MapPin, Printer, Trash2, Filter, X, ClipboardPaste, AlertCircle } from 'lucide-react';
+import { useLicense } from '../contexts/LicenseContext';
+import { canAddMore } from '../services/licenseService';
 
 const Routes = () => {
   const [currentRoute, setCurrentRoute] = useState(null);
@@ -8,6 +10,9 @@ const Routes = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const { license, setShowLicenseModal } = useLicense();
+  const [showLimitWarning, setShowLimitWarning] = useState(false);
+  const [routeCount, setRouteCount] = useState(0);
   
   // Area filter state
   const [areaFilter, setAreaFilter] = useState('');
@@ -165,6 +170,12 @@ const Routes = () => {
   };
 
   const handleGenerateRoute = async () => {
+    // Check license limit
+    if (!canAddMore(license, 'routes', routeCount)) {
+      setShowLimitWarning(true);
+      return;
+    }
+    
     let anleggsnrList = [];
     
     if (routeMode === 'area') {
@@ -193,6 +204,7 @@ const Routes = () => {
         anleggsnr_list: anleggsnrList
       });
       setCurrentRoute(response.data);
+      setRouteCount(prev => prev + 1);
       setShowModal(false);
       setSelectedAreas([]);
       setSelectedCustomersForRoute(new Set());
@@ -688,6 +700,41 @@ const Routes = () => {
                 className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Generate route ({routeMode === 'area' ? selectedCustomersForRoute.size : matchedCustomers.length} stops)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* License Limit Warning Modal */}
+      {showLimitWarning && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded p-6 w-full max-w-md">
+            <div className="flex items-center gap-3 mb-4">
+              <AlertCircle className="text-yellow-600" size={32} />
+              <h3 className="text-xl font-semibold text-gray-900">Route Limit Reached</h3>
+            </div>
+            <p className="text-gray-700 mb-4">
+              You've reached your plan's limit of {license?.features?.max_routes || 0} routes.
+            </p>
+            <p className="text-gray-700 mb-6">
+              Upgrade to Professional for unlimited customers, routes, and products.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setShowLimitWarning(false)}
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded transition-colors text-gray-900"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowLimitWarning(false);
+                  setShowLicenseModal(true);
+                }}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
+              >
+                Upgrade Now
               </button>
             </div>
           </div>
