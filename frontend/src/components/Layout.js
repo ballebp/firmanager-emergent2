@@ -27,14 +27,14 @@ const Layout = ({ children }) => {
 
   const menuItems = [
     { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { path: '/customers', icon: Users, label: 'Kunder' },
-    { path: '/invoicing', icon: FileText, label: 'Fakturagrunnlag' },
-    { path: '/internal', icon: Briefcase, label: 'Intern' },
-    { path: '/routes', icon: Route, label: 'Ruteplanlegger' },
+    { path: '/customers', icon: Users, label: 'Customers' },
+    { path: '/invoicing', icon: FileText, label: 'Invoicing' },
+    { path: '/internal', icon: Briefcase, label: 'Internal' },
+    { path: '/routes', icon: Route, label: 'Route Planner' },
     { path: '/hms', icon: Shield, label: 'HMS' },
-    { path: '/products', icon: Package, label: 'Produktkatalog' },
-    { path: '/results', icon: BarChart3, label: 'Resultater' },
-    { path: '/economy', icon: DollarSign, label: 'Økonomi' },
+    { path: '/products', icon: Package, label: 'Product Catalog' },
+    { path: '/results', icon: BarChart3, label: 'Results' },
+    { path: '/economy', icon: DollarSign, label: 'Economy' },
     { path: '/settings', icon: Settings, label: 'Settings' }
   ];
 
@@ -81,7 +81,7 @@ const Layout = ({ children }) => {
             className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-300 hover:bg-gray-800 rounded transition-colors"
           >
             <LogOut size={16} />
-            <span>Logg ut</span>
+            <span>Log out</span>
           </button>
         </div>
       </div>

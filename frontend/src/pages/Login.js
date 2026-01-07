@@ -49,7 +49,7 @@ const Login = () => {
             {isRegister && (
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Navn
+                  Name
                 </label>
                 <input
                   type="text"
@@ -64,7 +64,7 @@ const Login = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                E-post
+                Email
               </label>
               <input
                 type="email"
@@ -78,7 +78,7 @@ const Login = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                Passord
+                Password
               </label>
               <input
                 type="password"
@@ -102,7 +102,7 @@ const Login = () => {
               data-testid="login-submit-button"
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Vennligst vent...' : isRegister ? 'Registrer' : 'Logg inn'}
+              {loading ? 'Please wait...' : isRegister ? 'Register' : 'Log in'}
             </button>
           </form>
 
@@ -112,7 +112,7 @@ const Login = () => {
               data-testid="toggle-auth-mode"
               className="text-blue-400 hover:text-blue-300 text-sm"
             >
-              {isRegister ? 'Har du allerede en konto? Logg inn' : 'Har du ikke en konto? Registrer deg'}
+              {isRegister ? 'Already have an account? Log in' : 'Don\'t have an account? Register'}
             </button>
           </div>
         </div>
