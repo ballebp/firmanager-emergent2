@@ -227,7 +227,7 @@ const Invoicing = () => {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold">Invoice Basis</h1>
-          <p className="text-sm text-gray-400 mt-1">{workOrders.length} work orders</p>
+          <p className="text-sm text-gray-800 mt-1">{workOrders.length} work orders</p>
         </div>
         <div className="flex gap-3">
           {selectedOrders.size > 0 && (
@@ -254,12 +254,12 @@ const Invoicing = () => {
       {/* Filters */}
       <div className="flex gap-4 mb-6">
         <div className="flex items-center gap-2">
-          <Filter size={20} className="text-gray-400" />
+          <Filter size={20} className="text-gray-800" />
           <select
             value={filterOrderType}
             onChange={(e) => setFilterOrderType(e.target.value)}
             data-testid="filter-ordertype"
-            className="px-3 py-2 bg-gray-900 border border-gray-800 rounded text-white focus:outline-none focus:border-blue-500"
+            className="px-3 py-2 bg-white border border-gray-200 rounded text-gray-900 focus:outline-none focus:border-blue-500"
           >
             <option value="">All types</option>
             <option value="service">Service</option>
@@ -270,7 +270,7 @@ const Invoicing = () => {
         {workOrders.length > 0 && (
           <button
             onClick={toggleSelectAll}
-            className="flex items-center gap-2 text-sm text-gray-400 hover:text-white"
+            className="flex items-center gap-2 text-sm text-gray-800 hover:text-gray-900"
           >
             {selectedOrders.size === workOrders.length ? (
               <CheckSquare size={18} className="text-blue-500" />
@@ -283,35 +283,35 @@ const Invoicing = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-800">
+            <thead className="bg-gray-100">
               <tr>
-                <th className="px-4 py-3 text-left w-10"></th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Date</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Customer</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Employee</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Type</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Work hours</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Drive time</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Km</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Actions</th>
+                <th className="px-4 py-2 text-left w-10"></th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">Date</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">Customer</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">Employee</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">Type</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">Work hours</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">Drive time</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">Km</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800">
               {loading ? (
                 <tr>
-                  <td colSpan="9" className="px-4 py-8 text-center text-gray-400">Loading...</td>
+                  <td colSpan="9" className="px-4 py-8 text-center text-gray-800">Loading...</td>
                 </tr>
               ) : workOrders.length === 0 ? (
                 <tr>
-                  <td colSpan="9" className="px-4 py-8 text-center text-gray-400">No work orders found</td>
+                  <td colSpan="9" className="px-4 py-8 text-center text-gray-800">No work orders found</td>
                 </tr>
               ) : (
                 workOrders.map((order) => (
-                  <tr key={order.id} className={`hover:bg-gray-800 ${selectedOrders.has(order.id) ? 'bg-blue-900/20' : ''}`}>
-                    <td className="px-4 py-3">
+                  <tr key={order.id} className={`hover:bg-gray-100 ${selectedOrders.has(order.id) ? 'bg-blue-900/20' : ''}`}>
+                    <td className="px-4 py-2">
                       <button onClick={() => toggleSelectOrder(order.id)}>
                         {selectedOrders.has(order.id) ? (
                           <CheckSquare size={18} className="text-blue-500" />
@@ -320,14 +320,14 @@ const Invoicing = () => {
                         )}
                       </button>
                     </td>
-                    <td className="px-4 py-3 text-sm">{new Date(order.date).toLocaleDateString('no-NO')}</td>
-                    <td className="px-4 py-3 text-sm">{getCustomerName(order.customer_id)}</td>
-                    <td className="px-4 py-3 text-sm">{getEmployeeName(order.employee_id)}</td>
-                    <td className="px-4 py-3 text-sm capitalize">{order.order_type}</td>
-                    <td className="px-4 py-3 text-sm">{order.arbeidstid}h</td>
-                    <td className="px-4 py-3 text-sm">{order.kjoretid}h</td>
-                    <td className="px-4 py-3 text-sm">{order.kjorte_km} km</td>
-                    <td className="px-4 py-3 text-sm">
+                    <td className="px-4 py-2 text-sm">{new Date(order.date).toLocaleDateString('no-NO')}</td>
+                    <td className="px-4 py-2 text-sm">{getCustomerName(order.customer_id)}</td>
+                    <td className="px-4 py-2 text-sm">{getEmployeeName(order.employee_id)}</td>
+                    <td className="px-4 py-2 text-sm capitalize">{order.order_type}</td>
+                    <td className="px-4 py-2 text-sm">{order.arbeidstid}h</td>
+                    <td className="px-4 py-2 text-sm">{order.kjoretid}h</td>
+                    <td className="px-4 py-2 text-sm">{order.kjorte_km} km</td>
+                    <td className="px-4 py-2 text-sm">
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleEdit(order)}
@@ -356,21 +356,21 @@ const Invoicing = () => {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 w-full max-w-2xl my-8 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white border border-gray-200 rounded p-4 w-full max-w-2xl my-8 max-h-[90vh] overflow-y-auto">
             <h2 className="text-2xl font-bold mb-6">
               {editingOrder ? 'Edit work order' : 'Register work order'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Facility no *</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Facility no *</label>
                   <input
                     type="text"
                     value={formData.anleggsnr}
                     onChange={(e) => handleAnleggsnrChange(e.target.value)}
                     data-testid="workorder-anleggsnr-input"
                     placeholder="Enter facility number"
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     required
                   />
                   {formData.anleggsnr && getCurrentCustomer() && (
@@ -384,7 +384,7 @@ const Invoicing = () => {
                             <Info size={16} />
                             <span className="font-medium">Service: {servicePricing.tjeneste_navn}</span>
                           </div>
-                          <div className="grid grid-cols-2 gap-2 text-xs text-gray-300">
+                          <div className="grid grid-cols-2 gap-2 text-xs text-gray-900">
                             <div>Fixed price: <span className="text-green-400 font-semibold">{servicePricing.pris} kr</span></div>
                             <div>Extra service: {servicePricing.t1_ekstraservice} kr/h</div>
                             <div>Driving time: {servicePricing.t5_kjoretid} kr/h</div>
@@ -401,12 +401,12 @@ const Invoicing = () => {
                   )}
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Employee *</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Employee *</label>
                   <select
                     value={formData.employee_id}
                     onChange={(e) => setFormData({ ...formData, employee_id: e.target.value })}
                     data-testid="workorder-employee-select"
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     required
                   >
                     <option value="">Select employee</option>
@@ -416,22 +416,22 @@ const Invoicing = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Date *</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Date *</label>
                   <input
                     type="date"
                     value={formData.date}
                     onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                     data-testid="workorder-date-input"
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Type *</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Type *</label>
                   <select
                     value={formData.order_type}
                     onChange={(e) => setFormData({ ...formData, order_type: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     required
                   >
                     <option value="service">Service</option>
@@ -440,41 +440,41 @@ const Invoicing = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Work hours (hours)</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Work hours (hours)</label>
                   <input
                     type="number"
                     step="0.5"
                     value={formData.arbeidstid}
                     onChange={(e) => setFormData({ ...formData, arbeidstid: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Driving time (hours)</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Driving time (hours)</label>
                   <input
                     type="number"
                     step="0.5"
                     value={formData.kjoretid}
                     onChange={(e) => setFormData({ ...formData, kjoretid: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Driven km</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Driven km</label>
                   <input
                     type="number"
                     step="0.1"
                     value={formData.kjorte_km}
                     onChange={(e) => setFormData({ ...formData, kjorte_km: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Description</label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     rows="3"
                   />
                 </div>
@@ -486,7 +486,7 @@ const Invoicing = () => {
                     type="button"
                     onClick={closeModal}
                     data-testid="cancel-workorder-button"
-                    className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
+                    className="px-4 py-2 bg-gray-100 hover:bg-gray-700 rounded transition-colors"
                   >
                     Cancel
                   </button>
@@ -495,7 +495,7 @@ const Invoicing = () => {
                   <button
                     type="button"
                     onClick={closeModal}
-                    className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
+                    className="px-4 py-2 bg-gray-100 hover:bg-gray-700 rounded transition-colors"
                   >
                     Close
                   </button>
@@ -517,3 +517,6 @@ const Invoicing = () => {
 };
 
 export default Invoicing;
+
+
+

@@ -38,17 +38,17 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-8">
+        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-lg">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">Firmanager</h1>
+            <h1 className="text-3xl font-bold text-blue-600 mb-2">Firmanager</h1>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {isRegister && (
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-900 mb-2">
                   Name
                 </label>
                 <input
@@ -56,14 +56,14 @@ const Login = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   data-testid="register-name-input"
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required={isRegister}
                 />
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-900 mb-2">
                 Email
               </label>
               <input
@@ -71,13 +71,13 @@ const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 data-testid="login-email-input"
-                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-2 bg-white border border-gray-300 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-900 mb-2">
                 Password
               </label>
               <input
@@ -85,13 +85,13 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 data-testid="login-password-input"
-                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-2 bg-white border border-gray-300 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
               />
             </div>
 
             {error && (
-              <div className="bg-red-900/30 border border-red-700 text-red-400 px-4 py-3 rounded" data-testid="login-error">
+              <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded" data-testid="login-error">
                 {error}
               </div>
             )}
@@ -110,7 +110,7 @@ const Login = () => {
             <button
               onClick={() => setIsRegister(!isRegister)}
               data-testid="toggle-auth-mode"
-              className="text-blue-400 hover:text-blue-300 text-sm"
+              className="text-blue-600 hover:text-blue-700 text-sm"
             >
               {isRegister ? 'Already have an account? Log in' : 'Don\'t have an account? Register'}
             </button>
@@ -122,3 +122,4 @@ const Login = () => {
 };
 
 export default Login;
+

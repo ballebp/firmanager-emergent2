@@ -379,18 +379,18 @@ const Routes = () => {
       {/* Current Route */}
       <div className="space-y-4">
         {loading ? (
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-8 text-center text-gray-400">Loading...</div>
+          <div className="bg-white border border-gray-200 rounded p-6 text-center text-gray-800">Loading...</div>
         ) : !currentRoute ? (
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-8 text-center text-gray-400">
+          <div className="bg-white border border-gray-200 rounded p-6 text-center text-gray-800">
             <p className="mb-4">No active route</p>
             <p className="text-sm">Click &quot;Generate Route&quot; to create a new travel note</p>
           </div>
         ) : (
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+          <div className="bg-white border border-gray-200 rounded p-4">
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h3 className="text-lg font-semibold">Route - {new Date(currentRoute.date).toLocaleDateString('no-NO')}</h3>
-                <p className="text-sm text-gray-400 mt-1">Geo-optimized • {currentRoute.anleggsnr_list.length} stops</p>
+                <p className="text-sm text-gray-800 mt-1">Geo-optimized • {currentRoute.anleggsnr_list.length} stops</p>
               </div>
               <div className="flex gap-2">
                 <button onClick={() => handlePrintTravelNote(currentRoute)} data-testid="print-route-button" className="flex items-center gap-2 px-3 py-1 bg-green-700 hover:bg-green-600 rounded text-sm transition-colors">
@@ -405,14 +405,14 @@ const Routes = () => {
               {currentRoute.anleggsnr_list.map((anleggsnr, idx) => {
                 const customer = getCustomerByAnleggsnr(anleggsnr);
                 return (
-                  <div key={idx} className="flex items-center gap-3 bg-gray-800 p-3 rounded">
+                  <div key={idx} className="flex items-center gap-3 bg-gray-100 p-3 rounded">
                     <div className="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-full text-sm font-medium">{idx + 1}</div>
-                    <MapPin size={16} className="text-gray-400" />
+                    <MapPin size={16} className="text-gray-800" />
                     <div className="flex-1">
                       <p className="font-medium">{customer?.kundnavn || anleggsnr}</p>
-                      <p className="text-sm text-gray-400">{customer ? `${customer.adresse}, ${customer.postnr} ${customer.poststed}` : 'Customer not found'}</p>
+                      <p className="text-sm text-gray-800">{customer ? `${customer.adresse}, ${customer.postnr} ${customer.poststed}` : 'Customer not found'}</p>
                     </div>
-                    <div className="text-right text-sm text-gray-400">
+                    <div className="text-right text-sm text-gray-800">
                       <p>An.nr: {anleggsnr}</p>
                       {customer?.telefon1 && <p>Tlf: {customer.telefon1}</p>}
                     </div>
@@ -427,10 +427,10 @@ const Routes = () => {
       {/* Modal with Area Filter and Anleggsnr Input */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 w-full max-w-4xl my-8 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white border border-gray-200 rounded p-4 w-full max-w-4xl my-8 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">Generate New Route</h2>
-              <button onClick={() => { setShowModal(false); setSelectedAreas([]); setSelectedCustomersForRoute(new Set()); setAnleggsnrInput(''); setParsedAnleggsnr([]); }} className="p-2 hover:bg-gray-800 rounded">
+              <button onClick={() => { setShowModal(false); setSelectedAreas([]); setSelectedCustomersForRoute(new Set()); setAnleggsnrInput(''); setParsedAnleggsnr([]); }} className="p-2 hover:bg-gray-100 rounded">
                 <X size={20} />
               </button>
             </div>
@@ -438,24 +438,24 @@ const Routes = () => {
             <div className="space-y-6">
               {/* Date */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Date</label>
-                <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500" />
+                <label className="block text-sm font-medium text-gray-900 mb-2">Date</label>
+                <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500" />
               </div>
               
               {/* Mode selection tabs */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Select Method</label>
+                <label className="block text-sm font-medium text-gray-900 mb-2">Select Method</label>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setRouteMode('area')}
-                    className={`flex items-center gap-2 px-4 py-2 rounded transition-colors ${routeMode === 'area' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
+                    className={`flex items-center gap-2 px-4 py-2 rounded transition-colors ${routeMode === 'area' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-700'}`}
                   >
                     <Filter size={16} />
                     Select Area
                   </button>
                   <button
                     onClick={() => setRouteMode('anleggsnr')}
-                    className={`flex items-center gap-2 px-4 py-2 rounded transition-colors ${routeMode === 'anleggsnr' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
+                    className={`flex items-center gap-2 px-4 py-2 rounded transition-colors ${routeMode === 'anleggsnr' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-700'}`}
                   >
                     <ClipboardPaste size={16} />
                     Paste Facility Numbers
@@ -466,7 +466,7 @@ const Routes = () => {
               {/* Mode: Anleggsnr paste */}
               {routeMode === 'anleggsnr' && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
                     <ClipboardPaste size={16} className="inline mr-2" />
                     Paste facility numbers (comma, space, or newline separated)
                   </label>
@@ -476,7 +476,7 @@ const Routes = () => {
                     placeholder="F.eks: 12345, 12346, 12347&#10;eller&#10;12345&#10;12346&#10;12347"
                     data-testid="anleggsnr-paste-input"
                     rows={5}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500 font-mono"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500 font-mono"
                   />
                   
                   {parsedAnleggsnr.length > 0 && (
@@ -491,20 +491,20 @@ const Routes = () => {
                       {unmatchedAnleggsnr.length > 0 && (
                         <div className="p-2 bg-red-900/20 border border-red-800 rounded text-sm">
                           <p className="text-red-400 mb-1">Following facility numbers were not found:</p>
-                          <p className="text-gray-400 font-mono text-xs">{unmatchedAnleggsnr.join(', ')}</p>
+                          <p className="text-gray-800 font-mono text-xs">{unmatchedAnleggsnr.join(', ')}</p>
                         </div>
                       )}
                       
                       {matchedCustomers.length > 0 && (
-                        <div className="max-h-40 overflow-y-auto bg-gray-800 border border-gray-700 rounded">
+                        <div className="max-h-40 overflow-y-auto bg-gray-100 border border-gray-300 rounded">
                           {matchedCustomers.map((customer, idx) => (
-                            <div key={customer.id} className="p-2 border-b border-gray-700 last:border-0 flex items-center gap-3">
-                              <span className="text-xs text-gray-400">{idx + 1}.</span>
+                            <div key={customer.id} className="p-2 border-b border-gray-300 last:border-0 flex items-center gap-3">
+                              <span className="text-xs text-gray-800">{idx + 1}.</span>
                               <div className="flex-1">
                                 <p className="text-sm font-medium">{customer.kundnavn}</p>
-                                <p className="text-xs text-gray-400">{customer.adresse}, {customer.postnr} {customer.poststed}</p>
+                                <p className="text-xs text-gray-800">{customer.adresse}, {customer.postnr} {customer.poststed}</p>
                               </div>
-                              <span className="text-xs text-gray-400 font-mono">{customer.anleggsnr}</span>
+                              <span className="text-xs text-gray-800 font-mono">{customer.anleggsnr}</span>
                             </div>
                           ))}
                         </div>
@@ -518,7 +518,7 @@ const Routes = () => {
               {routeMode === 'area' && (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
                       <Filter size={16} className="inline mr-2" />
                       Select areas (postal code/city/municipality)
                     </label>
@@ -528,16 +528,16 @@ const Routes = () => {
                       onChange={(e) => setAreaFilter(e.target.value)}
                       placeholder="Search by postal code, city or municipality..."
                       data-testid="area-filter-input"
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     />
                     
                     {/* Area suggestions */}
                     {areaFilter && filteredAreas.length > 0 && (
-                      <div className="mt-2 bg-gray-800 border border-gray-700 rounded max-h-40 overflow-y-auto">
+                      <div className="mt-2 bg-gray-100 border border-gray-300 rounded max-h-40 overflow-y-auto">
                         {filteredAreas.map((area, idx) => (
                           <button key={idx} onClick={() => addArea(area)} className="w-full px-3 py-2 text-left hover:bg-gray-700 flex justify-between items-center">
                             <span>{area.postnr} {area.poststed} ({area.kommune})</span>
-                            <span className="text-xs text-gray-400">{area.count} customers</span>
+                            <span className="text-xs text-gray-800">{area.count} customers</span>
                           </button>
                         ))}
                       </div>
@@ -562,23 +562,23 @@ const Routes = () => {
                   {selectedAreas.length > 0 && (
                     <div>
                       <div className="flex justify-between items-center mb-2">
-                        <label className="block text-sm font-medium text-gray-300">
+                        <label className="block text-sm font-medium text-gray-900">
                           Select customers ({customersInSelectedAreas.length} available, {selectedCustomersForRoute.size} selected)
                         </label>
                         <div className="flex gap-2">
-                          <button onClick={selectAllInArea} className="text-xs text-blue-400 hover:text-blue-300">Select all</button>
-                          <button onClick={clearSelection} className="text-xs text-gray-400 hover:text-gray-300">Clear all</button>
+                          <button onClick={selectAllInArea} className="text-xs text-blue-700 hover:text-blue-800">Select all</button>
+                          <button onClick={clearSelection} className="text-xs text-gray-800 hover:text-gray-900">Clear all</button>
                         </div>
                       </div>
-                      <div className="max-h-60 overflow-y-auto bg-gray-800 border border-gray-700 rounded">
+                      <div className="max-h-60 overflow-y-auto bg-gray-100 border border-gray-300 rounded">
                         {customersInSelectedAreas.map((customer) => (
                           <div key={customer.id} onClick={() => toggleCustomerForRoute(customer.id)} className={`p-2 cursor-pointer flex items-center gap-3 hover:bg-gray-700 ${selectedCustomersForRoute.has(customer.id) ? 'bg-blue-900/30' : ''}`}>
                             <input type="checkbox" checked={selectedCustomersForRoute.has(customer.id)} readOnly className="w-4 h-4" />
                             <div className="flex-1">
                               <p className="text-sm font-medium">{customer.kundnavn}</p>
-                              <p className="text-xs text-gray-400">{customer.adresse}, {customer.postnr} {customer.poststed}</p>
+                              <p className="text-xs text-gray-800">{customer.adresse}, {customer.postnr} {customer.poststed}</p>
                             </div>
-                            <span className="text-xs text-gray-400">An.nr: {customer.anleggsnr}</span>
+                            <span className="text-xs text-gray-800">An.nr: {customer.anleggsnr}</span>
                           </div>
                         ))}
                       </div>
@@ -587,13 +587,13 @@ const Routes = () => {
                 </>
               )}
               
-              <div className="bg-blue-900/20 border border-blue-800 rounded p-3 text-sm text-blue-300">
+              <div className="bg-blue-50 border border-blue-200 rounded p-3 text-sm text-blue-800">
                 <p><strong>Geo-optimization:</strong> The route is automatically optimized based on postal code and address for the most efficient driving route.</p>
               </div>
             </div>
 
             <div className="flex gap-3 justify-end pt-6">
-              <button onClick={() => { setShowModal(false); setSelectedAreas([]); setSelectedCustomersForRoute(new Set()); setAnleggsnrInput(''); setParsedAnleggsnr([]); }} className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors">Cancel</button>
+              <button onClick={() => { setShowModal(false); setSelectedAreas([]); setSelectedCustomersForRoute(new Set()); setAnleggsnrInput(''); setParsedAnleggsnr([]); }} className="px-4 py-2 bg-gray-100 hover:bg-gray-700 rounded transition-colors">Cancel</button>
               <button 
                 onClick={handleGenerateRoute} 
                 disabled={routeMode === 'area' ? selectedCustomersForRoute.size === 0 : matchedCustomers.length === 0} 
@@ -611,3 +611,8 @@ const Routes = () => {
 };
 
 export default Routes;
+
+
+
+
+

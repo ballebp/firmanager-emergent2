@@ -149,7 +149,7 @@ const Internal = () => {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold">Internal</h1>
-          <p className="text-sm text-gray-400 mt-1">{orders.length} internal orders</p>
+          <p className="text-sm text-gray-800 mt-1">{orders.length} internal orders</p>
         </div>
         <div className="flex gap-3">
           {selectedOrders.size > 0 && (
@@ -178,7 +178,7 @@ const Internal = () => {
         <div className="mb-4 flex items-center gap-2">
           <button
             onClick={toggleSelectAll}
-            className="flex items-center gap-2 text-sm text-gray-400 hover:text-white"
+            className="flex items-center gap-2 text-sm text-gray-800 hover:text-gray-900"
           >
             {selectedOrders.size === orders.length ? (
               <CheckSquare size={18} className="text-blue-500" />
@@ -194,34 +194,34 @@ const Internal = () => {
       )}
 
       {/* Table */}
-      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-800">
+            <thead className="bg-gray-100">
               <tr>
-                <th className="px-4 py-3 text-left w-10"></th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Date</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Department</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Employee</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Type</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Description</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Hours</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Actions</th>
+                <th className="px-4 py-2 text-left w-10"></th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">Date</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">Department</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">Employee</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">Type</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">Description</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">Hours</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800">
               {loading ? (
                 <tr>
-                  <td colSpan="8" className="px-4 py-8 text-center text-gray-400">Loading...</td>
+                  <td colSpan="8" className="px-4 py-8 text-center text-gray-800">Loading...</td>
                 </tr>
               ) : orders.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="px-4 py-8 text-center text-gray-400">No internal orders found</td>
+                  <td colSpan="8" className="px-4 py-8 text-center text-gray-800">No internal orders found</td>
                 </tr>
               ) : (
                 orders.map((order) => (
-                  <tr key={order.id} className={`hover:bg-gray-800 ${selectedOrders.has(order.id) ? 'bg-blue-900/20' : ''}`}>
-                    <td className="px-4 py-3">
+                  <tr key={order.id} className={`hover:bg-gray-100 ${selectedOrders.has(order.id) ? 'bg-blue-900/20' : ''}`}>
+                    <td className="px-4 py-2">
                       <button onClick={() => toggleSelectOrder(order.id)}>
                         {selectedOrders.has(order.id) ? (
                           <CheckSquare size={18} className="text-blue-500" />
@@ -230,13 +230,13 @@ const Internal = () => {
                         )}
                       </button>
                     </td>
-                    <td className="px-4 py-3 text-sm">{new Date(order.date).toLocaleDateString('no-NO')}</td>
-                    <td className="px-4 py-3 text-sm">{order.avdeling}</td>
-                    <td className="px-4 py-3 text-sm">{getEmployeeName(order.employee_id)}</td>
-                    <td className="px-4 py-3 text-sm capitalize">{order.task_type}</td>
-                    <td className="px-4 py-3 text-sm max-w-xs truncate">{order.beskrivelse}</td>
-                    <td className="px-4 py-3 text-sm">{order.arbeidstid}h</td>
-                    <td className="px-4 py-3 text-sm">
+                    <td className="px-4 py-2 text-sm">{new Date(order.date).toLocaleDateString('no-NO')}</td>
+                    <td className="px-4 py-2 text-sm">{order.avdeling}</td>
+                    <td className="px-4 py-2 text-sm">{getEmployeeName(order.employee_id)}</td>
+                    <td className="px-4 py-2 text-sm capitalize">{order.task_type}</td>
+                    <td className="px-4 py-2 text-sm max-w-xs truncate">{order.beskrivelse}</td>
+                    <td className="px-4 py-2 text-sm">{order.arbeidstid}h</td>
+                    <td className="px-4 py-2 text-sm">
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleEdit(order)}
@@ -265,14 +265,14 @@ const Internal = () => {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white border border-gray-200 rounded p-4 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">
                 {editingOrder ? 'Edit internal order' : 'Register internal order'}
               </h2>
               <button
                 onClick={() => { setShowModal(false); setEditingOrder(null); }}
-                className="p-2 hover:bg-gray-800 rounded"
+                className="p-2 hover:bg-gray-100 rounded"
               >
                 <X size={20} />
               </button>
@@ -280,32 +280,32 @@ const Internal = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Department *</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Department *</label>
                   <input
                     type="text"
                     value={formData.avdeling}
                     onChange={(e) => setFormData({ ...formData, avdeling: e.target.value })}
                     data-testid="internal-avdeling-input"
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Date *</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Date *</label>
                   <input
                     type="date"
                     value={formData.date}
                     onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     required
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Employee *</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Employee *</label>
                   <select
                     value={formData.employee_id}
                     onChange={(e) => setFormData({ ...formData, employee_id: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     required
                   >
                     <option value="">Select employee</option>
@@ -315,11 +315,11 @@ const Internal = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Type *</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Type *</label>
                   <select
                     value={formData.task_type}
                     onChange={(e) => setFormData({ ...formData, task_type: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     required
                   >
                     <option value="kontor">Office</option>
@@ -331,32 +331,32 @@ const Internal = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Work hours (hours) *</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Work hours (hours) *</label>
                   <input
                     type="number"
                     step="0.5"
                     value={formData.arbeidstid}
                     onChange={(e) => setFormData({ ...formData, arbeidstid: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     required
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Description *</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Description *</label>
                   <textarea
                     value={formData.beskrivelse}
                     onChange={(e) => setFormData({ ...formData, beskrivelse: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     rows="3"
                     required
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Comment</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Comment</label>
                   <textarea
                     value={formData.kommentar}
                     onChange={(e) => setFormData({ ...formData, kommentar: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     rows="2"
                   />
                 </div>
@@ -366,7 +366,7 @@ const Internal = () => {
                 <button
                   type="button"
                   onClick={() => { setShowModal(false); setEditingOrder(null); }}
-                  className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-700 rounded transition-colors"
                 >
                   Cancel
                 </button>
@@ -387,3 +387,7 @@ const Internal = () => {
 };
 
 export default Internal;
+
+
+
+

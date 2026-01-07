@@ -293,7 +293,7 @@ const Results = () => {
   };
 
   if (loading) {
-    return <div className="text-gray-400">Loading...</div>;
+    return <div className="text-gray-800">Loading...</div>;
   }
 
   const summary = calculateSummary();
@@ -313,18 +313,18 @@ const Results = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Results</h1>
         <div>
-          <label className="text-sm text-gray-400 mr-2">Select month:</label>
+          <label className="text-sm text-gray-800 mr-2">Select month:</label>
           <input
             type="month"
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(e.target.value)}
-            className="px-3 py-2 bg-gray-900 border border-gray-800 rounded text-white focus:outline-none focus:border-blue-500"
+            className="px-3 py-2 bg-white border border-gray-200 rounded text-gray-900 focus:outline-none focus:border-blue-500"
           />
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6 border-b border-gray-800 pb-2">
+      <div className="flex gap-2 mb-6 border-b border-gray-200 pb-2">
         {tabs.map(tab => (
           <button
             key={tab.id}
@@ -332,7 +332,7 @@ const Results = () => {
             className={`px-4 py-2 rounded-t transition-colors ${
               activeTab === tab.id 
                 ? 'bg-blue-600 text-white' 
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                : 'bg-gray-100 text-gray-800 hover:bg-gray-700'
             }`}
           >
             {tab.label}
@@ -345,49 +345,49 @@ const Results = () => {
         <div>
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+            <div className="bg-white border border-gray-200 rounded p-4">
               <div className="flex items-center gap-3">
-                <div className="bg-green-600 p-3 rounded-lg">
-                  <Building2 size={24} />
+                <div className="bg-green-500 p-3 rounded">
+                  <Building2 size={24} className="text-white" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-green-400">{summary.total_revenue.toFixed(0)} kr</p>
-                  <p className="text-sm text-gray-400">Company Revenue</p>
+                  <p className="text-2xl font-bold text-green-700">{summary.total_revenue.toFixed(0)} kr</p>
+                  <p className="text-sm text-gray-800">Company Revenue</p>
                 </div>
               </div>
             </div>
-            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+            <div className="bg-white border border-gray-200 rounded p-4">
               <div className="flex items-center gap-3">
-                <div className="bg-blue-600 p-3 rounded-lg">
-                  <Users size={24} />
+                <div className="bg-blue-500 p-3 rounded">
+                  <Users size={24} className="text-white" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-blue-400">{summary.total_pa.toFixed(0)} kr</p>
-                  <p className="text-sm text-gray-400">PA Payment</p>
+                  <p className="text-2xl font-bold text-blue-700">{summary.total_pa.toFixed(0)} kr</p>
+                  <p className="text-sm text-gray-800">PA Payment</p>
                 </div>
               </div>
             </div>
-            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+            <div className="bg-white border border-gray-200 rounded p-4">
               <div className="flex items-center gap-3">
-                <div className="bg-purple-600 p-3 rounded-lg">
-                  <Briefcase size={24} />
+                <div className="bg-purple-500 p-3 rounded">
+                  <Briefcase size={24} className="text-white" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-purple-400">{summary.total_intern.toFixed(0)} kr</p>
-                  <p className="text-sm text-gray-400">Internal Salary</p>
+                  <p className="text-2xl font-bold text-purple-700">{summary.total_intern.toFixed(0)} kr</p>
+                  <p className="text-sm text-gray-800">Internal Salary</p>
                 </div>
               </div>
             </div>
-            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+            <div className="bg-white border border-gray-200 rounded p-4">
               <div className="flex items-center gap-3">
-                <div className={`${summary.profit >= 0 ? 'bg-yellow-600' : 'bg-red-600'} p-3 rounded-lg`}>
-                  <TrendingUp size={24} />
+                <div className={`${summary.profit >= 0 ? 'bg-yellow-500' : 'bg-red-500'} p-3 rounded`}>
+                  <TrendingUp size={24} className="text-white" />
                 </div>
                 <div>
-                  <p className={`text-2xl font-bold ${summary.profit >= 0 ? 'text-yellow-400' : 'text-red-400'}`}>
+                  <p className={`text-2xl font-bold ${summary.profit >= 0 ? 'text-yellow-700' : 'text-red-700'}`}>
                     {summary.profit.toFixed(0)} kr
                   </p>
-                  <p className="text-sm text-gray-400">Resultat</p>
+                  <p className="text-sm text-gray-800">Resultat</p>
                 </div>
               </div>
             </div>
@@ -395,29 +395,29 @@ const Results = () => {
 
           {/* Quick Overview */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+            <div className="bg-white border border-gray-200 rounded p-4">
               <h3 className="font-semibold mb-4 flex items-center gap-2">
                 <Briefcase size={18} className="text-purple-400" />
                 Intern Resultater
               </h3>
               <p className="text-3xl font-bold text-purple-400">{summary.total_intern.toFixed(0)} kr</p>
-              <p className="text-sm text-gray-400 mt-2">{internResults.length} employees with internal work</p>
+              <p className="text-sm text-gray-800 mt-2">{internResults.length} employees with internal work</p>
             </div>
-            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+            <div className="bg-white border border-gray-200 rounded p-4">
               <h3 className="font-semibold mb-4 flex items-center gap-2">
                 <Users size={18} className="text-blue-400" />
                 PA Resultater
               </h3>
               <p className="text-3xl font-bold text-blue-400">{summary.total_pa.toFixed(0)} kr</p>
-              <p className="text-sm text-gray-400 mt-2">{paResults.length} employees with PA payment</p>
+              <p className="text-sm text-gray-800 mt-2">{paResults.length} employees with PA payment</p>
             </div>
-            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+            <div className="bg-white border border-gray-200 rounded p-4">
               <h3 className="font-semibold mb-4 flex items-center gap-2">
                 <Building2 size={18} className="text-green-400" />
                 Bedrift Inntjening
               </h3>
               <p className="text-3xl font-bold text-green-400">{summary.total_revenue.toFixed(0)} kr</p>
-              <p className="text-sm text-gray-400 mt-2">Based on services and supplier rates</p>
+              <p className="text-sm text-gray-800 mt-2">Based on services and supplier rates</p>
             </div>
           </div>
         </div>
@@ -426,43 +426,43 @@ const Results = () => {
       {/* INTERN TAB */}
       {activeTab === 'intern' && (
         <div>
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 mb-6">
+          <div className="bg-white border border-gray-200 rounded p-4 mb-6">
             <h2 className="text-xl font-semibold mb-4">Intern Resultater - Intern Timesats</h2>
-            <p className="text-sm text-gray-400 mb-4">Lønn basert på intern timesats for internt arbeid (ikke fakturerbart)</p>
+            <p className="text-sm text-gray-800 mb-4">Lønn basert på intern timesats for internt arbeid (ikke fakturerbart)</p>
             
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-800">
+                <thead className="bg-gray-100">
                   <tr>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Employee</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-300">Internal Rate</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-300">Hours</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-300">Amount</th>
+                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">Employee</th>
+                    <th className="px-4 py-2 text-right text-sm font-medium text-gray-900">Internal Rate</th>
+                    <th className="px-4 py-2 text-right text-sm font-medium text-gray-900">Hours</th>
+                    <th className="px-4 py-2 text-right text-sm font-medium text-gray-900">Amount</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-800">
                   {internResults.map((result, idx) => (
-                    <tr key={idx} className="hover:bg-gray-800">
-                      <td className="px-4 py-3">
+                    <tr key={idx} className="hover:bg-gray-100">
+                      <td className="px-4 py-2">
                         <p className="font-medium">{result.name}</p>
-                        <p className="text-xs text-gray-400">{result.initialer}</p>
+                        <p className="text-xs text-gray-800">{result.initialer}</p>
                       </td>
-                      <td className="px-4 py-3 text-right text-gray-400">{result.intern_sats} kr/t</td>
-                      <td className="px-4 py-3 text-right">{result.hours.toFixed(1)} t</td>
-                      <td className="px-4 py-3 text-right font-bold text-purple-400">{result.amount.toFixed(0)} kr</td>
+                      <td className="px-4 py-2 text-right text-gray-800">{result.intern_sats} kr/t</td>
+                      <td className="px-4 py-2 text-right">{result.hours.toFixed(1)} t</td>
+                      <td className="px-4 py-2 text-right font-bold text-purple-400">{result.amount.toFixed(0)} kr</td>
                     </tr>
                   ))}
                   {internResults.length === 0 && (
                     <tr>
-                      <td colSpan="4" className="px-4 py-8 text-center text-gray-400">No internal work for selected month</td>
+                      <td colSpan="4" className="px-4 py-8 text-center text-gray-800">No internal work for selected month</td>
                     </tr>
                   )}
                 </tbody>
-                <tfoot className="bg-gray-800">
+                <tfoot className="bg-gray-100">
                   <tr>
-                    <td colSpan="2" className="px-4 py-3 font-bold">TOTAL</td>
-                    <td className="px-4 py-3 text-right font-bold">{internResults.reduce((s, r) => s + r.hours, 0).toFixed(1)} t</td>
-                    <td className="px-4 py-3 text-right font-bold text-purple-400">{summary.total_intern.toFixed(0)} kr</td>
+                    <td colSpan="2" className="px-4 py-2 font-bold">TOTAL</td>
+                    <td className="px-4 py-2 text-right font-bold">{internResults.reduce((s, r) => s + r.hours, 0).toFixed(1)} t</td>
+                    <td className="px-4 py-2 text-right font-bold text-purple-400">{summary.total_intern.toFixed(0)} kr</td>
                   </tr>
                 </tfoot>
               </table>
@@ -474,68 +474,68 @@ const Results = () => {
       {/* PA TAB */}
       {activeTab === 'pa' && (
         <div>
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+          <div className="bg-white border border-gray-200 rounded p-4">
             <h2 className="text-xl font-semibold mb-4">PA Results - Commission/Share</h2>
-            <p className="text-sm text-gray-400 mb-4">Payment based on all employee rates (PA service, installation, hourly, driving, km)</p>
+            <p className="text-sm text-gray-800 mb-4">Payment based on all employee rates (PA service, installation, hourly, driving, km)</p>
             
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gray-800">
+                <thead className="bg-gray-100">
                   <tr>
-                    <th className="px-3 py-3 text-left font-medium text-gray-300">Employee</th>
-                    <th className="px-3 py-3 text-right font-medium text-gray-300">Service</th>
-                    <th className="px-3 py-3 text-right font-medium text-gray-300">Installation</th>
-                    <th className="px-3 py-3 text-right font-medium text-gray-300">Extra (hours)</th>
-                    <th className="px-3 py-3 text-right font-medium text-gray-300">Driving</th>
-                    <th className="px-3 py-3 text-right font-medium text-gray-300">Kilometers</th>
-                    <th className="px-3 py-3 text-right font-medium text-gray-300">TOTAL</th>
+                    <th className="px-3 py-2 text-left font-medium text-gray-900">Employee</th>
+                    <th className="px-3 py-2 text-right font-medium text-gray-900">Service</th>
+                    <th className="px-3 py-2 text-right font-medium text-gray-900">Installation</th>
+                    <th className="px-3 py-2 text-right font-medium text-gray-900">Extra (hours)</th>
+                    <th className="px-3 py-2 text-right font-medium text-gray-900">Driving</th>
+                    <th className="px-3 py-2 text-right font-medium text-gray-900">Kilometers</th>
+                    <th className="px-3 py-2 text-right font-medium text-gray-900">TOTAL</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-800">
                   {paResults.map((result, idx) => (
-                    <tr key={idx} className="hover:bg-gray-800">
-                      <td className="px-3 py-3">
+                    <tr key={idx} className="hover:bg-gray-100">
+                      <td className="px-3 py-2">
                         <p className="font-medium">{result.name}</p>
-                        <p className="text-xs text-gray-400">{result.initialer}</p>
+                        <p className="text-xs text-gray-800">{result.initialer}</p>
                       </td>
-                      <td className="px-3 py-3 text-right">
+                      <td className="px-3 py-2 text-right">
                         <p className="font-semibold">{result.service_amount.toFixed(0)} kr</p>
-                        <p className="text-xs text-gray-400">{result.service_count} stk × {result.pa_service_sats} kr</p>
+                        <p className="text-xs text-gray-800">{result.service_count} stk × {result.pa_service_sats} kr</p>
                       </td>
-                      <td className="px-3 py-3 text-right">
+                      <td className="px-3 py-2 text-right">
                         <p className="font-semibold">{result.montering_amount.toFixed(0)} kr</p>
-                        <p className="text-xs text-gray-400">{result.montering_count} stk × {result.pa_montering_sats} kr</p>
+                        <p className="text-xs text-gray-800">{result.montering_count} stk × {result.pa_montering_sats} kr</p>
                       </td>
-                      <td className="px-3 py-3 text-right">
+                      <td className="px-3 py-2 text-right">
                         <p className="font-semibold">{result.extra_amount.toFixed(0)} kr</p>
-                        <p className="text-xs text-gray-400">{result.extra_hours.toFixed(1)} t × {result.pa_timesats} kr</p>
+                        <p className="text-xs text-gray-800">{result.extra_hours.toFixed(1)} t × {result.pa_timesats} kr</p>
                       </td>
-                      <td className="px-3 py-3 text-right">
+                      <td className="px-3 py-2 text-right">
                         <p className="font-semibold">{result.kjore_amount.toFixed(0)} kr</p>
-                        <p className="text-xs text-gray-400">{result.kjore_hours.toFixed(1)} t × {result.pa_kjoresats} kr</p>
+                        <p className="text-xs text-gray-800">{result.kjore_hours.toFixed(1)} t × {result.pa_kjoresats} kr</p>
                       </td>
-                      <td className="px-3 py-3 text-right">
+                      <td className="px-3 py-2 text-right">
                         <p className="font-semibold">{result.km_amount.toFixed(0)} kr</p>
-                        <p className="text-xs text-gray-400">{result.km.toFixed(0)} km × {result.pa_km_sats} kr</p>
+                        <p className="text-xs text-gray-800">{result.km.toFixed(0)} km × {result.pa_km_sats} kr</p>
                       </td>
-                      <td className="px-3 py-3 text-right font-bold text-blue-400">{result.total.toFixed(0)} kr</td>
+                      <td className="px-3 py-2 text-right font-bold text-blue-400">{result.total.toFixed(0)} kr</td>
                     </tr>
                   ))}
                   {paResults.length === 0 && (
                     <tr>
-                      <td colSpan="7" className="px-4 py-8 text-center text-gray-400">No PA payments for selected month</td>
+                      <td colSpan="7" className="px-4 py-8 text-center text-gray-800">No PA payments for selected month</td>
                     </tr>
                   )}
                 </tbody>
-                <tfoot className="bg-gray-800">
+                <tfoot className="bg-gray-100">
                   <tr>
-                    <td className="px-3 py-3 font-bold">TOTAL</td>
-                    <td className="px-3 py-3 text-right font-bold">{paResults.reduce((s, r) => s + r.service_amount, 0).toFixed(0)} kr</td>
-                    <td className="px-3 py-3 text-right font-bold">{paResults.reduce((s, r) => s + r.montering_amount, 0).toFixed(0)} kr</td>
-                    <td className="px-3 py-3 text-right font-bold">{paResults.reduce((s, r) => s + r.extra_amount, 0).toFixed(0)} kr</td>
-                    <td className="px-3 py-3 text-right font-bold">{paResults.reduce((s, r) => s + r.kjore_amount, 0).toFixed(0)} kr</td>
-                    <td className="px-3 py-3 text-right font-bold">{paResults.reduce((s, r) => s + r.km_amount, 0).toFixed(0)} kr</td>
-                    <td className="px-3 py-3 text-right font-bold text-blue-400">{summary.total_pa.toFixed(0)} kr</td>
+                    <td className="px-3 py-2 font-bold">TOTAL</td>
+                    <td className="px-3 py-2 text-right font-bold">{paResults.reduce((s, r) => s + r.service_amount, 0).toFixed(0)} kr</td>
+                    <td className="px-3 py-2 text-right font-bold">{paResults.reduce((s, r) => s + r.montering_amount, 0).toFixed(0)} kr</td>
+                    <td className="px-3 py-2 text-right font-bold">{paResults.reduce((s, r) => s + r.extra_amount, 0).toFixed(0)} kr</td>
+                    <td className="px-3 py-2 text-right font-bold">{paResults.reduce((s, r) => s + r.kjore_amount, 0).toFixed(0)} kr</td>
+                    <td className="px-3 py-2 text-right font-bold">{paResults.reduce((s, r) => s + r.km_amount, 0).toFixed(0)} kr</td>
+                    <td className="px-3 py-2 text-right font-bold text-blue-400">{summary.total_pa.toFixed(0)} kr</td>
                   </tr>
                 </tfoot>
               </table>
@@ -548,56 +548,56 @@ const Results = () => {
       {activeTab === 'revenue' && (
         <div className="space-y-6">
           {/* Service-based revenue */}
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+          <div className="bg-white border border-gray-200 rounded p-4">
             <h2 className="text-xl font-semibold mb-4">Services (Rate-based)</h2>
-            <p className="text-sm text-gray-400 mb-4">Revenue based on fixed service rates (Service, Installation, Extra)</p>
+            <p className="text-sm text-gray-800 mb-4">Revenue based on fixed service rates (Service, Installation, Extra)</p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-gray-800 rounded p-4">
+              <div className="bg-gray-100 rounded p-4">
                 <h3 className="font-medium text-lg mb-2">Service</h3>
                 <p className="text-2xl font-bold text-green-400">{companyRevenue.service_revenue.amount.toFixed(0)} kr</p>
-                <p className="text-xs text-gray-400 mt-1">{companyRevenue.service_revenue.count} pcs performed</p>
+                <p className="text-xs text-gray-800 mt-1">{companyRevenue.service_revenue.count} pcs performed</p>
               </div>
-              <div className="bg-gray-800 rounded p-4">
+              <div className="bg-gray-100 rounded p-4">
                 <h3 className="font-medium text-lg mb-2">Installation</h3>
                 <p className="text-2xl font-bold text-green-400">{companyRevenue.montering_revenue.amount.toFixed(0)} kr</p>
-                <p className="text-xs text-gray-400 mt-1">{companyRevenue.montering_revenue.count} pcs performed</p>
+                <p className="text-xs text-gray-800 mt-1">{companyRevenue.montering_revenue.count} pcs performed</p>
               </div>
-              <div className="bg-gray-800 rounded p-4">
+              <div className="bg-gray-100 rounded p-4">
                 <h3 className="font-medium text-lg mb-2">Extra work</h3>
                 <p className="text-2xl font-bold text-green-400">{companyRevenue.ekstra_revenue.amount.toFixed(0)} kr</p>
-                <p className="text-xs text-gray-400 mt-1">{companyRevenue.ekstra_revenue.count} pcs performed</p>
+                <p className="text-xs text-gray-800 mt-1">{companyRevenue.ekstra_revenue.count} pcs performed</p>
               </div>
             </div>
-            <div className="mt-4 pt-4 border-t border-gray-700 flex justify-between">
+            <div className="mt-4 pt-4 border-t border-gray-300 flex justify-between">
               <span className="font-semibold">Rate-based sum:</span>
               <span className="font-bold text-green-400">{companyRevenue.total_service_based.toFixed(0)} kr</span>
             </div>
           </div>
 
           {/* Time-based revenue (Produsent satser) */}
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+          <div className="bg-white border border-gray-200 rounded p-4">
             <h2 className="text-xl font-semibold mb-4">Supplier Rates (Time/KM-based)</h2>
-            <p className="text-sm text-gray-400 mb-4">Revenue based on supplier hourly rates and km-rate per service</p>
+            <p className="text-sm text-gray-800 mb-4">Revenue based on supplier hourly rates and km-rate per service</p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-gray-800 rounded p-4">
+              <div className="bg-gray-100 rounded p-4">
                 <h3 className="font-medium text-lg mb-2">Work time</h3>
                 <p className="text-2xl font-bold text-yellow-400">{companyRevenue.arbeidstid_revenue.amount.toFixed(0)} kr</p>
-                <p className="text-xs text-gray-400 mt-1">{companyRevenue.arbeidstid_revenue.hours.toFixed(1)} hours total</p>
+                <p className="text-xs text-gray-800 mt-1">{companyRevenue.arbeidstid_revenue.hours.toFixed(1)} hours total</p>
               </div>
-              <div className="bg-gray-800 rounded p-4">
+              <div className="bg-gray-100 rounded p-4">
                 <h3 className="font-medium text-lg mb-2">Driving time</h3>
                 <p className="text-2xl font-bold text-yellow-400">{companyRevenue.kjoretid_revenue.amount.toFixed(0)} kr</p>
-                <p className="text-xs text-gray-400 mt-1">{companyRevenue.kjoretid_revenue.hours.toFixed(1)} hours total</p>
+                <p className="text-xs text-gray-800 mt-1">{companyRevenue.kjoretid_revenue.hours.toFixed(1)} hours total</p>
               </div>
-              <div className="bg-gray-800 rounded p-4">
+              <div className="bg-gray-100 rounded p-4">
                 <h3 className="font-medium text-lg mb-2">Kilometers</h3>
                 <p className="text-2xl font-bold text-yellow-400">{companyRevenue.km_revenue.amount.toFixed(0)} kr</p>
-                <p className="text-xs text-gray-400 mt-1">{companyRevenue.km_revenue.km.toFixed(0)} km total</p>
+                <p className="text-xs text-gray-800 mt-1">{companyRevenue.km_revenue.km.toFixed(0)} km total</p>
               </div>
             </div>
-            <div className="mt-4 pt-4 border-t border-gray-700 flex justify-between">
+            <div className="mt-4 pt-4 border-t border-gray-300 flex justify-between">
               <span className="font-semibold">Time-based sum:</span>
               <span className="font-bold text-yellow-400">{companyRevenue.total_time_based.toFixed(0)} kr</span>
             </div>
@@ -605,38 +605,38 @@ const Results = () => {
 
           {/* Breakdown by Produsent */}
           {Object.keys(companyRevenue.by_produsent).length > 0 && (
-            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+            <div className="bg-white border border-gray-200 rounded p-4">
               <h2 className="text-xl font-semibold mb-4">Breakdown per Supplier</h2>
-              <p className="text-sm text-gray-400 mb-4">Detailed revenue per supplier (time/km-based)</p>
+              <p className="text-sm text-gray-800 mb-4">Detailed revenue per supplier (time/km-based)</p>
               
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="bg-gray-800">
+                  <thead className="bg-gray-100">
                     <tr>
-                      <th className="px-4 py-3 text-left font-medium text-gray-300">Supplier</th>
-                      <th className="px-4 py-3 text-right font-medium text-gray-300">Work time</th>
-                      <th className="px-4 py-3 text-right font-medium text-gray-300">Driving time</th>
-                      <th className="px-4 py-3 text-right font-medium text-gray-300">Kilometers</th>
-                      <th className="px-4 py-3 text-right font-medium text-gray-300">TOTAL</th>
+                      <th className="px-4 py-2 text-left font-medium text-gray-900">Supplier</th>
+                      <th className="px-4 py-2 text-right font-medium text-gray-900">Work time</th>
+                      <th className="px-4 py-2 text-right font-medium text-gray-900">Driving time</th>
+                      <th className="px-4 py-2 text-right font-medium text-gray-900">Kilometers</th>
+                      <th className="px-4 py-2 text-right font-medium text-gray-900">TOTAL</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-800">
                     {Object.entries(companyRevenue.by_produsent).map(([name, data]) => (
-                      <tr key={name} className="hover:bg-gray-800">
-                        <td className="px-4 py-3 font-medium">{name}</td>
-                        <td className="px-4 py-3 text-right">
+                      <tr key={name} className="hover:bg-gray-100">
+                        <td className="px-4 py-2 font-medium">{name}</td>
+                        <td className="px-4 py-2 text-right">
                           <p>{data.arbeidstid.amount.toFixed(0)} kr</p>
-                          <p className="text-xs text-gray-400">{data.arbeidstid.hours.toFixed(1)} t</p>
+                          <p className="text-xs text-gray-800">{data.arbeidstid.hours.toFixed(1)} t</p>
                         </td>
-                        <td className="px-4 py-3 text-right">
+                        <td className="px-4 py-2 text-right">
                           <p>{data.kjoretid.amount.toFixed(0)} kr</p>
-                          <p className="text-xs text-gray-400">{data.kjoretid.hours.toFixed(1)} t</p>
+                          <p className="text-xs text-gray-800">{data.kjoretid.hours.toFixed(1)} t</p>
                         </td>
-                        <td className="px-4 py-3 text-right">
+                        <td className="px-4 py-2 text-right">
                           <p>{data.km.amount.toFixed(0)} kr</p>
-                          <p className="text-xs text-gray-400">{data.km.km.toFixed(0)} km</p>
+                          <p className="text-xs text-gray-800">{data.km.km.toFixed(0)} km</p>
                         </td>
-                        <td className="px-4 py-3 text-right font-bold text-yellow-400">
+                        <td className="px-4 py-2 text-right font-bold text-yellow-400">
                           {(data.arbeidstid.amount + data.kjoretid.amount + data.km.amount).toFixed(0)} kr
                         </td>
                       </tr>
@@ -648,11 +648,11 @@ const Results = () => {
           )}
 
           {/* Total Revenue Summary */}
-          <div className="bg-green-900/30 border border-green-700 rounded-lg p-6">
+          <div className="bg-green-900/30 border border-green-700 rounded p-4">
             <div className="flex justify-between items-center">
               <div>
                 <h2 className="text-xl font-semibold">Total Company Revenue</h2>
-                <p className="text-sm text-gray-400">Services + Supplier rates</p>
+                <p className="text-sm text-gray-800">Services + Supplier rates</p>
               </div>
               <p className="text-3xl font-bold text-green-400">{companyRevenue.total_revenue.toFixed(0)} kr</p>
             </div>
@@ -661,9 +661,9 @@ const Results = () => {
       )}
 
       {/* Explanation */}
-      <div className="mt-6 bg-blue-900/20 border border-blue-800 rounded-lg p-4">
+      <div className="mt-6 bg-blue-900/20 border border-blue-800 rounded p-4">
         <h3 className="text-sm font-semibold text-blue-400 mb-2">Explanation:</h3>
-        <ul className="text-sm text-gray-300 space-y-1">
+        <ul className="text-sm text-gray-900 space-y-1">
           <li><strong>Internal Results:</strong> Salary for internal work (internal hourly rate × hours)</li>
           <li><strong>PA Results:</strong> All employee rates (PA service, installation, hourly, driving, km)</li>
           <li><strong>Company Revenue:</strong> Billable income from services and supplier rates per service</li>
@@ -675,3 +675,7 @@ const Results = () => {
 };
 
 export default Results;
+
+
+
+

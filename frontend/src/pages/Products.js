@@ -168,7 +168,7 @@ const Products = () => {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold">Product Catalog</h1>
-          <p className="text-sm text-gray-400 mt-1">{products.length} products</p>
+          <p className="text-sm text-gray-800 mt-1">{products.length} products</p>
         </div>
         <div className="flex gap-3">
           {selectedProducts.size > 0 && (
@@ -201,7 +201,7 @@ const Products = () => {
         <div className="mb-4 flex items-center gap-2">
           <button
             onClick={toggleSelectAll}
-            className="flex items-center gap-2 text-sm text-gray-400 hover:text-white"
+            className="flex items-center gap-2 text-sm text-gray-800 hover:text-gray-900"
           >
             {selectedProducts.size === products.length ? (
               <CheckSquare size={18} className="text-blue-500" />
@@ -216,10 +216,10 @@ const Products = () => {
         </div>
       )}
 
-      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded overflow-hidden">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-gray-800">
+            <tr className="border-b border-gray-200">
               <th className="p-4 text-left w-10"></th>
               <th className="p-4 text-left w-16">Image</th>
               <th className="p-4 text-left">Product No</th>
@@ -233,19 +233,19 @@ const Products = () => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="8" className="p-8 text-center text-gray-400">
+                <td colSpan="8" className="p-8 text-center text-gray-800">
                   Laster...
                 </td>
               </tr>
             ) : products.length === 0 ? (
               <tr>
-                <td colSpan="8" className="p-8 text-center text-gray-400">
+                <td colSpan="8" className="p-8 text-center text-gray-800">
                   No products found
                 </td>
               </tr>
             ) : (
               products.map((product) => (
-                <tr key={product.id} className={`border-b border-gray-800 hover:bg-gray-800/50 ${selectedProducts.has(product.id) ? 'bg-blue-900/20' : ''}`}>
+                <tr key={product.id} className={`border-b border-gray-200 hover:bg-gray-100/50 ${selectedProducts.has(product.id) ? 'bg-blue-900/20' : ''}`}>
                   <td className="p-4">
                     <button onClick={() => toggleSelectProduct(product.id)}>
                       {selectedProducts.has(product.id) ? (
@@ -270,7 +270,7 @@ const Products = () => {
                   </td>
                   <td className="p-4 font-mono text-blue-400">{product.produktnr}</td>
                   <td className="p-4">{product.navn}</td>
-                  <td className="p-4 text-gray-400">{product.kategori || '-'}</td>
+                  <td className="p-4 text-gray-800">{product.kategori || '-'}</td>
                   <td className="p-4 text-right">{product.kundepris.toLocaleString('no-NO')} kr</td>
                   <td className="p-4 text-right">
                     <span className={`px-2 py-1 rounded text-sm ${product.pa_lager > 10 ? 'bg-green-900/50 text-green-400' : product.pa_lager > 0 ? 'bg-yellow-900/50 text-yellow-400' : 'bg-red-900/50 text-red-400'}`}>
@@ -303,61 +303,61 @@ const Products = () => {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 w-full max-w-lg">
+          <div className="bg-white border border-gray-200 rounded p-4 w-full max-w-lg">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">
                 {editingProduct ? 'Edit Product' : 'New Product'}
               </h2>
               <button
                 onClick={() => { setShowModal(false); setEditingProduct(null); }}
-                className="p-2 hover:bg-gray-800 rounded"
+                className="p-2 hover:bg-gray-100 rounded"
               >
                 <X size={20} />
               </button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Product Number</label>
+                <label className="block text-sm font-medium text-gray-900 mb-1">Product Number</label>
                 <input
                   type="text"
                   value={formData.produktnr}
                   onChange={(e) => setFormData({ ...formData, produktnr: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Name</label>
+                <label className="block text-sm font-medium text-gray-900 mb-1">Name</label>
                 <input
                   type="text"
                   value={formData.navn}
                   onChange={(e) => setFormData({ ...formData, navn: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Description</label>
+                <label className="block text-sm font-medium text-gray-900 mb-1">Description</label>
                 <textarea
                   value={formData.beskrivelse}
                   onChange={(e) => setFormData({ ...formData, beskrivelse: e.target.value })}
                   rows="2"
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Category</label>
+                <label className="block text-sm font-medium text-gray-900 mb-1">Category</label>
                 <input
                   type="text"
                   value={formData.kategori}
                   onChange={(e) => setFormData({ ...formData, kategori: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                 />
               </div>
               
               {/* Image section */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Product Image</label>
+                <label className="block text-sm font-medium text-gray-900 mb-1">Product Image</label>
                 <div className="space-y-2">
                   {/* Image URL input */}
                   <input
@@ -365,7 +365,7 @@ const Products = () => {
                     value={formData.image_url}
                     onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
                     placeholder="Image URL (e.g. https://...)"
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                   />
                   
                   {/* File upload (only for existing products) */}
@@ -382,7 +382,7 @@ const Products = () => {
                           disabled={uploadingImage}
                         />
                       </label>
-                      <span className="text-xs text-gray-400">JPG, PNG, GIF, WebP</span>
+                      <span className="text-xs text-gray-800">JPG, PNG, GIF, WebP</span>
                     </div>
                   )}
                   
@@ -392,7 +392,7 @@ const Products = () => {
                       <img 
                         src={formData.image_url.startsWith('/api') ? `${process.env.REACT_APP_BACKEND_URL}${formData.image_url}` : formData.image_url}
                         alt="Preview"
-                        className="w-24 h-24 object-cover rounded border border-gray-700"
+                        className="w-24 h-24 object-cover rounded border border-gray-300"
                         onError={(e) => e.target.style.display = 'none'}
                       />
                     </div>
@@ -402,24 +402,24 @@ const Products = () => {
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Customer Price (kr)</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Customer Price (kr)</label>
                   <input
                     type="number"
                     value={formData.kundepris}
                     onChange={(e) => setFormData({ ...formData, kundepris: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     min="0"
                     step="0.01"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">In Stock</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">In Stock</label>
                   <input
                     type="number"
                     value={formData.pa_lager}
                     onChange={(e) => setFormData({ ...formData, pa_lager: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     min="0"
                     required
                   />
@@ -430,7 +430,7 @@ const Products = () => {
                 <button
                   type="button"
                   onClick={() => { setShowModal(false); setEditingProduct(null); }}
-                  className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-700 rounded transition-colors"
                 >
                   Cancel
                 </button>
@@ -450,3 +450,7 @@ const Products = () => {
 };
 
 export default Products;
+
+
+
+

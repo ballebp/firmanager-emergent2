@@ -350,14 +350,14 @@ const Economy = () => {
   ];
 
   if (loading) {
-    return <div className="text-gray-400">Loading...</div>;
+    return <div className="text-gray-800">Loading...</div>;
   }
 
   return (
     <div data-testid="economy-page">
       <h1 className="text-3xl font-bold mb-6">Economy</h1>
 
-      <div className="flex gap-2 mb-6 border-b border-gray-800">
+      <div className="flex gap-2 mb-6 border-b border-gray-200">
         {tabs.map(tab => (
           <button
             key={tab.id}
@@ -366,7 +366,7 @@ const Economy = () => {
             className={`px-4 py-2 font-medium transition-colors ${
               activeTab === tab.id
                 ? 'text-blue-400 border-b-2 border-blue-400'
-                : 'text-gray-400 hover:text-white'
+                : 'text-gray-800 hover:text-gray-900'
             }`}
           >
             {tab.label}
@@ -387,28 +387,28 @@ const Economy = () => {
               New Employee
             </button>
           </div>
-          <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+          <div className="bg-white border border-gray-200 rounded overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-800">
+                <thead className="bg-gray-100">
                   <tr>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Initials</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Name</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Position</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Internal Rate</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Invoice Rate</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Actions</th>
+                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">Initials</th>
+                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">Name</th>
+                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">Position</th>
+                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">Internal Rate</th>
+                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">Invoice Rate</th>
+                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-800">
                   {employees.map((employee) => (
-                    <tr key={employee.id} className="hover:bg-gray-800">
-                      <td className="px-4 py-3 text-sm font-medium">{employee.initialer}</td>
-                      <td className="px-4 py-3 text-sm">{employee.navn}</td>
-                      <td className="px-4 py-3 text-sm">{employee.stilling}</td>
-                      <td className="px-4 py-3 text-sm">{employee.intern_sats.toFixed(0)} kr/t</td>
-                      <td className="px-4 py-3 text-sm">{employee.faktura_sats.toFixed(0)} kr/t</td>
-                      <td className="px-4 py-3 text-sm">
+                    <tr key={employee.id} className="hover:bg-gray-100">
+                      <td className="px-4 py-2 text-sm font-medium">{employee.initialer}</td>
+                      <td className="px-4 py-2 text-sm">{employee.navn}</td>
+                      <td className="px-4 py-2 text-sm">{employee.stilling}</td>
+                      <td className="px-4 py-2 text-sm">{employee.intern_sats.toFixed(0)} kr/t</td>
+                      <td className="px-4 py-2 text-sm">{employee.faktura_sats.toFixed(0)} kr/t</td>
+                      <td className="px-4 py-2 text-sm">
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleEditEmployee(employee)}
@@ -468,17 +468,17 @@ const Economy = () => {
           </div>
           <div className="space-y-3">
             {services.map(service => (
-              <div key={service.id} className="bg-gray-900 border border-gray-800 rounded-lg p-4">
+              <div key={service.id} className="bg-white border border-gray-200 rounded p-4">
                 <div className="flex justify-between items-start mb-2">
                   <div>
                     <h3 className="font-semibold text-lg">{service.tjeneste_navn}</h3>
-                    <p className="text-sm text-gray-400">Service no: {service.tjenestenr}</p>
-                    {service.beskrivelse && <p className="text-sm text-gray-400 mt-1">{service.beskrivelse}</p>}
+                    <p className="text-sm text-gray-800">Service no: {service.tjenestenr}</p>
+                    {service.beskrivelse && <p className="text-sm text-gray-800 mt-1">{service.beskrivelse}</p>}
                   </div>
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleEditService(service)}
-                      className="p-1 hover:bg-gray-800 rounded transition-colors"
+                      className="p-1 hover:bg-gray-100 rounded transition-colors"
                     >
                       <Edit size={16} />
                     </button>
@@ -491,27 +491,27 @@ const Economy = () => {
                   </div>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
-                  <div className="bg-gray-800 rounded p-2">
-                    <p className="text-xs text-gray-400">Fixed price</p>
+                  <div className="bg-gray-100 rounded p-2">
+                    <p className="text-xs text-gray-800">Fixed price</p>
                     <p className="font-semibold text-green-400">{service.pris} kr</p>
                   </div>
-                  <div className="bg-gray-800 rounded p-2">
-                    <p className="text-xs text-gray-400">Extra service</p>
+                  <div className="bg-gray-100 rounded p-2">
+                    <p className="text-xs text-gray-800">Extra service</p>
                     <p className="font-semibold">{service.t1_ekstraservice} kr/h</p>
                   </div>
-                  <div className="bg-gray-800 rounded p-2">
-                    <p className="text-xs text-gray-400">Driving time</p>
+                  <div className="bg-gray-100 rounded p-2">
+                    <p className="text-xs text-gray-800">Driving time</p>
                     <p className="font-semibold">{service.t5_kjoretid} kr/h</p>
                   </div>
-                  <div className="bg-gray-800 rounded p-2">
-                    <p className="text-xs text-gray-400">Km compensation</p>
+                  <div className="bg-gray-100 rounded p-2">
+                    <p className="text-xs text-gray-800">Km compensation</p>
                     <p className="font-semibold">{service.t6_km_godtgjorelse} kr/km</p>
                   </div>
                 </div>
               </div>
             ))}
             {services.length === 0 && (
-              <div className="bg-gray-900 border border-gray-800 rounded-lg p-8 text-center text-gray-400">
+              <div className="bg-white border border-gray-200 rounded p-6 text-center text-gray-800">
                 No services registered
               </div>
             )}
@@ -524,7 +524,7 @@ const Economy = () => {
           <div className="flex justify-between items-center mb-6">
             <div>
               <h2 className="text-xl font-semibold">Supplier rates</h2>
-              <p className="text-sm text-gray-400 mt-1">Rates for invoicing (work time, driving time, km)</p>
+              <p className="text-sm text-gray-800 mt-1">Rates for invoicing (work time, driving time, km)</p>
             </div>
             <button
               onClick={() => { resetPricingForm(); setShowPricingModal(true); }}
@@ -537,11 +537,11 @@ const Economy = () => {
           </div>
           <div className="space-y-4">
             {supplierPricing.map(pricing => (
-              <div key={pricing.id} className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+              <div key={pricing.id} className="bg-white border border-gray-200 rounded p-4">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="text-lg font-semibold">{pricing.name || 'Standard supplier'}</h3>
-                    <p className="text-sm text-gray-400">Revenue (billable)</p>
+                    <p className="text-sm text-gray-800">Revenue (billable)</p>
                   </div>
                   <div className="flex gap-2">
                     <button
@@ -560,23 +560,23 @@ const Economy = () => {
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-gray-800 rounded p-4">
-                    <p className="text-sm text-gray-400">Work hourly rate</p>
+                  <div className="bg-gray-100 rounded p-4">
+                    <p className="text-sm text-gray-800">Work hourly rate</p>
                     <p className="text-2xl font-semibold">{pricing.arbeidstid_rate?.toFixed(0) || 0} kr/h</p>
                   </div>
-                  <div className="bg-gray-800 rounded p-4">
-                    <p className="text-sm text-gray-400">Driving rate</p>
+                  <div className="bg-gray-100 rounded p-4">
+                    <p className="text-sm text-gray-800">Driving rate</p>
                     <p className="text-2xl font-semibold">{pricing.kjoretid_rate?.toFixed(0) || 0} kr/h</p>
                   </div>
-                  <div className="bg-gray-800 rounded p-4">
-                    <p className="text-sm text-gray-400">KM rate</p>
+                  <div className="bg-gray-100 rounded p-4">
+                    <p className="text-sm text-gray-800">KM rate</p>
                     <p className="text-2xl font-semibold">{pricing.km_rate?.toFixed(2) || 0} kr/km</p>
                   </div>
                 </div>
               </div>
             ))}
             {supplierPricing.length === 0 && (
-              <div className="bg-gray-900 border border-gray-800 rounded-lg p-8 text-center text-gray-400">
+              <div className="bg-white border border-gray-200 rounded p-6 text-center text-gray-800">
                 <p className="mb-4">No supplier rates registered</p>
                 <p className="text-sm">Click &quot;New supplier&quot; to create</p>
               </div>
@@ -587,148 +587,148 @@ const Economy = () => {
 
       {showEmployeeModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white border border-gray-200 rounded p-4 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">
                 {editingEmployee ? 'Edit employee' : 'New employee'}
               </h2>
-              <button onClick={() => setShowEmployeeModal(false)} className="text-gray-400 hover:text-white">
+              <button onClick={() => setShowEmployeeModal(false)} className="text-gray-800 hover:text-gray-900">
                 <X size={24} />
               </button>
             </div>
             <form onSubmit={handleSubmitEmployee} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Initials *</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Initials *</label>
                   <input
                     type="text"
                     value={employeeFormData.initialer}
                     onChange={(e) => setEmployeeFormData({ ...employeeFormData, initialer: e.target.value })}
                     data-testid="employee-initialer-input"
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Position *</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Position *</label>
                   <input
                     type="text"
                     value={employeeFormData.stilling}
                     onChange={(e) => setEmployeeFormData({ ...employeeFormData, stilling: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     required
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Name *</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Name *</label>
                   <input
                     type="text"
                     value={employeeFormData.navn}
                     onChange={(e) => setEmployeeFormData({ ...employeeFormData, navn: e.target.value })}
                     data-testid="employee-navn-input"
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Email</label>
                   <input
                     type="email"
                     value={employeeFormData.epost}
                     onChange={(e) => setEmployeeFormData({ ...employeeFormData, epost: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Phone</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Phone</label>
                   <input
                     type="text"
                     value={employeeFormData.telefon}
                     onChange={(e) => setEmployeeFormData({ ...employeeFormData, telefon: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                   />
                 </div>
               </div>
 
-              <div className="border-t border-gray-800 pt-4 mt-4">
+              <div className="border-t border-gray-200 pt-4 mt-4">
                 <h3 className="text-lg font-semibold mb-3">Rates</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Internal rate (kr/h) *</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">Internal rate (kr/h) *</label>
                     <input
                       type="number"
                       step="0.01"
                       value={employeeFormData.intern_sats}
                       onChange={(e) => setEmployeeFormData({ ...employeeFormData, intern_sats: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Invoice rate (kr/h) *</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">Invoice rate (kr/h) *</label>
                     <input
                       type="number"
                       step="0.01"
                       value={employeeFormData.faktura_sats}
                       onChange={(e) => setEmployeeFormData({ ...employeeFormData, faktura_sats: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                       required
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="border-t border-gray-800 pt-4 mt-4">
+              <div className="border-t border-gray-200 pt-4 mt-4">
                 <h3 className="text-lg font-semibold mb-3">PA (Provisjon/Andel) Satser</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">PA Service sats</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">PA Service sats</label>
                     <input
                       type="number"
                       step="0.01"
                       value={employeeFormData.pa_service_sats}
                       onChange={(e) => setEmployeeFormData({ ...employeeFormData, pa_service_sats: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">PA Montering sats</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">PA Montering sats</label>
                     <input
                       type="number"
                       step="0.01"
                       value={employeeFormData.pa_montering_sats}
                       onChange={(e) => setEmployeeFormData({ ...employeeFormData, pa_montering_sats: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">PA Timesats</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">PA Timesats</label>
                     <input
                       type="number"
                       step="0.01"
                       value={employeeFormData.pa_timesats}
                       onChange={(e) => setEmployeeFormData({ ...employeeFormData, pa_timesats: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">PA Kjøresats</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">PA Kjøresats</label>
                     <input
                       type="number"
                       step="0.01"
                       value={employeeFormData.pa_kjoresats}
                       onChange={(e) => setEmployeeFormData({ ...employeeFormData, pa_kjoresats: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">PA Km sats</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">PA Km sats</label>
                     <input
                       type="number"
                       step="0.01"
                       value={employeeFormData.pa_km_sats}
                       onChange={(e) => setEmployeeFormData({ ...employeeFormData, pa_km_sats: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     />
                   </div>
                 </div>
@@ -738,7 +738,7 @@ const Economy = () => {
                 <button
                   type="button"
                   onClick={() => setShowEmployeeModal(false)}
-                  className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-700 rounded transition-colors"
                 >
                   Cancel
                 </button>
@@ -757,145 +757,145 @@ const Economy = () => {
 
       {showServiceModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white border border-gray-200 rounded p-4 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">
                 {editingService ? 'Edit service' : 'New service'}
               </h2>
-              <button onClick={() => setShowServiceModal(false)} className="text-gray-400 hover:text-white">
+              <button onClick={() => setShowServiceModal(false)} className="text-gray-800 hover:text-gray-900">
                 <X size={24} />
               </button>
             </div>
             <form onSubmit={handleSubmitService} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Service no *</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Service no *</label>
                   <input
                     type="text"
                     value={serviceFormData.tjenestenr}
                     onChange={(e) => setServiceFormData({ ...serviceFormData, tjenestenr: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Supplier</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Supplier</label>
                   <select
                     value={serviceFormData.produsent_id}
                     onChange={(e) => setServiceFormData({ ...serviceFormData, produsent_id: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                   >
                     <option value="">Select supplier</option>
                     {supplierPricing.map(p => (
                       <option key={p.id} value={p.id}>{p.name}</option>
                     ))}
                   </select>
-                  <p className="text-xs text-gray-400 mt-1">Links to supplier rates for calculations</p>
+                  <p className="text-xs text-gray-800 mt-1">Links to supplier rates for calculations</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Vendor</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Vendor</label>
                   <input
                     type="text"
                     value={serviceFormData.leverandor}
                     onChange={(e) => setServiceFormData({ ...serviceFormData, leverandor: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Service name *</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Service name *</label>
                   <input
                     type="text"
                     value={serviceFormData.tjeneste_navn}
                     onChange={(e) => setServiceFormData({ ...serviceFormData, tjeneste_navn: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     required
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">Description</label>
                   <textarea
                     value={serviceFormData.beskrivelse}
                     onChange={(e) => setServiceFormData({ ...serviceFormData, beskrivelse: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     rows="2"
                   />
                 </div>
               </div>
 
-              <div className="border-t border-gray-800 pt-4 mt-4">
+              <div className="border-t border-gray-200 pt-4 mt-4">
                 <h3 className="text-lg font-semibold mb-3">Prices</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-2">
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Fixed price (kr) *</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">Fixed price (kr) *</label>
                     <input
                       type="number"
                       step="0.01"
                       value={serviceFormData.pris}
                       onChange={(e) => setServiceFormData({ ...serviceFormData, pris: e.target.value })}
                       placeholder="Example: 1490"
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                       required
                     />
-                    <p className="text-xs text-gray-400 mt-1">This is the rate charged to the customer</p>
+                    <p className="text-xs text-gray-800 mt-1">This is the rate charged to the customer</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">T1 Ekstraservice (kr/t)</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">T1 Ekstraservice (kr/t)</label>
                     <input
                       type="number"
                       step="0.01"
                       value={serviceFormData.t1_ekstraservice}
                       onChange={(e) => setServiceFormData({ ...serviceFormData, t1_ekstraservice: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">T2 Ekstraservice 50% (kr/t)</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">T2 Ekstraservice 50% (kr/t)</label>
                     <input
                       type="number"
                       step="0.01"
                       value={serviceFormData.t2_ekstraservice_50}
                       onChange={(e) => setServiceFormData({ ...serviceFormData, t2_ekstraservice_50: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">T3 Ekstraservice 100% (kr/t)</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">T3 Ekstraservice 100% (kr/t)</label>
                     <input
                       type="number"
                       step="0.01"
                       value={serviceFormData.t3_ekstraservice_100}
                       onChange={(e) => setServiceFormData({ ...serviceFormData, t3_ekstraservice_100: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">T4 Ekstraarbeid (kr/t)</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">T4 Ekstraarbeid (kr/t)</label>
                     <input
                       type="number"
                       step="0.01"
                       value={serviceFormData.t4_ekstraarbeid}
                       onChange={(e) => setServiceFormData({ ...serviceFormData, t4_ekstraarbeid: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">T5 Driving time (kr/h)</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">T5 Driving time (kr/h)</label>
                     <input
                       type="number"
                       step="0.01"
                       value={serviceFormData.t5_kjoretid}
                       onChange={(e) => setServiceFormData({ ...serviceFormData, t5_kjoretid: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">T6 Km compensation (kr/km)</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">T6 Km compensation (kr/km)</label>
                     <input
                       type="number"
                       step="0.01"
                       value={serviceFormData.t6_km_godtgjorelse}
                       onChange={(e) => setServiceFormData({ ...serviceFormData, t6_km_godtgjorelse: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                     />
                   </div>
                 </div>
@@ -905,7 +905,7 @@ const Economy = () => {
                 <button
                   type="button"
                   onClick={() => setShowServiceModal(false)}
-                  className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-700 rounded transition-colors"
                 >
                   Cancel
                 </button>
@@ -923,55 +923,55 @@ const Economy = () => {
 
       {showPricingModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 w-full max-w-md">
+          <div className="bg-white border border-gray-200 rounded p-4 w-full max-w-md">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">{editingPricing ? 'Edit supplier' : 'New supplier'}</h2>
-              <button onClick={() => { setShowPricingModal(false); setEditingPricing(null); }} className="text-gray-400 hover:text-white">
+              <button onClick={() => { setShowPricingModal(false); setEditingPricing(null); }} className="text-gray-800 hover:text-gray-900">
                 <X size={24} />
               </button>
             </div>
             <form onSubmit={handleSubmitPricing} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Supplier name *</label>
+                <label className="block text-sm font-medium text-gray-900 mb-2">Supplier name *</label>
                 <input
                   type="text"
                   value={pricingFormData.name}
                   onChange={(e) => setPricingFormData({ ...pricingFormData, name: e.target.value })}
                   placeholder="E.g: Standard, Premium, Biovac"
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Work hourly rate (kr/h) *</label>
+                <label className="block text-sm font-medium text-gray-900 mb-2">Work hourly rate (kr/h) *</label>
                 <input
                   type="number"
                   step="0.01"
                   value={pricingFormData.arbeidstid_rate}
                   onChange={(e) => setPricingFormData({ ...pricingFormData, arbeidstid_rate: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Driving rate (kr/h) *</label>
+                <label className="block text-sm font-medium text-gray-900 mb-2">Driving rate (kr/h) *</label>
                 <input
                   type="number"
                   step="0.01"
                   value={pricingFormData.kjoretid_rate}
                   onChange={(e) => setPricingFormData({ ...pricingFormData, kjoretid_rate: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">KM rate (kr/km) *</label>
+                <label className="block text-sm font-medium text-gray-900 mb-2">KM rate (kr/km) *</label>
                 <input
                   type="number"
                   step="0.01"
                   value={pricingFormData.km_rate}
                   onChange={(e) => setPricingFormData({ ...pricingFormData, km_rate: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                   required
                 />
               </div>
@@ -980,7 +980,7 @@ const Economy = () => {
                 <button
                   type="button"
                   onClick={() => { setShowPricingModal(false); setEditingPricing(null); }}
-                  className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-700 rounded transition-colors"
                 >
                   Cancel
                 </button>
@@ -1000,3 +1000,7 @@ const Economy = () => {
 };
 
 export default Economy;
+
+
+
+

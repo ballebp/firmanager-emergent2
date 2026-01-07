@@ -77,41 +77,41 @@ const Settings = () => {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">Loading...</div>;
+    return <div className="flex items-center justify-center min-h-screen bg-gray-50 text-gray-900">Loading...</div>;
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
+    <div className="min-h-screen bg-gray-50 text-gray-900 p-6">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Settings</h1>
-          <p className="text-gray-400">Manage your organization and users</p>
+          <p className="text-gray-800">Manage your organization and users</p>
         </div>
 
         {error && (
-          <div className="bg-red-900 border border-red-700 text-red-200 px-4 py-3 rounded mb-4">
+          <div className="bg-red-900 border border-red-700 text-red-200 px-4 py-2 rounded mb-4">
             {error}
           </div>
         )}
 
         {success && (
-          <div className="bg-green-900 border border-green-700 text-green-200 px-4 py-3 rounded mb-4">
+          <div className="bg-green-900 border border-green-700 text-green-200 px-4 py-2 rounded mb-4">
             {success}
           </div>
         )}
 
-        <div className="bg-gray-800 rounded-lg p-6 mb-6">
+        <div className="bg-white rounded p-4 mb-6">
           <h2 className="text-xl font-semibold mb-4 flex items-center">
             <Shield className="mr-2" />
             Organization
           </h2>
           <div className="space-y-2">
-            <p><span className="text-gray-400">Name:</span> <span className="font-medium">{organization?.name}</span></p>
-            <p><span className="text-gray-400">Subscription:</span> <span className="font-medium capitalize">{organization?.subscription_tier}</span></p>
+            <p><span className="text-gray-800">Name:</span> <span className="font-medium">{organization?.name}</span></p>
+            <p><span className="text-gray-800">Subscription:</span> <span className="font-medium capitalize">{organization?.subscription_tier}</span></p>
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-lg p-6">
+        <div className="bg-gray-100 rounded p-4">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold flex items-center">
               <Users className="mr-2" />
@@ -128,24 +128,24 @@ const Settings = () => {
 
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="border-b border-gray-700">
+              <thead className="border-b border-gray-300">
                 <tr>
-                  <th className="text-left py-3 px-4">Name</th>
-                  <th className="text-left py-3 px-4">Email</th>
-                  <th className="text-left py-3 px-4">Role</th>
-                  <th className="text-right py-3 px-4">Actions</th>
+                  <th className="text-left py-2 px-4">Name</th>
+                  <th className="text-left py-2 px-4">Email</th>
+                  <th className="text-left py-2 px-4">Role</th>
+                  <th className="text-right py-2 px-4">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {users.map(user => (
-                  <tr key={user.id} className="border-b border-gray-700 hover:bg-gray-750">
-                    <td className="py-3 px-4">{user.name}</td>
-                    <td className="py-3 px-4">{user.email}</td>
-                    <td className="py-3 px-4">
+                  <tr key={user.id} className="border-b border-gray-300 hover:bg-gray-50">
+                    <td className="py-2 px-4">{user.name}</td>
+                    <td className="py-2 px-4">{user.email}</td>
+                    <td className="py-2 px-4">
                       <select
                         value={user.role}
                         onChange={(e) => handleUpdateRole(user.id, e.target.value)}
-                        className="bg-gray-700 border border-gray-600 rounded px-2 py-1"
+                        className="bg-gray-50 border border-gray-300 rounded px-2 py-1">
                       >
                         <option value="admin">Admin</option>
                         <option value="user">User</option>
@@ -153,7 +153,7 @@ const Settings = () => {
                         <option value="free">Free</option>
                       </select>
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-2 px-4 text-right">
                       <button
                         onClick={() => handleDeleteUser(user.id, user.email)}
                         className="text-red-400 hover:text-red-300 transition-colors"
@@ -170,12 +170,12 @@ const Settings = () => {
 
         {showAddUser && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md">
+            <div className="bg-white rounded p-4 w-full max-w-md">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-semibold">Add New User</h3>
                 <button
                   onClick={() => setShowAddUser(false)}
-                  className="text-gray-400 hover:text-white"
+                  className="text-gray-800 hover:text-gray-900">
                 >
                   <X size={24} />
                 </button>
@@ -226,18 +226,18 @@ const Settings = () => {
                     type="text"
                     value={newUser.password}
                     onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded focus:outline-none focus:border-blue-500"
                     required
                     placeholder="user123"
                   />
-                  <p className="text-xs text-gray-400 mt-1">User should change this on first login</p>
+                  <p className="text-xs text-gray-800 mt-1">User should change this on first login</p>
                 </div>
 
                 <div className="flex gap-3 justify-end pt-4">
                   <button
                     type="button"
                     onClick={() => setShowAddUser(false)}
-                    className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded transition-colors"
+                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded transition-colors">
                   >
                     Cancel
                   </button>
@@ -258,3 +258,6 @@ const Settings = () => {
 };
 
 export default Settings;
+
+
+

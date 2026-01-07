@@ -173,7 +173,7 @@ const HMS = () => {
       <h1 className="text-3xl font-bold mb-6">HMS - Health, Environment and Safety</h1>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6 border-b border-gray-800">
+      <div className="flex gap-2 mb-6 border-b border-gray-200">
         {tabs.map(tab => (
           <button
             key={tab.id}
@@ -182,7 +182,7 @@ const HMS = () => {
             className={`px-4 py-2 font-medium transition-colors ${
               activeTab === tab.id
                 ? 'text-blue-400 border-b-2 border-blue-400'
-                : 'text-gray-400 hover:text-white'
+                : 'text-gray-800 hover:text-gray-900'
             }`}
           >
             {tab.label}
@@ -194,66 +194,66 @@ const HMS = () => {
       {activeTab === 'overview' && (
         <div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+            <div className="bg-white border border-gray-200 rounded p-4">
               <div className="flex items-center gap-3 mb-3">
-                <div className="bg-yellow-600 p-3 rounded-lg">
-                  <AlertTriangle size={24} />
+                <div className="bg-yellow-500 p-3 rounded">
+                  <AlertTriangle size={24} className="text-white" />
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{activeRiskAssessments.length}</p>
-                  <p className="text-sm text-gray-400">Active risk assessments</p>
+                  <p className="text-sm text-gray-800">Active risk assessments</p>
                 </div>
               </div>
             </div>
-            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+            <div className="bg-white border border-gray-200 rounded p-4">
               <div className="flex items-center gap-3 mb-3">
-                <div className="bg-red-600 p-3 rounded-lg">
-                  <FileText size={24} />
+                <div className="bg-red-500 p-3 rounded">
+                  <FileText size={24} className="text-white" />
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{openIncidents.length}</p>
-                  <p className="text-sm text-gray-400">Open incidents</p>
+                  <p className="text-sm text-gray-800">Open incidents</p>
                 </div>
               </div>
             </div>
-            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+            <div className="bg-white border border-gray-200 rounded p-4">
               <div className="flex items-center gap-3 mb-3">
-                <div className="bg-blue-600 p-3 rounded-lg">
-                  <GraduationCap size={24} />
+                <div className="bg-blue-500 p-3 rounded">
+                  <GraduationCap size={24} className="text-white" />
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{training.length}</p>
-                  <p className="text-sm text-gray-400">Training sessions</p>
+                  <p className="text-sm text-gray-800">Training sessions</p>
                 </div>
               </div>
             </div>
-            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+            <div className="bg-white border border-gray-200 rounded p-4">
               <div className="flex items-center gap-3 mb-3">
-                <div className="bg-green-600 p-3 rounded-lg">
-                  <Wrench size={24} />
+                <div className="bg-green-500 p-3 rounded">
+                  <Wrench size={24} className="text-white" />
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{equipment.length}</p>
-                  <p className="text-sm text-gray-400">Equipment registered</p>
+                  <p className="text-sm text-gray-800">Equipment registered</p>
                 </div>
               </div>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+            <div className="bg-white border border-gray-200 rounded p-4">
               <h3 className="text-lg font-semibold mb-4">Latest incidents</h3>
               {incidents.slice(0, 5).map(incident => (
-                <div key={incident.id} className="mb-3 pb-3 border-b border-gray-800 last:border-0">
+                <div key={incident.id} className="mb-3 pb-3 border-b border-gray-200 last:border-0">
                   <p className="font-medium">{incident.beskrivelse}</p>
-                  <p className="text-sm text-gray-400">{new Date(incident.dato).toLocaleDateString('no-NO')}</p>
+                  <p className="text-sm text-gray-800">{new Date(incident.dato).toLocaleDateString('no-NO')}</p>
                 </div>
               ))}
             </div>
-            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+            <div className="bg-white border border-gray-200 rounded p-4">
               <h3 className="text-lg font-semibold mb-4">High risk activities</h3>
               {riskAssessments.filter(r => r.alvorlighetsgrad === 'høy').slice(0, 5).map(risk => (
-                <div key={risk.id} className="mb-3 pb-3 border-b border-gray-800 last:border-0">
+                <div key={risk.id} className="mb-3 pb-3 border-b border-gray-200 last:border-0">
                   <p className="font-medium">{risk.tittel}</p>
                   <p className="text-sm text-red-400">High severity</p>
                 </div>
@@ -279,11 +279,11 @@ const HMS = () => {
           </div>
           <div className="space-y-3">
             {riskAssessments.map(risk => (
-              <div key={risk.id} className="bg-gray-900 border border-gray-800 rounded-lg p-4">
+              <div key={risk.id} className="bg-white border border-gray-200 rounded p-4">
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="font-semibold">{risk.tittel}</h3>
-                    <p className="text-sm text-gray-400 mt-1">{risk.beskrivelse}</p>
+                    <p className="text-sm text-gray-800 mt-1">{risk.beskrivelse}</p>
                     <div className="flex gap-3 mt-2">
                       <span className={`px-2 py-1 rounded text-xs ${
                         risk.alvorlighetsgrad === 'høy' ? 'bg-red-900/30 text-red-400' :
@@ -292,12 +292,12 @@ const HMS = () => {
                       }`}>
                         {risk.alvorlighetsgrad}
                       </span>
-                      <span className="px-2 py-1 rounded text-xs bg-gray-800 text-gray-300">
+                      <span className="px-2 py-1 rounded text-xs bg-gray-100 text-gray-900">
                         {risk.status}
                       </span>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-400">{new Date(risk.dato).toLocaleDateString('no-NO')}</p>
+                  <p className="text-sm text-gray-800">{new Date(risk.dato).toLocaleDateString('no-NO')}</p>
                 </div>
               </div>
             ))}
@@ -321,21 +321,21 @@ const HMS = () => {
           </div>
           <div className="space-y-3">
             {incidents.map(incident => (
-              <div key={incident.id} className="bg-gray-900 border border-gray-800 rounded-lg p-4">
+              <div key={incident.id} className="bg-white border border-gray-200 rounded p-4">
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="font-semibold capitalize">{incident.type}</h3>
-                    <p className="text-sm text-gray-400 mt-1">{incident.beskrivelse}</p>
+                    <p className="text-sm text-gray-800 mt-1">{incident.beskrivelse}</p>
                     <div className="flex gap-3 mt-2">
-                      <span className="px-2 py-1 rounded text-xs bg-gray-800 text-gray-300">
+                      <span className="px-2 py-1 rounded text-xs bg-gray-100 text-gray-900">
                         {incident.status}
                       </span>
-                      <span className="px-2 py-1 rounded text-xs bg-gray-800 text-gray-300">
+                      <span className="px-2 py-1 rounded text-xs bg-gray-100 text-gray-900">
                         {incident.alvorlighetsgrad}
                       </span>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-400">{new Date(incident.dato).toLocaleDateString('no-NO')}</p>
+                  <p className="text-sm text-gray-800">{new Date(incident.dato).toLocaleDateString('no-NO')}</p>
                 </div>
               </div>
             ))}
@@ -359,13 +359,13 @@ const HMS = () => {
           </div>
           <div className="space-y-3">
             {training.map(t => (
-              <div key={t.id} className="bg-gray-900 border border-gray-800 rounded-lg p-4">
+              <div key={t.id} className="bg-white border border-gray-200 rounded p-4">
                 <h3 className="font-semibold">{t.navn}</h3>
-                <p className="text-sm text-gray-400 mt-1">{t.beskrivelse}</p>
+                <p className="text-sm text-gray-800 mt-1">{t.beskrivelse}</p>
                 <div className="flex gap-3 mt-2 text-sm">
-                  <span className="text-gray-400">Dato: {new Date(t.dato).toLocaleDateString('no-NO')}</span>
+                  <span className="text-gray-800">Dato: {new Date(t.dato).toLocaleDateString('no-NO')}</span>
                   {t.expires_at && (
-                    <span className="text-gray-400">Utløper: {new Date(t.expires_at).toLocaleDateString('no-NO')}</span>
+                    <span className="text-gray-800">Utløper: {new Date(t.expires_at).toLocaleDateString('no-NO')}</span>
                   )}
                 </div>
               </div>
@@ -390,11 +390,11 @@ const HMS = () => {
           </div>
           <div className="space-y-3">
             {equipment.map(e => (
-              <div key={e.id} className="bg-gray-900 border border-gray-800 rounded-lg p-4">
+              <div key={e.id} className="bg-white border border-gray-200 rounded p-4">
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="font-semibold">{e.navn}</h3>
-                    <div className="flex gap-3 mt-2 text-sm text-gray-400">
+                    <div className="flex gap-3 mt-2 text-sm text-gray-800">
                       <span>Kontrollert: {new Date(e.control_date).toLocaleDateString('no-NO')}</span>
                       <span>Neste: {new Date(e.next_control).toLocaleDateString('no-NO')}</span>
                     </div>
@@ -416,7 +416,7 @@ const HMS = () => {
       {/* Modal with actual forms */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white border border-gray-200 rounded p-4 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">
                 {modalType === 'risk' && 'New Risk Assessment'}
@@ -424,7 +424,7 @@ const HMS = () => {
                 {modalType === 'training' && 'New Training'}
                 {modalType === 'equipment' && 'Register Equipment'}
               </h2>
-              <button onClick={closeModal} className="text-gray-400 hover:text-white">
+              <button onClick={closeModal} className="text-gray-800 hover:text-gray-900">
                 <X size={24} />
               </button>
             </div>
@@ -434,42 +434,42 @@ const HMS = () => {
               {modalType === 'risk' && (
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Title *</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">Title *</label>
                     <input
                       type="text"
                       value={riskFormData.tittel}
                       onChange={(e) => setRiskFormData({ ...riskFormData, tittel: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Description *</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">Description *</label>
                     <textarea
                       value={riskFormData.beskrivelse}
                       onChange={(e) => setRiskFormData({ ...riskFormData, beskrivelse: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                       rows="4"
                       required
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Date *</label>
+                      <label className="block text-sm font-medium text-gray-900 mb-2">Date *</label>
                       <input
                         type="date"
                         value={riskFormData.dato}
                         onChange={(e) => setRiskFormData({ ...riskFormData, dato: e.target.value })}
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                        className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Severity *</label>
+                      <label className="block text-sm font-medium text-gray-900 mb-2">Severity *</label>
                       <select
                         value={riskFormData.alvorlighetsgrad}
                         onChange={(e) => setRiskFormData({ ...riskFormData, alvorlighetsgrad: e.target.value })}
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                        className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                         required
                       >
                         <option value="lav">Lav</option>
@@ -478,11 +478,11 @@ const HMS = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Status *</label>
+                      <label className="block text-sm font-medium text-gray-900 mb-2">Status *</label>
                       <select
                         value={riskFormData.status}
                         onChange={(e) => setRiskFormData({ ...riskFormData, status: e.target.value })}
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                        className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                         required
                       >
                         <option value="aktiv">Active</option>
@@ -490,12 +490,12 @@ const HMS = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Responsible</label>
+                      <label className="block text-sm font-medium text-gray-900 mb-2">Responsible</label>
                       <input
                         type="text"
                         value={riskFormData.ansvarlig}
                         onChange={(e) => setRiskFormData({ ...riskFormData, ansvarlig: e.target.value })}
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                        className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                       />
                     </div>
                   </div>
@@ -506,32 +506,32 @@ const HMS = () => {
               {modalType === 'incident' && (
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Description *</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">Description *</label>
                     <textarea
                       value={incidentFormData.beskrivelse}
                       onChange={(e) => setIncidentFormData({ ...incidentFormData, beskrivelse: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                       rows="4"
                       required
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Date *</label>
+                      <label className="block text-sm font-medium text-gray-900 mb-2">Date *</label>
                       <input
                         type="date"
                         value={incidentFormData.dato}
                         onChange={(e) => setIncidentFormData({ ...incidentFormData, dato: e.target.value })}
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                        className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Type *</label>
+                      <label className="block text-sm font-medium text-gray-900 mb-2">Type *</label>
                       <select
                         value={incidentFormData.type}
                         onChange={(e) => setIncidentFormData({ ...incidentFormData, type: e.target.value })}
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                        className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                         required
                       >
                         <option value="ulykke">Accident</option>
@@ -540,11 +540,11 @@ const HMS = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Status *</label>
+                      <label className="block text-sm font-medium text-gray-900 mb-2">Status *</label>
                       <select
                         value={incidentFormData.status}
                         onChange={(e) => setIncidentFormData({ ...incidentFormData, status: e.target.value })}
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                        className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                         required
                       >
                         <option value="åpen">Open</option>
@@ -553,11 +553,11 @@ const HMS = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Alvorlighetsgrad *</label>
+                      <label className="block text-sm font-medium text-gray-900 mb-2">Alvorlighetsgrad *</label>
                       <select
                         value={incidentFormData.alvorlighetsgrad}
                         onChange={(e) => setIncidentFormData({ ...incidentFormData, alvorlighetsgrad: e.target.value })}
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                        className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                         required
                       >
                         <option value="lav">Lav</option>
@@ -573,43 +573,43 @@ const HMS = () => {
               {modalType === 'training' && (
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Name *</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">Name *</label>
                     <input
                       type="text"
                       value={trainingFormData.navn}
                       onChange={(e) => setTrainingFormData({ ...trainingFormData, navn: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Description *</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">Description *</label>
                     <textarea
                       value={trainingFormData.beskrivelse}
                       onChange={(e) => setTrainingFormData({ ...trainingFormData, beskrivelse: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                       rows="3"
                       required
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Dato *</label>
+                      <label className="block text-sm font-medium text-gray-900 mb-2">Dato *</label>
                       <input
                         type="date"
                         value={trainingFormData.dato}
                         onChange={(e) => setTrainingFormData({ ...trainingFormData, dato: e.target.value })}
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                        className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Expires date</label>
+                      <label className="block text-sm font-medium text-gray-900 mb-2">Expires date</label>
                       <input
                         type="date"
                         value={trainingFormData.expires_at}
                         onChange={(e) => setTrainingFormData({ ...trainingFormData, expires_at: e.target.value })}
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                        className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                       />
                     </div>
                   </div>
@@ -620,43 +620,43 @@ const HMS = () => {
               {modalType === 'equipment' && (
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Navn *</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">Navn *</label>
                     <input
                       type="text"
                       value={equipmentFormData.navn}
                       onChange={(e) => setEquipmentFormData({ ...equipmentFormData, navn: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                       required
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Control date *</label>
+                      <label className="block text-sm font-medium text-gray-900 mb-2">Control date *</label>
                       <input
                         type="date"
                         value={equipmentFormData.control_date}
                         onChange={(e) => setEquipmentFormData({ ...equipmentFormData, control_date: e.target.value })}
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                        className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Next control *</label>
+                      <label className="block text-sm font-medium text-gray-900 mb-2">Next control *</label>
                       <input
                         type="date"
                         value={equipmentFormData.next_control}
                         onChange={(e) => setEquipmentFormData({ ...equipmentFormData, next_control: e.target.value })}
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                        className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                         required
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Status *</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">Status *</label>
                     <select
                       value={equipmentFormData.status}
                       onChange={(e) => setEquipmentFormData({ ...equipmentFormData, status: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-blue-500"
                       required
                     >
                       <option value="ok">OK</option>
@@ -671,7 +671,7 @@ const HMS = () => {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-700 rounded transition-colors"
                 >
                   Cancel
                 </button>
@@ -692,3 +692,7 @@ const HMS = () => {
 };
 
 export default HMS;
+
+
+
+
