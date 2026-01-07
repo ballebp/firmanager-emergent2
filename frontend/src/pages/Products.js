@@ -221,13 +221,13 @@ const Products = () => {
           <thead>
             <tr className="border-b border-gray-800">
               <th className="p-4 text-left w-10"></th>
-              <th className="p-4 text-left w-16">Bilde</th>
-              <th className="p-4 text-left">Produktnr</th>
-              <th className="p-4 text-left">Navn</th>
-              <th className="p-4 text-left">Kategori</th>
-              <th className="p-4 text-right">Pris</th>
-              <th className="p-4 text-right">Lagerbeholdning</th>
-              <th className="p-4 text-right">Handlinger</th>
+              <th className="p-4 text-left w-16">Image</th>
+              <th className="p-4 text-left">Product No</th>
+              <th className="p-4 text-left">Name</th>
+              <th className="p-4 text-left">Category</th>
+              <th className="p-4 text-right">Price</th>
+              <th className="p-4 text-right">Stock</th>
+              <th className="p-4 text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
