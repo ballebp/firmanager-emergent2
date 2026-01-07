@@ -302,18 +302,18 @@ const Results = () => {
   const companyRevenue = calculateCompanyRevenue();
 
   const tabs = [
-    { id: 'overview', label: 'Oversikt' },
-    { id: 'intern', label: 'Intern Resultater' },
-    { id: 'pa', label: 'PA Resultater' },
-    { id: 'revenue', label: 'Bedrift Inntjening' }
+    { id: 'overview', label: 'Overview' },
+    { id: 'intern', label: 'Internal Results' },
+    { id: 'pa', label: 'PA Results' },
+    { id: 'revenue', label: 'Company Revenue' }
   ];
 
   return (
     <div data-testid="results-page">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Resultater</h1>
+        <h1 className="text-3xl font-bold">Results</h1>
         <div>
-          <label className="text-sm text-gray-400 mr-2">Velg måned:</label>
+          <label className="text-sm text-gray-400 mr-2">Select month:</label>
           <input
             type="month"
             value={selectedMonth}

@@ -167,8 +167,8 @@ const Products = () => {
     <div data-testid="products-page">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold">Produktkatalog</h1>
-          <p className="text-sm text-gray-400 mt-1">{products.length} produkter</p>
+          <h1 className="text-3xl font-bold">Product Catalog</h1>
+          <p className="text-sm text-gray-400 mt-1">{products.length} products</p>
         </div>
         <div className="flex gap-3">
           {selectedProducts.size > 0 && (
