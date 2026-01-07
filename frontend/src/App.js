@@ -1,8 +1,10 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { LicenseProvider } from './contexts/LicenseContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
+import LicenseModal from './components/LicenseModal';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Customers from './pages/Customers';
@@ -18,26 +20,28 @@ import Settings from './pages/Settings';
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route
-            path="/*"
-            element={
-              <ProtectedRoute>
-                <Layout>
-                  <Routes>
-                    <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/customers" element={<Customers />} />
-                    <Route path="/invoicing" element={<Invoicing />} />
-                    <Route path="/internal" element={<Internal />} />
-                    <Route path="/routes" element={<RoutePlanner />} />
-                    <Route path="/hms" element={<HMS />} />
-                    <Route path="/products" element={<Products />} />
-                    <Route path="/results" element={<Results />} />
-                    <Route path="/economy" element={<Economy />} />
-                    <Route path="/settings" element={<Settings />} />
+      <LicenseProvider>
+        <BrowserRouter>
+          <LicenseModal />
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/*"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Routes>
+                      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/customers" element={<Customers />} />
+                      <Route path="/invoicing" element={<Invoicing />} />
+                      <Route path="/internal" element={<Internal />} />
+                      <Route path="/routes" element={<RoutePlanner />} />
+                      <Route path="/hms" element={<HMS />} />
+                      <Route path="/products" element={<Products />} />
+                      <Route path="/results" element={<Results />} />
+                      <Route path="/economy" element={<Economy />} />
+                      <Route path="/settings" element={<Settings />} />
                   </Routes>
                 </Layout>
               </ProtectedRoute>
@@ -45,6 +49,7 @@ function App() {
           />
         </Routes>
       </BrowserRouter>
+      </LicenseProvider>
     </AuthProvider>
   );
 }
