@@ -21,11 +21,12 @@ function createWindow() {
   });
 
   // Load the app
-  mainWindow.loadURL(
-    isDev
-      ? 'http://localhost:3000'
-      : `file://${path.join(__dirname, '../build/index.html')}`
-  );
+  if (isDev) {
+    mainWindow.loadURL('http://localhost:3000');
+  } else {
+    // Use loadFile for production - more reliable than file:// protocol
+    mainWindow.loadFile(path.join(__dirname, '../build/index.html'));
+  }
 
   // Open DevTools in development
   if (isDev) {
