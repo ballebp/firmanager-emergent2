@@ -352,7 +352,7 @@ const Results = () => {
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-green-400">{summary.total_revenue.toFixed(0)} kr</p>
-                  <p className="text-sm text-gray-400">Bedrift Inntjening</p>
+                  <p className="text-sm text-gray-400">Company Revenue</p>
                 </div>
               </div>
             </div>
@@ -363,7 +363,7 @@ const Results = () => {
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-blue-400">{summary.total_pa.toFixed(0)} kr</p>
-                  <p className="text-sm text-gray-400">PA Utbetaling</p>
+                  <p className="text-sm text-gray-400">PA Payment</p>
                 </div>
               </div>
             </div>
@@ -374,7 +374,7 @@ const Results = () => {
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-purple-400">{summary.total_intern.toFixed(0)} kr</p>
-                  <p className="text-sm text-gray-400">Intern Lønn</p>
+                  <p className="text-sm text-gray-400">Internal Salary</p>
                 </div>
               </div>
             </div>
@@ -401,7 +401,7 @@ const Results = () => {
                 Intern Resultater
               </h3>
               <p className="text-3xl font-bold text-purple-400">{summary.total_intern.toFixed(0)} kr</p>
-              <p className="text-sm text-gray-400 mt-2">{internResults.length} ansatte med internt arbeid</p>
+              <p className="text-sm text-gray-400 mt-2">{internResults.length} employees with internal work</p>
             </div>
             <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
               <h3 className="font-semibold mb-4 flex items-center gap-2">
@@ -409,7 +409,7 @@ const Results = () => {
                 PA Resultater
               </h3>
               <p className="text-3xl font-bold text-blue-400">{summary.total_pa.toFixed(0)} kr</p>
-              <p className="text-sm text-gray-400 mt-2">{paResults.length} ansatte med PA-utbetaling</p>
+              <p className="text-sm text-gray-400 mt-2">{paResults.length} employees with PA payment</p>
             </div>
             <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
               <h3 className="font-semibold mb-4 flex items-center gap-2">
@@ -417,7 +417,7 @@ const Results = () => {
                 Bedrift Inntjening
               </h3>
               <p className="text-3xl font-bold text-green-400">{summary.total_revenue.toFixed(0)} kr</p>
-              <p className="text-sm text-gray-400 mt-2">Basert på tjenester og leverandørsatser</p>
+              <p className="text-sm text-gray-400 mt-2">Based on services and supplier rates</p>
             </div>
           </div>
         </div>
@@ -434,10 +434,10 @@ const Results = () => {
               <table className="w-full">
                 <thead className="bg-gray-800">
                   <tr>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Ansatt</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-300">Intern Sats</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-300">Timer</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-300">Beløp</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Employee</th>
+                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-300">Internal Rate</th>
+                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-300">Hours</th>
+                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-300">Amount</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-800">

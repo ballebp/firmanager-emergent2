@@ -240,7 +240,7 @@ const Products = () => {
             ) : products.length === 0 ? (
               <tr>
                 <td colSpan="8" className="p-8 text-center text-gray-400">
-                  Ingen produkter funnet
+                  No products found
                 </td>
               </tr>
             ) : (
@@ -306,7 +306,7 @@ const Products = () => {
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 w-full max-w-lg">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">
-                {editingProduct ? 'Rediger produkt' : 'Nytt produkt'}
+                {editingProduct ? 'Edit Product' : 'New Product'}
               </h2>
               <button
                 onClick={() => { setShowModal(false); setEditingProduct(null); }}
@@ -317,7 +317,7 @@ const Products = () => {
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Produktnummer</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Product Number</label>
                 <input
                   type="text"
                   value={formData.produktnr}
@@ -327,7 +327,7 @@ const Products = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Navn</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Name</label>
                 <input
                   type="text"
                   value={formData.navn}
@@ -337,7 +337,7 @@ const Products = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Beskrivelse</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Description</label>
                 <textarea
                   value={formData.beskrivelse}
                   onChange={(e) => setFormData({ ...formData, beskrivelse: e.target.value })}
@@ -346,7 +346,7 @@ const Products = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Kategori</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Category</label>
                 <input
                   type="text"
                   value={formData.kategori}
@@ -357,14 +357,14 @@ const Products = () => {
               
               {/* Image section */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Produktbilde</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Product Image</label>
                 <div className="space-y-2">
                   {/* Image URL input */}
                   <input
                     type="text"
                     value={formData.image_url}
                     onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                    placeholder="Bilde-URL (f.eks. https://...)"
+                    placeholder="Image URL (e.g. https://...)"
                     className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
                   />
                   
@@ -373,7 +373,7 @@ const Products = () => {
                     <div className="flex items-center gap-2">
                       <label className="flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded cursor-pointer transition-colors">
                         <Upload size={16} />
-                        <span className="text-sm">{uploadingImage ? 'Laster opp...' : 'Last opp fil'}</span>
+                        <span className="text-sm">{uploadingImage ? 'Uploading...' : 'Upload file'}</span>
                         <input
                           type="file"
                           accept="image/*"
@@ -391,7 +391,7 @@ const Products = () => {
                     <div className="mt-2">
                       <img 
                         src={formData.image_url.startsWith('/api') ? `${process.env.REACT_APP_BACKEND_URL}${formData.image_url}` : formData.image_url}
-                        alt="Forhåndsvisning"
+                        alt="Preview"
                         className="w-24 h-24 object-cover rounded border border-gray-700"
                         onError={(e) => e.target.style.display = 'none'}
                       />
@@ -402,7 +402,7 @@ const Products = () => {
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Kundepris (kr)</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Customer Price (kr)</label>
                   <input
                     type="number"
                     value={formData.kundepris}
@@ -414,7 +414,7 @@ const Products = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">På lager</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">In Stock</label>
                   <input
                     type="number"
                     value={formData.pa_lager}
@@ -432,13 +432,13 @@ const Products = () => {
                   onClick={() => { setShowModal(false); setEditingProduct(null); }}
                   className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
                 >
-                  Avbryt
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded transition-colors"
                 >
-                  {editingProduct ? 'Oppdater' : 'Opprett'}
+                  {editingProduct ? 'Update' : 'Create'}
                 </button>
               </div>
             </form>
