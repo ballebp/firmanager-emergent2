@@ -52,6 +52,30 @@ class OrganizationCreate(BaseModel):
     name: str
     subscription_tier: str = "trial"
 
+# License Models
+class License(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    license_key: str
+    organization_id: str
+    subscription_tier: str = "trial"  # trial, free, pro, enterprise
+    status: str = "active"  # active, expired, cancelled, suspended
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    activated_at: Optional[datetime] = None
+    expires_at: Optional[datetime] = None
+    max_users: int = 1
+    features: dict = {}
+
+class LicenseCreate(BaseModel):
+    organization_id: str
+    subscription_tier: str = "trial"
+    max_users: int = 1
+    trial_days: int = 14
+
+class LicenseValidation(BaseModel):
+    license_key: str
+    organization_id: Optional[str] = None
+
 # User & Auth Models
 class User(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -508,6 +532,145 @@ async def login(credentials: UserLogin):
 @api_router.get("/auth/me", response_model=User)
 async def get_me(current_user: User = Depends(get_current_user)):
     return current_user
+
+# ==================== LICENSE ENDPOINTS ====================
+
+import secrets
+import hashlib
+
+def generate_license_key() -> str:
+    """Generate a unique license key"""
+    random_bytes = secrets.token_bytes(16)
+    key_hash = hashlib.sha256(random_bytes).hexdigest()[:24].upper()
+    # Format: XXXX-XXXX-XXXX-XXXX-XXXX-XXXX
+    formatted = '-'.join([key_hash[i:i+4] for i in range(0, 24, 4)])
+    return formatted
+
+@api_router.post("/licenses/generate")
+async def generate_license(license_data: LicenseCreate, current_user: User = Depends(get_current_user)):
+    """Generate a new license key (admin only)"""
+    # Only allow admins to generate licenses
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Only admins can generate licenses")
+    
+    license_key = generate_license_key()
+    
+    # Calculate expiration date
+    expires_at = None
+    if license_data.subscription_tier == "trial":
+        expires_at = datetime.now(timezone.utc) + timedelta(days=license_data.trial_days)
+    
+    # Feature sets based on tier
+    features = {
+        "trial": {"max_customers": 50, "max_routes": 20, "max_products": 100, "hms_enabled": True},
+        "free": {"max_customers": 10, "max_routes": 5, "max_products": 20, "hms_enabled": False},
+        "pro": {"max_customers": -1, "max_routes": -1, "max_products": -1, "hms_enabled": True},
+        "enterprise": {"max_customers": -1, "max_routes": -1, "max_products": -1, "hms_enabled": True, "multi_user": True}
+    }
+    
+    license = License(
+        license_key=license_key,
+        organization_id=license_data.organization_id,
+        subscription_tier=license_data.subscription_tier,
+        status="active",
+        expires_at=expires_at,
+        max_users=license_data.max_users,
+        features=features.get(license_data.subscription_tier, features["free"])
+    )
+    
+    doc = license.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    if doc.get('activated_at'):
+        doc['activated_at'] = doc['activated_at'].isoformat()
+    if doc.get('expires_at'):
+        doc['expires_at'] = doc['expires_at'].isoformat()
+    
+    await db.licenses.insert_one(doc)
+    return license
+
+@api_router.post("/licenses/validate")
+async def validate_license(validation: LicenseValidation):
+    """Validate a license key and return license details"""
+    license_doc = await db.licenses.find_one({"license_key": validation.license_key}, {"_id": 0})
+    
+    if not license_doc:
+        raise HTTPException(status_code=404, detail="License key not found")
+    
+    # Convert datetime fields
+    if isinstance(license_doc['created_at'], str):
+        license_doc['created_at'] = datetime.fromisoformat(license_doc['created_at'])
+    if license_doc.get('activated_at') and isinstance(license_doc['activated_at'], str):
+        license_doc['activated_at'] = datetime.fromisoformat(license_doc['activated_at'])
+    if license_doc.get('expires_at') and isinstance(license_doc['expires_at'], str):
+        license_doc['expires_at'] = datetime.fromisoformat(license_doc['expires_at'])
+    
+    license_obj = License(**license_doc)
+    
+    # Check if license is expired
+    if license_obj.expires_at and license_obj.expires_at < datetime.now(timezone.utc):
+        await db.licenses.update_one(
+            {"license_key": validation.license_key},
+            {"$set": {"status": "expired"}}
+        )
+        raise HTTPException(status_code=403, detail="License has expired")
+    
+    # Check status
+    if license_obj.status != "active":
+        raise HTTPException(status_code=403, detail=f"License is {license_obj.status}")
+    
+    # If organization_id provided, verify it matches
+    if validation.organization_id and license_obj.organization_id != validation.organization_id:
+        raise HTTPException(status_code=403, detail="License does not belong to this organization")
+    
+    # Activate license if first use
+    if not license_obj.activated_at:
+        activated_at = datetime.now(timezone.utc)
+        await db.licenses.update_one(
+            {"license_key": validation.license_key},
+            {"$set": {"activated_at": activated_at.isoformat()}}
+        )
+        license_obj.activated_at = activated_at
+    
+    return {
+        "valid": True,
+        "license": license_obj,
+        "days_remaining": (license_obj.expires_at - datetime.now(timezone.utc)).days if license_obj.expires_at else None
+    }
+
+@api_router.get("/licenses/check")
+async def check_license(current_user: User = Depends(get_current_user)):
+    """Check current organization's license status"""
+    license_doc = await db.licenses.find_one(
+        {"organization_id": current_user.organization_id, "status": "active"},
+        {"_id": 0}
+    )
+    
+    if not license_doc:
+        return {"valid": False, "message": "No active license found"}
+    
+    # Convert datetime fields
+    if isinstance(license_doc['created_at'], str):
+        license_doc['created_at'] = datetime.fromisoformat(license_doc['created_at'])
+    if license_doc.get('activated_at') and isinstance(license_doc['activated_at'], str):
+        license_doc['activated_at'] = datetime.fromisoformat(license_doc['activated_at'])
+    if license_doc.get('expires_at') and isinstance(license_doc['expires_at'], str):
+        license_doc['expires_at'] = datetime.fromisoformat(license_doc['expires_at'])
+    
+    license_obj = License(**license_doc)
+    
+    # Check expiration
+    if license_obj.expires_at and license_obj.expires_at < datetime.now(timezone.utc):
+        await db.licenses.update_one(
+            {"license_key": license_obj.license_key},
+            {"$set": {"status": "expired"}}
+        )
+        return {"valid": False, "message": "License has expired"}
+    
+    return {
+        "valid": True,
+        "license": license_obj,
+        "days_remaining": (license_obj.expires_at - datetime.now(timezone.utc)).days if license_obj.expires_at else None
+    }
 
 # ==================== CUSTOMER ENDPOINTS ====================
 
