@@ -475,19 +475,19 @@ const Results = () => {
       {activeTab === 'pa' && (
         <div>
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
-            <h2 className="text-xl font-semibold mb-4">PA Resultater - Provisjon/Andel</h2>
-            <p className="text-sm text-gray-400 mb-4">Utbetaling basert på alle ansatt-satser (PA service, montering, time, kjøre, km)</p>
+            <h2 className="text-xl font-semibold mb-4">PA Results - Commission/Share</h2>
+            <p className="text-sm text-gray-400 mb-4">Payment based on all employee rates (PA service, installation, hourly, driving, km)</p>
             
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="bg-gray-800">
                   <tr>
-                    <th className="px-3 py-3 text-left font-medium text-gray-300">Ansatt</th>
+                    <th className="px-3 py-3 text-left font-medium text-gray-300">Employee</th>
                     <th className="px-3 py-3 text-right font-medium text-gray-300">Service</th>
-                    <th className="px-3 py-3 text-right font-medium text-gray-300">Montering</th>
-                    <th className="px-3 py-3 text-right font-medium text-gray-300">Ekstra (timer)</th>
-                    <th className="px-3 py-3 text-right font-medium text-gray-300">Kjøretid</th>
-                    <th className="px-3 py-3 text-right font-medium text-gray-300">Kilometer</th>
+                    <th className="px-3 py-3 text-right font-medium text-gray-300">Installation</th>
+                    <th className="px-3 py-3 text-right font-medium text-gray-300">Extra (hours)</th>
+                    <th className="px-3 py-3 text-right font-medium text-gray-300">Driving</th>
+                    <th className="px-3 py-3 text-right font-medium text-gray-300">Kilometers</th>
                     <th className="px-3 py-3 text-right font-medium text-gray-300">TOTAL</th>
                   </tr>
                 </thead>
@@ -549,56 +549,56 @@ const Results = () => {
         <div className="space-y-6">
           {/* Service-based revenue */}
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
-            <h2 className="text-xl font-semibold mb-4">Tjenester (Satsbasert)</h2>
-            <p className="text-sm text-gray-400 mb-4">Inntjening basert på faste tjenestesatser (Service, Montering, Ekstra)</p>
+            <h2 className="text-xl font-semibold mb-4">Services (Rate-based)</h2>
+            <p className="text-sm text-gray-400 mb-4">Revenue based on fixed service rates (Service, Installation, Extra)</p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-gray-800 rounded p-4">
                 <h3 className="font-medium text-lg mb-2">Service</h3>
                 <p className="text-2xl font-bold text-green-400">{companyRevenue.service_revenue.amount.toFixed(0)} kr</p>
-                <p className="text-xs text-gray-400 mt-1">{companyRevenue.service_revenue.count} stk utført</p>
+                <p className="text-xs text-gray-400 mt-1">{companyRevenue.service_revenue.count} pcs performed</p>
               </div>
               <div className="bg-gray-800 rounded p-4">
-                <h3 className="font-medium text-lg mb-2">Montering</h3>
+                <h3 className="font-medium text-lg mb-2">Installation</h3>
                 <p className="text-2xl font-bold text-green-400">{companyRevenue.montering_revenue.amount.toFixed(0)} kr</p>
-                <p className="text-xs text-gray-400 mt-1">{companyRevenue.montering_revenue.count} stk utført</p>
+                <p className="text-xs text-gray-400 mt-1">{companyRevenue.montering_revenue.count} pcs performed</p>
               </div>
               <div className="bg-gray-800 rounded p-4">
-                <h3 className="font-medium text-lg mb-2">Ekstra arbeid</h3>
+                <h3 className="font-medium text-lg mb-2">Extra work</h3>
                 <p className="text-2xl font-bold text-green-400">{companyRevenue.ekstra_revenue.amount.toFixed(0)} kr</p>
-                <p className="text-xs text-gray-400 mt-1">{companyRevenue.ekstra_revenue.count} stk utført</p>
+                <p className="text-xs text-gray-400 mt-1">{companyRevenue.ekstra_revenue.count} pcs performed</p>
               </div>
             </div>
             <div className="mt-4 pt-4 border-t border-gray-700 flex justify-between">
-              <span className="font-semibold">Sum satsbasert:</span>
+              <span className="font-semibold">Rate-based sum:</span>
               <span className="font-bold text-green-400">{companyRevenue.total_service_based.toFixed(0)} kr</span>
             </div>
           </div>
 
           {/* Time-based revenue (Produsent satser) */}
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
-            <h2 className="text-xl font-semibold mb-4">Produsent Satser (Time/KM-basert)</h2>
-            <p className="text-sm text-gray-400 mb-4">Inntjening basert på produsent timesatser og km-sats per tjeneste</p>
+            <h2 className="text-xl font-semibold mb-4">Supplier Rates (Time/KM-based)</h2>
+            <p className="text-sm text-gray-400 mb-4">Revenue based on supplier hourly rates and km-rate per service</p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-gray-800 rounded p-4">
-                <h3 className="font-medium text-lg mb-2">Arbeidstid</h3>
+                <h3 className="font-medium text-lg mb-2">Work time</h3>
                 <p className="text-2xl font-bold text-yellow-400">{companyRevenue.arbeidstid_revenue.amount.toFixed(0)} kr</p>
-                <p className="text-xs text-gray-400 mt-1">{companyRevenue.arbeidstid_revenue.hours.toFixed(1)} timer totalt</p>
+                <p className="text-xs text-gray-400 mt-1">{companyRevenue.arbeidstid_revenue.hours.toFixed(1)} hours total</p>
               </div>
               <div className="bg-gray-800 rounded p-4">
-                <h3 className="font-medium text-lg mb-2">Kjøretid</h3>
+                <h3 className="font-medium text-lg mb-2">Driving time</h3>
                 <p className="text-2xl font-bold text-yellow-400">{companyRevenue.kjoretid_revenue.amount.toFixed(0)} kr</p>
-                <p className="text-xs text-gray-400 mt-1">{companyRevenue.kjoretid_revenue.hours.toFixed(1)} timer totalt</p>
+                <p className="text-xs text-gray-400 mt-1">{companyRevenue.kjoretid_revenue.hours.toFixed(1)} hours total</p>
               </div>
               <div className="bg-gray-800 rounded p-4">
-                <h3 className="font-medium text-lg mb-2">Kilometer</h3>
+                <h3 className="font-medium text-lg mb-2">Kilometers</h3>
                 <p className="text-2xl font-bold text-yellow-400">{companyRevenue.km_revenue.amount.toFixed(0)} kr</p>
-                <p className="text-xs text-gray-400 mt-1">{companyRevenue.km_revenue.km.toFixed(0)} km totalt</p>
+                <p className="text-xs text-gray-400 mt-1">{companyRevenue.km_revenue.km.toFixed(0)} km total</p>
               </div>
             </div>
             <div className="mt-4 pt-4 border-t border-gray-700 flex justify-between">
-              <span className="font-semibold">Sum timebasert:</span>
+              <span className="font-semibold">Time-based sum:</span>
               <span className="font-bold text-yellow-400">{companyRevenue.total_time_based.toFixed(0)} kr</span>
             </div>
           </div>
@@ -606,17 +606,17 @@ const Results = () => {
           {/* Breakdown by Produsent */}
           {Object.keys(companyRevenue.by_produsent).length > 0 && (
             <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
-              <h2 className="text-xl font-semibold mb-4">Fordelt per Produsent</h2>
-              <p className="text-sm text-gray-400 mb-4">Detaljert inntjening per produsent (time/km-basert)</p>
+              <h2 className="text-xl font-semibold mb-4">Breakdown per Supplier</h2>
+              <p className="text-sm text-gray-400 mb-4">Detailed revenue per supplier (time/km-based)</p>
               
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-800">
                     <tr>
-                      <th className="px-4 py-3 text-left font-medium text-gray-300">Produsent</th>
-                      <th className="px-4 py-3 text-right font-medium text-gray-300">Arbeidstid</th>
-                      <th className="px-4 py-3 text-right font-medium text-gray-300">Kjøretid</th>
-                      <th className="px-4 py-3 text-right font-medium text-gray-300">Kilometer</th>
+                      <th className="px-4 py-3 text-left font-medium text-gray-300">Supplier</th>
+                      <th className="px-4 py-3 text-right font-medium text-gray-300">Work time</th>
+                      <th className="px-4 py-3 text-right font-medium text-gray-300">Driving time</th>
+                      <th className="px-4 py-3 text-right font-medium text-gray-300">Kilometers</th>
                       <th className="px-4 py-3 text-right font-medium text-gray-300">TOTAL</th>
                     </tr>
                   </thead>
@@ -651,8 +651,8 @@ const Results = () => {
           <div className="bg-green-900/30 border border-green-700 rounded-lg p-6">
             <div className="flex justify-between items-center">
               <div>
-                <h2 className="text-xl font-semibold">Total Bedrift Inntjening</h2>
-                <p className="text-sm text-gray-400">Tjenester + Produsent satser</p>
+                <h2 className="text-xl font-semibold">Total Company Revenue</h2>
+                <p className="text-sm text-gray-400">Services + Supplier rates</p>
               </div>
               <p className="text-3xl font-bold text-green-400">{companyRevenue.total_revenue.toFixed(0)} kr</p>
             </div>
@@ -662,12 +662,12 @@ const Results = () => {
 
       {/* Explanation */}
       <div className="mt-6 bg-blue-900/20 border border-blue-800 rounded-lg p-4">
-        <h3 className="text-sm font-semibold text-blue-400 mb-2">Forklaring:</h3>
+        <h3 className="text-sm font-semibold text-blue-400 mb-2">Explanation:</h3>
         <ul className="text-sm text-gray-300 space-y-1">
-          <li><strong>Intern Resultater:</strong> Lønn for internt arbeid (intern timesats × timer)</li>
-          <li><strong>PA Resultater:</strong> Alle ansatt-satser (PA service, montering, time, kjøre, km)</li>
-          <li><strong>Bedrift Inntjening:</strong> Fakturerbar inntekt fra tjenester og produsent-satser per tjeneste</li>
-          <li><strong>Resultat:</strong> Bedrift Inntjening - PA - Intern = Bedriftens overskudd</li>
+          <li><strong>Internal Results:</strong> Salary for internal work (internal hourly rate × hours)</li>
+          <li><strong>PA Results:</strong> All employee rates (PA service, installation, hourly, driving, km)</li>
+          <li><strong>Company Revenue:</strong> Billable income from services and supplier rates per service</li>
+          <li><strong>Result:</strong> Company Revenue - PA - Internal = Company profit</li>
         </ul>
       </div>
     </div>
