@@ -72,13 +72,13 @@ const Products = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Er du sikker på at du vil slette dette produktet?')) {
+    if (window.confirm('Are you sure you want to delete this product?')) {
       try {
         await deleteProduct(id);
         loadProducts();
       } catch (error) {
         console.error('Failed to delete product:', error);
-        alert('Kunne ikke slette produkt');
+        alert('Could not save product');
       }
     }
   };

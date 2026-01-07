@@ -36,7 +36,7 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return <div className="text-gray-400">Laster...</div>;
+    return <div className="text-gray-400">Loading...</div>;
   }
 
   // Calculate this month's stats
@@ -66,32 +66,32 @@ const Dashboard = () => {
 
   const statCards = [
     {
-      title: 'Totalt kunder',
+      title: 'Total Customers',
       value: stats?.total_customers || customers.length,
       icon: Users,
       color: 'bg-blue-600',
-      sub: `${services.length} tjenester`
+      sub: `${services.length} services`
     },
     {
-      title: 'Ansatte',
+      title: 'Employees',
       value: employees.length,
       icon: Users,
       color: 'bg-indigo-600',
-      sub: 'Aktive medarbeidere'
+      sub: 'Active employees'
     },
     {
-      title: 'Denne måned',
+      title: 'This Month',
       value: completedThisMonth,
       icon: CheckCircle,
       color: 'bg-green-600',
-      sub: `${pendingThisMonth} planlagt`
+      sub: `${pendingThisMonth} planned`
     },
     {
-      title: 'Produkter',
+      title: 'Products',
       value: stats?.total_products || 0,
       icon: Package,
       color: 'bg-purple-600',
-      sub: 'I katalog'
+      sub: 'In catalog'
     }
   ];
 
@@ -100,10 +100,10 @@ const Dashboard = () => {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-gray-400 mt-1">Velkommen til Firmanager</p>
+          <p className="text-gray-400 mt-1">Welcome to Firmanager</p>
         </div>
         <div className="text-right">
-          <p className="text-sm text-gray-400">Dagens dato</p>
+          <p className="text-sm text-gray-400">Today's Date</p>
           <p className="text-lg font-semibold">{new Date().toLocaleDateString('no-NO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
         </div>
       </div>
@@ -136,28 +136,28 @@ const Dashboard = () => {
         <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <Calendar size={20} className="text-blue-400" />
-            Månedsoppsummering
+            Monthly Summary
           </h2>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">Arbeidsordre</span>
+              <span className="text-gray-400">Work Orders</span>
               <span className="font-bold">{thisMonthOrders.length}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">Fullført</span>
+              <span className="text-gray-400">Completed</span>
               <span className="font-bold text-green-400">{completedThisMonth}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">Planlagt</span>
+              <span className="text-gray-400">Planned</span>
               <span className="font-bold text-yellow-400">{pendingThisMonth}</span>
             </div>
             <div className="border-t border-gray-800 pt-3 mt-3">
               <div className="flex justify-between items-center">
-                <span className="text-gray-400">Totalt timer</span>
-                <span className="font-bold">{totalHours.toFixed(1)} t</span>
+                <span className="text-gray-400">Total Hours</span>
+                <span className="font-bold">{totalHours.toFixed(1)} h</span>
               </div>
               <div className="flex justify-between items-center mt-2">
-                <span className="text-gray-400">Kjørte km</span>
+                <span className="text-gray-400">Driven km</span>
                 <span className="font-bold">{totalKm.toFixed(0)} km</span>
               </div>
             </div>
@@ -167,7 +167,7 @@ const Dashboard = () => {
         <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <Clock size={20} className="text-yellow-400" />
-            Kommende oppgaver
+            Upcoming Tasks
           </h2>
           {upcomingOrders.length > 0 ? (
             <div className="space-y-3">
@@ -184,14 +184,14 @@ const Dashboard = () => {
               ))}
             </div>
           ) : (
-            <p className="text-gray-400 text-sm">Ingen kommende oppgaver</p>
+            <p className="text-gray-400 text-sm">No upcoming tasks</p>
           )}
         </div>
 
         <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <FileText size={20} className="text-green-400" />
-            Siste aktivitet
+            Recent Activity
           </h2>
           {recentOrders.length > 0 ? (
             <div className="space-y-3">
@@ -209,7 +209,7 @@ const Dashboard = () => {
               ))}
             </div>
           ) : (
-            <p className="text-gray-400 text-sm">Ingen nylig aktivitet</p>
+            <p className="text-gray-400 text-sm">No recent activity</p>
           )}
         </div>
       </div>
@@ -217,14 +217,14 @@ const Dashboard = () => {
       {/* Work Order Stats by Type */}
       {stats?.stats_by_type && Object.keys(stats.stats_by_type).length > 0 && (
         <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Arbeidsordre per type</h2>
+          <h2 className="text-xl font-semibold mb-4">Work Orders by Type</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {Object.entries(stats.stats_by_type).map(([type, data]) => (
               <div key={type} className="bg-gray-800 rounded p-4">
                 <h3 className="font-medium text-lg capitalize mb-2">{type}</h3>
                 <div className="space-y-1 text-sm">
-                  <p className="text-gray-400">Antall: <span className="text-white font-bold">{data.count}</span></p>
-                  <p className="text-gray-400">Timer: <span className="text-white">{data.total_hours.toFixed(1)}</span></p>
+                  <p className="text-gray-400">Count: <span className="text-white font-bold">{data.count}</span></p>
+                  <p className="text-gray-400">Hours: <span className="text-white">{data.total_hours.toFixed(1)}</span></p>
                   <p className="text-gray-400">Km: <span className="text-white">{data.total_km.toFixed(0)}</span></p>
                 </div>
               </div>
@@ -237,19 +237,19 @@ const Dashboard = () => {
       <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
         <a href="/customers" className="bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-center transition-colors">
           <Users size={32} className="mx-auto mb-2 text-blue-400" />
-          <p className="font-medium">Kunder</p>
+          <p className="font-medium">Customers</p>
         </a>
         <a href="/invoicing" className="bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-center transition-colors">
           <FileText size={32} className="mx-auto mb-2 text-green-400" />
-          <p className="font-medium">Fakturagrunnlag</p>
+          <p className="font-medium">Invoicing</p>
         </a>
         <a href="/routes" className="bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-center transition-colors">
           <MapPin size={32} className="mx-auto mb-2 text-yellow-400" />
-          <p className="font-medium">Ruteplanlegger</p>
+          <p className="font-medium">Route Planner</p>
         </a>
         <a href="/results" className="bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-center transition-colors">
           <TrendingUp size={32} className="mx-auto mb-2 text-purple-400" />
-          <p className="font-medium">Resultater</p>
+          <p className="font-medium">Results</p>
         </a>
       </div>
     </div>

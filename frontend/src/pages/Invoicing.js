@@ -75,7 +75,7 @@ const Invoicing = () => {
     e.preventDefault();
     
     if (!formData.customer_id) {
-      alert('Finner ikke kunde med dette anleggsnummeret');
+      alert('Cannot find customer with this facility number');
       return;
     }
 
@@ -115,7 +115,7 @@ const Invoicing = () => {
       loadData();
     } catch (error) {
       console.error('Failed to save work order:', error);
-      alert('Kunne ikke lagre arbeidsordre');
+      alert('Could not save work order');
     }
   };
 
@@ -137,13 +137,13 @@ const Invoicing = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Er du sikker på at du vil slette denne arbeidsordren?')) {
+    if (window.confirm('Are you sure you want to delete this work order?')) {
       try {
         await deleteWorkOrder(id);
         loadData();
       } catch (error) {
         console.error('Failed to delete work order:', error);
-        alert('Kunne ikke slette arbeidsordre');
+        alert('Could not delete work order');
       }
     }
   };
@@ -151,7 +151,7 @@ const Invoicing = () => {
   const handleDeleteSelected = async () => {
     if (selectedOrders.size === 0) return;
     
-    if (window.confirm(`Er du sikker på at du vil slette ${selectedOrders.size} valgte arbeidsordre?`)) {
+    if (window.confirm(`Are you sure you want to delete ${selectedOrders.size} selected work orders?`)) {
       try {
         const deletePromises = Array.from(selectedOrders).map(id => deleteWorkOrder(id));
         await Promise.all(deletePromises);
@@ -159,7 +159,7 @@ const Invoicing = () => {
         loadData();
       } catch (error) {
         console.error('Failed to delete work orders:', error);
-        alert('Kunne ikke slette alle arbeidsordre');
+        alert('Could not delete all work orders');
       }
     }
   };
@@ -226,8 +226,8 @@ const Invoicing = () => {
     <div data-testid="invoicing-page">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold">Fakturagrunnlag</h1>
-          <p className="text-sm text-gray-400 mt-1">{workOrders.length} arbeidsordre</p>
+          <h1 className="text-3xl font-bold">Invoice Basis</h1>
+          <p className="text-sm text-gray-400 mt-1">{workOrders.length} work orders</p>
         </div>
         <div className="flex gap-3">
           {selectedOrders.size > 0 && (
@@ -237,7 +237,7 @@ const Invoicing = () => {
               className="flex items-center gap-2 px-4 py-2 bg-red-700 hover:bg-red-600 rounded transition-colors"
             >
               <Trash2 size={20} />
-              Slett valgte ({selectedOrders.size})
+              Delete selected ({selectedOrders.size})
             </button>
           )}
           <button
@@ -261,10 +261,10 @@ const Invoicing = () => {
             data-testid="filter-ordertype"
             className="px-3 py-2 bg-gray-900 border border-gray-800 rounded text-white focus:outline-none focus:border-blue-500"
           >
-            <option value="">Alle typer</option>
+            <option value="">All types</option>
             <option value="service">Service</option>
-            <option value="ekstra">Ekstra</option>
-            <option value="montering">Montering</option>
+            <option value="ekstra">Extra</option>
+            <option value="montering">Installation</option>
           </select>
         </div>
         {workOrders.length > 0 && (
@@ -277,7 +277,7 @@ const Invoicing = () => {
             ) : (
               <Square size={18} />
             )}
-            Velg alle
+            Select all
           </button>
         )}
       </div>
@@ -289,24 +289,24 @@ const Invoicing = () => {
             <thead className="bg-gray-800">
               <tr>
                 <th className="px-4 py-3 text-left w-10"></th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Dato</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Kunde</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Ansatt</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Date</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Customer</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Employee</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Type</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Arbeidstid</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Kjøretid</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Work hours</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Drive time</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Km</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Handlinger</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800">
               {loading ? (
                 <tr>
-                  <td colSpan="9" className="px-4 py-8 text-center text-gray-400">Laster...</td>
+                  <td colSpan="9" className="px-4 py-8 text-center text-gray-400">Loading...</td>
                 </tr>
               ) : workOrders.length === 0 ? (
                 <tr>
-                  <td colSpan="9" className="px-4 py-8 text-center text-gray-400">Ingen arbeidsordre funnet</td>
+                  <td colSpan="9" className="px-4 py-8 text-center text-gray-400">No work orders found</td>
                 </tr>
               ) : (
                 workOrders.map((order) => (
@@ -358,18 +358,18 @@ const Invoicing = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 overflow-y-auto">
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 w-full max-w-2xl my-8 max-h-[90vh] overflow-y-auto">
             <h2 className="text-2xl font-bold mb-6">
-              {editingOrder ? 'Rediger arbeidsordre' : 'Registrer arbeidsordre'}
+              {editingOrder ? 'Edit work order' : 'Register work order'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Anleggsnr *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Facility no *</label>
                   <input
                     type="text"
                     value={formData.anleggsnr}
                     onChange={(e) => handleAnleggsnrChange(e.target.value)}
                     data-testid="workorder-anleggsnr-input"
-                    placeholder="Skriv anleggsnummer"
+                    placeholder="Enter facility number"
                     className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
                     required
                   />
@@ -382,13 +382,13 @@ const Invoicing = () => {
                         <div className="mt-2 p-3 bg-blue-900/20 border border-blue-800 rounded">
                           <div className="flex items-center gap-2 text-blue-400 text-sm mb-2">
                             <Info size={16} />
-                            <span className="font-medium">Tjeneste: {servicePricing.tjeneste_navn}</span>
+                            <span className="font-medium">Service: {servicePricing.tjeneste_navn}</span>
                           </div>
                           <div className="grid grid-cols-2 gap-2 text-xs text-gray-300">
-                            <div>Fast pris: <span className="text-green-400 font-semibold">{servicePricing.pris} kr</span></div>
-                            <div>Ekstraservice: {servicePricing.t1_ekstraservice} kr/t</div>
-                            <div>Kjøretid: {servicePricing.t5_kjoretid} kr/t</div>
-                            <div>Km godtgjørelse: {servicePricing.t6_km_godtgjorelse} kr/km</div>
+                            <div>Fixed price: <span className="text-green-400 font-semibold">{servicePricing.pris} kr</span></div>
+                            <div>Extra service: {servicePricing.t1_ekstraservice} kr/h</div>
+                            <div>Driving time: {servicePricing.t5_kjoretid} kr/h</div>
+                            <div>Km compensation: {servicePricing.t6_km_godtgjorelse} kr/km</div>
                           </div>
                         </div>
                       )}
@@ -396,12 +396,12 @@ const Invoicing = () => {
                   )}
                   {formData.anleggsnr && !getCurrentCustomer() && (
                     <p className="text-sm text-red-400 mt-1">
-                      ✗ Finner ikke kunde
+                      ✗ Cannot find customer
                     </p>
                   )}
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Ansatt *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Employee *</label>
                   <select
                     value={formData.employee_id}
                     onChange={(e) => setFormData({ ...formData, employee_id: e.target.value })}
@@ -409,14 +409,14 @@ const Invoicing = () => {
                     className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
                     required
                   >
-                    <option value="">Velg ansatt</option>
+                    <option value="">Select employee</option>
                     {employees.map(e => (
                       <option key={e.id} value={e.id}>{e.navn}</option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Dato *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Date *</label>
                   <input
                     type="date"
                     value={formData.date}
@@ -435,12 +435,12 @@ const Invoicing = () => {
                     required
                   >
                     <option value="service">Service</option>
-                    <option value="ekstra">Ekstra</option>
-                    <option value="montering">Montering</option>
+                    <option value="ekstra">Extra</option>
+                    <option value="montering">Installation</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Arbeidstid (timer)</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Work hours (hours)</label>
                   <input
                     type="number"
                     step="0.5"
@@ -450,7 +450,7 @@ const Invoicing = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Kjøretid (timer)</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Driving time (hours)</label>
                   <input
                     type="number"
                     step="0.5"
@@ -460,7 +460,7 @@ const Invoicing = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Kjørte km</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Driven km</label>
                   <input
                     type="number"
                     step="0.1"
@@ -470,7 +470,7 @@ const Invoicing = () => {
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Beskrivelse</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -488,7 +488,7 @@ const Invoicing = () => {
                     data-testid="cancel-workorder-button"
                     className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
                   >
-                    Avbryt
+                    Cancel
                   </button>
                 )}
                 {!editingOrder && (
@@ -497,7 +497,7 @@ const Invoicing = () => {
                     onClick={closeModal}
                     className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
                   >
-                    Lukk
+                    Close
                   </button>
                 )}
                 <button
@@ -505,7 +505,7 @@ const Invoicing = () => {
                   data-testid="save-workorder-button"
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded transition-colors"
                 >
-                  {editingOrder ? 'Oppdater' : 'Opprett'}
+                  {editingOrder ? 'Update' : 'Create'}
                 </button>
               </div>
             </form>

@@ -115,7 +115,7 @@ const Economy = () => {
       loadData();
     } catch (error) {
       console.error('Failed to save employee:', error);
-      alert('Kunne ikke lagre ansatt');
+      alert('Could not save employee');
     }
   };
 
@@ -139,13 +139,13 @@ const Economy = () => {
   };
 
   const handleDeleteEmployee = async (id) => {
-    if (window.confirm('Er du sikker på at du vil slette denne ansatte?')) {
+    if (window.confirm('Are you sure you want to delete this employee?')) {
       try {
         await deleteEmployee(id);
         loadData();
       } catch (error) {
         console.error('Failed to delete employee:', error);
-        alert('Kunne ikke slette ansatt');
+        alert('Could not delete employee');
       }
     }
   };
@@ -192,7 +192,7 @@ const Economy = () => {
       loadData();
     } catch (error) {
       console.error('Failed to save service:', error);
-      alert('Kunne ikke lagre tjeneste');
+      alert('Could not save service');
     }
   };
 
@@ -216,13 +216,13 @@ const Economy = () => {
   };
 
   const handleDeleteService = async (id) => {
-    if (window.confirm('Er du sikker på at du vil slette denne tjenesten?')) {
+    if (window.confirm('Are you sure you want to delete this service?')) {
       try {
         await deleteService(id);
         loadData();
       } catch (error) {
         console.error('Failed to delete service:', error);
-        alert('Kunne ikke slette tjeneste');
+        alert('Could not delete service');
       }
     }
   };
@@ -232,7 +232,7 @@ const Economy = () => {
     if (!file) return;
 
     if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
-      alert('Vennligst velg en Excel-fil (.xlsx eller .xls)');
+      alert('Please select an Excel file (.xlsx or .xls)');
       return;
     }
 
@@ -258,11 +258,11 @@ const Economy = () => {
       }
 
       const result = await response.json();
-      alert(`Import fullført! ${result.imported_count} tjenester importert.`);
+      alert(`Import completed! ${result.imported_count} services imported.`);
       loadData();
     } catch (error) {
       console.error('Service import failed:', error);
-      alert(`Kunne ikke importere tjenester.\nFeil: ${error.message}\n\nForventet kolonner i Excel:\n- tjenestenr\n- tjeneste navn\n- Leverandør pris`);
+      alert(`Could not import services.\nError: ${error.message}\n\nExpected columns in Excel:\n- tjenestenr\n- tjeneste navn\n- Leverand\u00f8r pris`);
     } finally {
       setImporting(false);
       e.target.value = '';
@@ -307,7 +307,7 @@ const Economy = () => {
       loadData();
     } catch (error) {
       console.error('Failed to save pricing:', error);
-      alert('Kunne ikke lagre priser');
+      alert('Could not save pricing');
     }
   };
 
@@ -323,13 +323,13 @@ const Economy = () => {
   };
 
   const handleDeletePricing = async (id) => {
-    if (window.confirm('Er du sikker på at du vil slette denne produsenten?')) {
+    if (window.confirm('Are you sure you want to delete this supplier?')) {
       try {
         await deleteSupplierPricing(id);
         loadData();
       } catch (error) {
         console.error('Failed to delete pricing:', error);
-        alert('Kunne ikke slette produsent');
+        alert('Could not delete supplier');
       }
     }
   };
@@ -344,18 +344,18 @@ const Economy = () => {
   };
 
   const tabs = [
-    { id: 'employees', label: 'Roller' },
-    { id: 'services', label: 'Tjenester' },
-    { id: 'pricing', label: 'Produsent' }
+    { id: 'employees', label: 'Roles' },
+    { id: 'services', label: 'Services' },
+    { id: 'pricing', label: 'Supplier' }
   ];
 
   if (loading) {
-    return <div className="text-gray-400">Laster...</div>;
+    return <div className="text-gray-400">Loading...</div>;
   }
 
   return (
     <div data-testid="economy-page">
-      <h1 className="text-3xl font-bold mb-6">Økonomi</h1>
+      <h1 className="text-3xl font-bold mb-6">Economy</h1>
 
       <div className="flex gap-2 mb-6 border-b border-gray-800">
         {tabs.map(tab => (
@@ -377,14 +377,14 @@ const Economy = () => {
       {activeTab === 'employees' && (
         <div>
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold">Ansatte og roller</h2>
+            <h2 className="text-xl font-semibold">Employees and Roles</h2>
             <button
               onClick={() => { resetEmployeeForm(); setShowEmployeeModal(true); }}
               data-testid="add-employee-button"
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded transition-colors"
             >
               <Plus size={20} />
-              Ny ansatt
+              New Employee
             </button>
           </div>
           <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
@@ -392,12 +392,12 @@ const Economy = () => {
               <table className="w-full">
                 <thead className="bg-gray-800">
                   <tr>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Initialer</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Navn</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Stilling</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Intern sats</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Faktura sats</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Handlinger</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Initials</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Name</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Position</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Internal Rate</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Invoice Rate</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-800">
@@ -438,7 +438,7 @@ const Economy = () => {
       {activeTab === 'services' && (
         <div>
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold">Tjenester</h2>
+            <h2 className="text-xl font-semibold">Services</h2>
             <div className="flex gap-3">
               <input
                 type="file"
@@ -454,7 +454,7 @@ const Economy = () => {
                 className="flex items-center gap-2 px-4 py-2 bg-green-700 hover:bg-green-600 rounded transition-colors disabled:opacity-50"
               >
                 <Upload size={20} />
-                {importing ? 'Importerer...' : 'Importer Excel'}
+                {importing ? 'Importing...' : 'Import Excel'}
               </button>
               <button
                 onClick={() => { resetServiceForm(); setShowServiceModal(true); }}
@@ -462,7 +462,7 @@ const Economy = () => {
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded transition-colors"
               >
                 <Plus size={20} />
-                Ny tjeneste
+                New service
               </button>
             </div>
           </div>
@@ -472,7 +472,7 @@ const Economy = () => {
                 <div className="flex justify-between items-start mb-2">
                   <div>
                     <h3 className="font-semibold text-lg">{service.tjeneste_navn}</h3>
-                    <p className="text-sm text-gray-400">Tjenestenr: {service.tjenestenr}</p>
+                    <p className="text-sm text-gray-400">Service no: {service.tjenestenr}</p>
                     {service.beskrivelse && <p className="text-sm text-gray-400 mt-1">{service.beskrivelse}</p>}
                   </div>
                   <div className="flex gap-2">
@@ -492,19 +492,19 @@ const Economy = () => {
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
                   <div className="bg-gray-800 rounded p-2">
-                    <p className="text-xs text-gray-400">Fast pris</p>
+                    <p className="text-xs text-gray-400">Fixed price</p>
                     <p className="font-semibold text-green-400">{service.pris} kr</p>
                   </div>
                   <div className="bg-gray-800 rounded p-2">
-                    <p className="text-xs text-gray-400">Ekstraservice</p>
-                    <p className="font-semibold">{service.t1_ekstraservice} kr/t</p>
+                    <p className="text-xs text-gray-400">Extra service</p>
+                    <p className="font-semibold">{service.t1_ekstraservice} kr/h</p>
                   </div>
                   <div className="bg-gray-800 rounded p-2">
-                    <p className="text-xs text-gray-400">Kjøretid</p>
-                    <p className="font-semibold">{service.t5_kjoretid} kr/t</p>
+                    <p className="text-xs text-gray-400">Driving time</p>
+                    <p className="font-semibold">{service.t5_kjoretid} kr/h</p>
                   </div>
                   <div className="bg-gray-800 rounded p-2">
-                    <p className="text-xs text-gray-400">Km-godtgjørelse</p>
+                    <p className="text-xs text-gray-400">Km compensation</p>
                     <p className="font-semibold">{service.t6_km_godtgjorelse} kr/km</p>
                   </div>
                 </div>
@@ -512,7 +512,7 @@ const Economy = () => {
             ))}
             {services.length === 0 && (
               <div className="bg-gray-900 border border-gray-800 rounded-lg p-8 text-center text-gray-400">
-                Ingen tjenester registrert
+                No services registered
               </div>
             )}
           </div>
@@ -523,8 +523,8 @@ const Economy = () => {
         <div>
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h2 className="text-xl font-semibold">Produsent-satser</h2>
-              <p className="text-sm text-gray-400 mt-1">Satser for fakturering (arbeidstid, kjøretid, km)</p>
+              <h2 className="text-xl font-semibold">Supplier rates</h2>
+              <p className="text-sm text-gray-400 mt-1">Rates for invoicing (work time, driving time, km)</p>
             </div>
             <button
               onClick={() => { resetPricingForm(); setShowPricingModal(true); }}
@@ -532,7 +532,7 @@ const Economy = () => {
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded transition-colors"
             >
               <Plus size={20} />
-              Ny produsent
+              New supplier
             </button>
           </div>
           <div className="space-y-4">
@@ -540,8 +540,8 @@ const Economy = () => {
               <div key={pricing.id} className="bg-gray-900 border border-gray-800 rounded-lg p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-lg font-semibold">{pricing.name || 'Standard produsent'}</h3>
-                    <p className="text-sm text-gray-400">Inntjening (fakturerbar)</p>
+                    <h3 className="text-lg font-semibold">{pricing.name || 'Standard supplier'}</h3>
+                    <p className="text-sm text-gray-400">Revenue (billable)</p>
                   </div>
                   <div className="flex gap-2">
                     <button
@@ -549,7 +549,7 @@ const Economy = () => {
                       className="flex items-center gap-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded text-sm transition-colors"
                     >
                       <Edit size={16} />
-                      Rediger
+                      Edit
                     </button>
                     <button
                       onClick={() => handleDeletePricing(pricing.id)}
@@ -561,15 +561,15 @@ const Economy = () => {
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                   <div className="bg-gray-800 rounded p-4">
-                    <p className="text-sm text-gray-400">Arbeid Timesats</p>
-                    <p className="text-2xl font-semibold">{pricing.arbeidstid_rate?.toFixed(0) || 0} kr/t</p>
+                    <p className="text-sm text-gray-400">Work hourly rate</p>
+                    <p className="text-2xl font-semibold">{pricing.arbeidstid_rate?.toFixed(0) || 0} kr/h</p>
                   </div>
                   <div className="bg-gray-800 rounded p-4">
-                    <p className="text-sm text-gray-400">Kjøresats</p>
-                    <p className="text-2xl font-semibold">{pricing.kjoretid_rate?.toFixed(0) || 0} kr/t</p>
+                    <p className="text-sm text-gray-400">Driving rate</p>
+                    <p className="text-2xl font-semibold">{pricing.kjoretid_rate?.toFixed(0) || 0} kr/h</p>
                   </div>
                   <div className="bg-gray-800 rounded p-4">
-                    <p className="text-sm text-gray-400">KM sats</p>
+                    <p className="text-sm text-gray-400">KM rate</p>
                     <p className="text-2xl font-semibold">{pricing.km_rate?.toFixed(2) || 0} kr/km</p>
                   </div>
                 </div>
@@ -577,8 +577,8 @@ const Economy = () => {
             ))}
             {supplierPricing.length === 0 && (
               <div className="bg-gray-900 border border-gray-800 rounded-lg p-8 text-center text-gray-400">
-                <p className="mb-4">Ingen produsent-satser registrert</p>
-                <p className="text-sm">Klikk &quot;Ny produsent&quot; for å opprette</p>
+                <p className="mb-4">No supplier rates registered</p>
+                <p className="text-sm">Click &quot;New supplier&quot; to create</p>
               </div>
             )}
           </div>
@@ -590,7 +590,7 @@ const Economy = () => {
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">
-                {editingEmployee ? 'Rediger ansatt' : 'Ny ansatt'}
+                {editingEmployee ? 'Edit employee' : 'New employee'}
               </h2>
               <button onClick={() => setShowEmployeeModal(false)} className="text-gray-400 hover:text-white">
                 <X size={24} />
@@ -599,7 +599,7 @@ const Economy = () => {
             <form onSubmit={handleSubmitEmployee} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Initialer *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Initials *</label>
                   <input
                     type="text"
                     value={employeeFormData.initialer}
@@ -610,7 +610,7 @@ const Economy = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Stilling *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Position *</label>
                   <input
                     type="text"
                     value={employeeFormData.stilling}
@@ -620,7 +620,7 @@ const Economy = () => {
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Navn *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Name *</label>
                   <input
                     type="text"
                     value={employeeFormData.navn}
@@ -631,7 +631,7 @@ const Economy = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">E-post</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
                   <input
                     type="email"
                     value={employeeFormData.epost}
@@ -640,7 +640,7 @@ const Economy = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Telefon</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Phone</label>
                   <input
                     type="text"
                     value={employeeFormData.telefon}
@@ -651,10 +651,10 @@ const Economy = () => {
               </div>
 
               <div className="border-t border-gray-800 pt-4 mt-4">
-                <h3 className="text-lg font-semibold mb-3">Satser</h3>
+                <h3 className="text-lg font-semibold mb-3">Rates</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Intern sats (kr/t) *</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Internal rate (kr/h) *</label>
                     <input
                       type="number"
                       step="0.01"
@@ -665,7 +665,7 @@ const Economy = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Faktura sats (kr/t) *</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Invoice rate (kr/h) *</label>
                     <input
                       type="number"
                       step="0.01"
@@ -740,14 +740,14 @@ const Economy = () => {
                   onClick={() => setShowEmployeeModal(false)}
                   className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
                 >
-                  Avbryt
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   data-testid="save-employee-button"
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded transition-colors"
                 >
-                  {editingEmployee ? 'Oppdater' : 'Opprett'}
+                  {editingEmployee ? 'Update' : 'Create'}
                 </button>
               </div>
             </form>
@@ -760,7 +760,7 @@ const Economy = () => {
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">
-                {editingService ? 'Rediger tjeneste' : 'Ny tjeneste'}
+                {editingService ? 'Edit service' : 'New service'}
               </h2>
               <button onClick={() => setShowServiceModal(false)} className="text-gray-400 hover:text-white">
                 <X size={24} />
@@ -769,7 +769,7 @@ const Economy = () => {
             <form onSubmit={handleSubmitService} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Tjenestenr *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Service no *</label>
                   <input
                     type="text"
                     value={serviceFormData.tjenestenr}
@@ -779,21 +779,21 @@ const Economy = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Produsent</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Supplier</label>
                   <select
                     value={serviceFormData.produsent_id}
                     onChange={(e) => setServiceFormData({ ...serviceFormData, produsent_id: e.target.value })}
                     className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
                   >
-                    <option value="">Velg produsent</option>
+                    <option value="">Select supplier</option>
                     {supplierPricing.map(p => (
                       <option key={p.id} value={p.id}>{p.name}</option>
                     ))}
                   </select>
-                  <p className="text-xs text-gray-400 mt-1">Kobles til produsent-satser for beregninger</p>
+                  <p className="text-xs text-gray-400 mt-1">Links to supplier rates for calculations</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Leverandør</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Vendor</label>
                   <input
                     type="text"
                     value={serviceFormData.leverandor}
@@ -802,7 +802,7 @@ const Economy = () => {
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Tjenestenavn *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Service name *</label>
                   <input
                     type="text"
                     value={serviceFormData.tjeneste_navn}
@@ -812,7 +812,7 @@ const Economy = () => {
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Beskrivelse</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
                   <textarea
                     value={serviceFormData.beskrivelse}
                     onChange={(e) => setServiceFormData({ ...serviceFormData, beskrivelse: e.target.value })}
@@ -823,20 +823,20 @@ const Economy = () => {
               </div>
 
               <div className="border-t border-gray-800 pt-4 mt-4">
-                <h3 className="text-lg font-semibold mb-3">Priser</h3>
+                <h3 className="text-lg font-semibold mb-3">Prices</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-2">
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Fast pris (kr) *</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Fixed price (kr) *</label>
                     <input
                       type="number"
                       step="0.01"
                       value={serviceFormData.pris}
                       onChange={(e) => setServiceFormData({ ...serviceFormData, pris: e.target.value })}
-                      placeholder="Eksempel: 1490"
+                      placeholder="Example: 1490"
                       className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
                       required
                     />
-                    <p className="text-xs text-gray-400 mt-1">Dette er satsen som faktureres kunden</p>
+                    <p className="text-xs text-gray-400 mt-1">This is the rate charged to the customer</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">T1 Ekstraservice (kr/t)</label>
@@ -879,7 +879,7 @@ const Economy = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">T5 Kjøretid (kr/t)</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">T5 Driving time (kr/h)</label>
                     <input
                       type="number"
                       step="0.01"
@@ -889,7 +889,7 @@ const Economy = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">T6 Km godtgjørelse (kr/km)</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">T6 Km compensation (kr/km)</label>
                     <input
                       type="number"
                       step="0.01"
@@ -907,13 +907,13 @@ const Economy = () => {
                   onClick={() => setShowServiceModal(false)}
                   className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
                 >
-                  Avbryt
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded transition-colors"
                 >
-                  {editingService ? 'Oppdater' : 'Opprett'}
+                  {editingService ? 'Update' : 'Create'}
                 </button>
               </div>
             </form>
@@ -925,25 +925,25 @@ const Economy = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">{editingPricing ? 'Rediger produsent' : 'Ny produsent'}</h2>
+              <h2 className="text-2xl font-bold">{editingPricing ? 'Edit supplier' : 'New supplier'}</h2>
               <button onClick={() => { setShowPricingModal(false); setEditingPricing(null); }} className="text-gray-400 hover:text-white">
                 <X size={24} />
               </button>
             </div>
             <form onSubmit={handleSubmitPricing} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Produsent navn *</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Supplier name *</label>
                 <input
                   type="text"
                   value={pricingFormData.name}
                   onChange={(e) => setPricingFormData({ ...pricingFormData, name: e.target.value })}
-                  placeholder="F.eks: Standard, Premium, Biovac"
+                  placeholder="E.g: Standard, Premium, Biovac"
                   className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Arbeid Timesats (kr/t) *</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Work hourly rate (kr/h) *</label>
                 <input
                   type="number"
                   step="0.01"
@@ -954,7 +954,7 @@ const Economy = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Kjøresats (kr/t) *</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Driving rate (kr/h) *</label>
                 <input
                   type="number"
                   step="0.01"
@@ -965,7 +965,7 @@ const Economy = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">KM sats (kr/km) *</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">KM rate (kr/km) *</label>
                 <input
                   type="number"
                   step="0.01"
@@ -982,13 +982,13 @@ const Economy = () => {
                   onClick={() => { setShowPricingModal(false); setEditingPricing(null); }}
                   className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
                 >
-                  Avbryt
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded transition-colors"
                 >
-                  Oppdater
+                  Update
                 </button>
               </div>
             </form>

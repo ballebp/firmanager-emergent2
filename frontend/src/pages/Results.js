@@ -293,7 +293,7 @@ const Results = () => {
   };
 
   if (loading) {
-    return <div className="text-gray-400">Laster...</div>;
+    return <div className="text-gray-400">Loading...</div>;
   }
 
   const summary = calculateSummary();
@@ -454,7 +454,7 @@ const Results = () => {
                   ))}
                   {internResults.length === 0 && (
                     <tr>
-                      <td colSpan="4" className="px-4 py-8 text-center text-gray-400">Ingen internt arbeid for valgt måned</td>
+                      <td colSpan="4" className="px-4 py-8 text-center text-gray-400">No internal work for selected month</td>
                     </tr>
                   )}
                 </tbody>
@@ -523,7 +523,7 @@ const Results = () => {
                   ))}
                   {paResults.length === 0 && (
                     <tr>
-                      <td colSpan="7" className="px-4 py-8 text-center text-gray-400">Ingen PA-utbetalinger for valgt måned</td>
+                      <td colSpan="7" className="px-4 py-8 text-center text-gray-400">No PA payments for selected month</td>
                     </tr>
                   )}
                 </tbody>

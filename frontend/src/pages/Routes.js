@@ -136,7 +136,7 @@ const Routes = () => {
     if (routeMode === 'area') {
       const selectedCustomersList = customersInSelectedAreas.filter(c => selectedCustomersForRoute.has(c.id));
       if (selectedCustomersList.length === 0) {
-        alert('Vennligst velg minst én kunde for ruten');
+        alert('Please select at least one customer for the route');
         return;
       }
       // Geo-optimize the route
@@ -145,7 +145,7 @@ const Routes = () => {
     } else {
       // Anleggsnr mode
       if (matchedCustomers.length === 0) {
-        alert('Ingen gyldige anleggsnummer funnet');
+        alert('No valid facility numbers found');
         return;
       }
       // Geo-optimize the route
@@ -166,7 +166,7 @@ const Routes = () => {
       setParsedAnleggsnr([]);
     } catch (error) {
       console.error('Failed to create route:', error);
-      alert('Kunne ikke generere rute');
+      alert('Could not generate route');
     }
   };
 
@@ -186,7 +186,7 @@ const Routes = () => {
         stopNumber: idx + 1,
         anleggsnr,
         kundennr: customer?.kundennr || '-',
-        customerName: customer?.kundnavn || 'Ukjent kunde',
+        customerName: customer?.kundnavn || 'Unknown customer',
         typenr: customer?.typenr || '-',
         typenavn: customer?.typenavn || '-',
         kommune: customer?.kommune || '-',
@@ -365,39 +365,39 @@ const Routes = () => {
   return (
     <div data-testid="routes-page">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Ruteplanlegger</h1>
+        <h1 className="text-3xl font-bold">Route Planner</h1>
         <button
           onClick={() => setShowModal(true)}
           data-testid="add-route-button"
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded transition-colors"
         >
           <Plus size={20} />
-          Generer rute
+          Generate Route
         </button>
       </div>
 
       {/* Current Route */}
       <div className="space-y-4">
         {loading ? (
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-8 text-center text-gray-400">Laster...</div>
+          <div className="bg-gray-900 border border-gray-800 rounded-lg p-8 text-center text-gray-400">Loading...</div>
         ) : !currentRoute ? (
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-8 text-center text-gray-400">
-            <p className="mb-4">Ingen aktiv rute</p>
-            <p className="text-sm">Klikk &quot;Generer rute&quot; for å opprette en ny kjøreseddel</p>
+            <p className="mb-4">No active route</p>
+            <p className="text-sm">Click &quot;Generate Route&quot; to create a new travel note</p>
           </div>
         ) : (
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h3 className="text-lg font-semibold">Rute - {new Date(currentRoute.date).toLocaleDateString('no-NO')}</h3>
-                <p className="text-sm text-gray-400 mt-1">Geo-optimalisert • {currentRoute.anleggsnr_list.length} stopp</p>
+                <h3 className="text-lg font-semibold">Route - {new Date(currentRoute.date).toLocaleDateString('no-NO')}</h3>
+                <p className="text-sm text-gray-400 mt-1">Geo-optimized • {currentRoute.anleggsnr_list.length} stops</p>
               </div>
               <div className="flex gap-2">
                 <button onClick={() => handlePrintTravelNote(currentRoute)} data-testid="print-route-button" className="flex items-center gap-2 px-3 py-1 bg-green-700 hover:bg-green-600 rounded text-sm transition-colors">
-                  <Printer size={16} />Skriv ut kjøreseddel
+                  <Printer size={16} />Print Travel Note
                 </button>
                 <button onClick={handleClearRoute} data-testid="clear-route-button" className="flex items-center gap-2 px-3 py-1 bg-red-700 hover:bg-red-600 rounded text-sm transition-colors">
-                  <Trash2 size={16} />Fjern rute
+                  <Trash2 size={16} />Remove Route
                 </button>
               </div>
             </div>
@@ -410,7 +410,7 @@ const Routes = () => {
                     <MapPin size={16} className="text-gray-400" />
                     <div className="flex-1">
                       <p className="font-medium">{customer?.kundnavn || anleggsnr}</p>
-                      <p className="text-sm text-gray-400">{customer ? `${customer.adresse}, ${customer.postnr} ${customer.poststed}` : 'Kunde ikke funnet'}</p>
+                      <p className="text-sm text-gray-400">{customer ? `${customer.adresse}, ${customer.postnr} ${customer.poststed}` : 'Customer not found'}</p>
                     </div>
                     <div className="text-right text-sm text-gray-400">
                       <p>An.nr: {anleggsnr}</p>
@@ -429,7 +429,7 @@ const Routes = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 overflow-y-auto">
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 w-full max-w-4xl my-8 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">Generer ny rute</h2>
+              <h2 className="text-2xl font-bold">Generate New Route</h2>
               <button onClick={() => { setShowModal(false); setSelectedAreas([]); setSelectedCustomersForRoute(new Set()); setAnleggsnrInput(''); setParsedAnleggsnr([]); }} className="p-2 hover:bg-gray-800 rounded">
                 <X size={20} />
               </button>
@@ -438,27 +438,27 @@ const Routes = () => {
             <div className="space-y-6">
               {/* Date */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Dato</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Date</label>
                 <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500" />
               </div>
               
               {/* Mode selection tabs */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Velg metode</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Select Method</label>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setRouteMode('area')}
                     className={`flex items-center gap-2 px-4 py-2 rounded transition-colors ${routeMode === 'area' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
                   >
                     <Filter size={16} />
-                    Velg område
+                    Select Area
                   </button>
                   <button
                     onClick={() => setRouteMode('anleggsnr')}
                     className={`flex items-center gap-2 px-4 py-2 rounded transition-colors ${routeMode === 'anleggsnr' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
                   >
                     <ClipboardPaste size={16} />
-                    Lim inn anleggsnr
+                    Paste Facility Numbers
                   </button>
                 </div>
               </div>
@@ -468,7 +468,7 @@ const Routes = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
                     <ClipboardPaste size={16} className="inline mr-2" />
-                    Lim inn anleggsnummer (separert med komma, mellomrom, eller ny linje)
+                    Paste facility numbers (comma, space, or newline separated)
                   </label>
                   <textarea
                     value={anleggsnrInput}
@@ -482,15 +482,15 @@ const Routes = () => {
                   {parsedAnleggsnr.length > 0 && (
                     <div className="mt-3 space-y-2">
                       <div className="flex items-center gap-2 text-sm">
-                        <span className="text-green-400">{matchedCustomers.length} funnet</span>
+                        <span className="text-green-400">{matchedCustomers.length} found</span>
                         {unmatchedAnleggsnr.length > 0 && (
-                          <span className="text-red-400">{unmatchedAnleggsnr.length} ikke funnet</span>
+                          <span className="text-red-400">{unmatchedAnleggsnr.length} not found</span>
                         )}
                       </div>
                       
                       {unmatchedAnleggsnr.length > 0 && (
                         <div className="p-2 bg-red-900/20 border border-red-800 rounded text-sm">
-                          <p className="text-red-400 mb-1">Følgende anleggsnr ble ikke funnet:</p>
+                          <p className="text-red-400 mb-1">Following facility numbers were not found:</p>
                           <p className="text-gray-400 font-mono text-xs">{unmatchedAnleggsnr.join(', ')}</p>
                         </div>
                       )}
@@ -520,13 +520,13 @@ const Routes = () => {
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       <Filter size={16} className="inline mr-2" />
-                      Velg områder (postnr/poststed/kommune)
+                      Select areas (postal code/city/municipality)
                     </label>
                     <input
                       type="text"
                       value={areaFilter}
                       onChange={(e) => setAreaFilter(e.target.value)}
-                      placeholder="Søk etter postnr, poststed eller kommune..."
+                      placeholder="Search by postal code, city or municipality..."
                       data-testid="area-filter-input"
                       className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
                     />
@@ -537,7 +537,7 @@ const Routes = () => {
                         {filteredAreas.map((area, idx) => (
                           <button key={idx} onClick={() => addArea(area)} className="w-full px-3 py-2 text-left hover:bg-gray-700 flex justify-between items-center">
                             <span>{area.postnr} {area.poststed} ({area.kommune})</span>
-                            <span className="text-xs text-gray-400">{area.count} kunder</span>
+                            <span className="text-xs text-gray-400">{area.count} customers</span>
                           </button>
                         ))}
                       </div>
@@ -563,11 +563,11 @@ const Routes = () => {
                     <div>
                       <div className="flex justify-between items-center mb-2">
                         <label className="block text-sm font-medium text-gray-300">
-                          Velg kunder ({customersInSelectedAreas.length} tilgjengelig, {selectedCustomersForRoute.size} valgt)
+                          Select customers ({customersInSelectedAreas.length} available, {selectedCustomersForRoute.size} selected)
                         </label>
                         <div className="flex gap-2">
-                          <button onClick={selectAllInArea} className="text-xs text-blue-400 hover:text-blue-300">Velg alle</button>
-                          <button onClick={clearSelection} className="text-xs text-gray-400 hover:text-gray-300">Fjern alle</button>
+                          <button onClick={selectAllInArea} className="text-xs text-blue-400 hover:text-blue-300">Select all</button>
+                          <button onClick={clearSelection} className="text-xs text-gray-400 hover:text-gray-300">Clear all</button>
                         </div>
                       </div>
                       <div className="max-h-60 overflow-y-auto bg-gray-800 border border-gray-700 rounded">
@@ -588,19 +588,19 @@ const Routes = () => {
               )}
               
               <div className="bg-blue-900/20 border border-blue-800 rounded p-3 text-sm text-blue-300">
-                <p><strong>Geo-optimalisering:</strong> Ruten optimaliseres automatisk basert på postnummer og adresse for mest effektiv kjørerute.</p>
+                <p><strong>Geo-optimization:</strong> The route is automatically optimized based on postal code and address for the most efficient driving route.</p>
               </div>
             </div>
 
             <div className="flex gap-3 justify-end pt-6">
-              <button onClick={() => { setShowModal(false); setSelectedAreas([]); setSelectedCustomersForRoute(new Set()); setAnleggsnrInput(''); setParsedAnleggsnr([]); }} className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors">Avbryt</button>
+              <button onClick={() => { setShowModal(false); setSelectedAreas([]); setSelectedCustomersForRoute(new Set()); setAnleggsnrInput(''); setParsedAnleggsnr([]); }} className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors">Cancel</button>
               <button 
                 onClick={handleGenerateRoute} 
                 disabled={routeMode === 'area' ? selectedCustomersForRoute.size === 0 : matchedCustomers.length === 0} 
                 data-testid="generate-route-button" 
                 className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Generer rute ({routeMode === 'area' ? selectedCustomersForRoute.size : matchedCustomers.length} stopp)
+                Generate route ({routeMode === 'area' ? selectedCustomersForRoute.size : matchedCustomers.length} stops)
               </button>
             </div>
           </div>

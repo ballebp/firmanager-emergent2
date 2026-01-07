@@ -57,7 +57,7 @@ const Internal = () => {
       loadData();
     } catch (error) {
       console.error('Failed to save internal order:', error);
-      alert('Kunne ikke lagre intern ordre');
+      alert('Could not save internal order');
     }
   };
 
@@ -76,13 +76,13 @@ const Internal = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Er du sikker på at du vil slette denne ordren?')) {
+    if (window.confirm('Are you sure you want to delete this order?')) {
       try {
         await deleteInternalOrder(id);
         loadData();
       } catch (error) {
         console.error('Failed to delete internal order:', error);
-        alert('Kunne ikke slette ordre');
+        alert('Could not delete order');
       }
     }
   };
@@ -90,7 +90,7 @@ const Internal = () => {
   const handleDeleteSelected = async () => {
     if (selectedOrders.size === 0) return;
     
-    if (window.confirm(`Er du sikker på at du vil slette ${selectedOrders.size} valgte ordre?`)) {
+    if (window.confirm(`Are you sure you want to delete ${selectedOrders.size} selected orders?`)) {
       try {
         const deletePromises = Array.from(selectedOrders).map(id => deleteInternalOrder(id));
         await Promise.all(deletePromises);
@@ -98,7 +98,7 @@ const Internal = () => {
         loadData();
       } catch (error) {
         console.error('Failed to delete orders:', error);
-        alert('Kunne ikke slette alle ordre');
+        alert('Could not delete all orders');
       }
     }
   };
@@ -148,8 +148,8 @@ const Internal = () => {
     <div data-testid="internal-page">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold">Intern</h1>
-          <p className="text-sm text-gray-400 mt-1">{orders.length} interne ordre</p>
+          <h1 className="text-3xl font-bold">Internal</h1>
+          <p className="text-sm text-gray-400 mt-1">{orders.length} internal orders</p>
         </div>
         <div className="flex gap-3">
           {selectedOrders.size > 0 && (
@@ -159,7 +159,7 @@ const Internal = () => {
               className="flex items-center gap-2 px-4 py-2 bg-red-700 hover:bg-red-600 rounded transition-colors"
             >
               <Trash2 size={20} />
-              Slett valgte ({selectedOrders.size})
+              Delete selected ({selectedOrders.size})
             </button>
           )}
           <button
@@ -168,7 +168,7 @@ const Internal = () => {
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded transition-colors"
           >
             <Plus size={20} />
-            Registrer nytt
+            Register new
           </button>
         </div>
       </div>
@@ -185,10 +185,10 @@ const Internal = () => {
             ) : (
               <Square size={18} />
             )}
-            Velg alle
+            Select all
           </button>
           {selectedOrders.size > 0 && (
-            <span className="text-sm text-gray-500">({selectedOrders.size} valgt)</span>
+            <span className="text-sm text-gray-500">({selectedOrders.size} selected)</span>
           )}
         </div>
       )}
@@ -200,23 +200,23 @@ const Internal = () => {
             <thead className="bg-gray-800">
               <tr>
                 <th className="px-4 py-3 text-left w-10"></th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Dato</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Avdeling</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Ansatt</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Date</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Department</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Employee</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Type</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Beskrivelse</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Timer</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Handlinger</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Description</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Hours</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800">
               {loading ? (
                 <tr>
-                  <td colSpan="8" className="px-4 py-8 text-center text-gray-400">Laster...</td>
+                  <td colSpan="8" className="px-4 py-8 text-center text-gray-400">Loading...</td>
                 </tr>
               ) : orders.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="px-4 py-8 text-center text-gray-400">Ingen interne ordre funnet</td>
+                  <td colSpan="8" className="px-4 py-8 text-center text-gray-400">No internal orders found</td>
                 </tr>
               ) : (
                 orders.map((order) => (
@@ -268,7 +268,7 @@ const Internal = () => {
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">
-                {editingOrder ? 'Rediger intern ordre' : 'Registrer intern ordre'}
+                {editingOrder ? 'Edit internal order' : 'Register internal order'}
               </h2>
               <button
                 onClick={() => { setShowModal(false); setEditingOrder(null); }}
@@ -280,7 +280,7 @@ const Internal = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Avdeling *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Department *</label>
                   <input
                     type="text"
                     value={formData.avdeling}
@@ -291,7 +291,7 @@ const Internal = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Dato *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Date *</label>
                   <input
                     type="date"
                     value={formData.date}
@@ -301,14 +301,14 @@ const Internal = () => {
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Ansatt *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Employee *</label>
                   <select
                     value={formData.employee_id}
                     onChange={(e) => setFormData({ ...formData, employee_id: e.target.value })}
                     className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
                     required
                   >
-                    <option value="">Velg ansatt</option>
+                    <option value="">Select employee</option>
                     {employees.map(e => (
                       <option key={e.id} value={e.id}>{e.navn}</option>
                     ))}
@@ -322,16 +322,16 @@ const Internal = () => {
                     className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
                     required
                   >
-                    <option value="kontor">Kontor</option>
-                    <option value="ekstra">Ekstra</option>
-                    <option value="montering">Montering</option>
-                    <option value="soknad">Søknad</option>
-                    <option value="vedlikehold">Vedlikehold</option>
-                    <option value="diverse">Diverse</option>
+                    <option value="kontor">Office</option>
+                    <option value="ekstra">Extra</option>
+                    <option value="montering">Installation</option>
+                    <option value="soknad">Application</option>
+                    <option value="vedlikehold">Maintenance</option>
+                    <option value="diverse">Miscellaneous</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Arbeidstid (timer) *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Work hours (hours) *</label>
                   <input
                     type="number"
                     step="0.5"
@@ -342,7 +342,7 @@ const Internal = () => {
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Beskrivelse *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Description *</label>
                   <textarea
                     value={formData.beskrivelse}
                     onChange={(e) => setFormData({ ...formData, beskrivelse: e.target.value })}
@@ -352,7 +352,7 @@ const Internal = () => {
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Kommentar</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Comment</label>
                   <textarea
                     value={formData.kommentar}
                     onChange={(e) => setFormData({ ...formData, kommentar: e.target.value })}
@@ -368,14 +368,14 @@ const Internal = () => {
                   onClick={() => { setShowModal(false); setEditingOrder(null); }}
                   className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
                 >
-                  Avbryt
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   data-testid="save-internal-order-button"
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded transition-colors"
                 >
-                  {editingOrder ? 'Oppdater' : 'Opprett'}
+                  {editingOrder ? 'Update' : 'Create'}
                 </button>
               </div>
             </form>

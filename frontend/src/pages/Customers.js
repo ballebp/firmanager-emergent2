@@ -67,7 +67,7 @@ const Customers = () => {
       loadCustomers();
     } catch (error) {
       console.error('Failed to save customer:', error);
-      alert('Kunne ikke lagre kunde');
+      alert('Could not save customer');
     }
   };
 
@@ -99,13 +99,13 @@ const Customers = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Er du sikker på at du vil slette denne kunden?')) {
+    if (window.confirm('Are you sure you want to delete this customer?')) {
       try {
         await deleteCustomer(id);
         loadCustomers();
       } catch (error) {
         console.error('Failed to delete customer:', error);
-        alert('Kunne ikke slette kunde');
+        alert('Could not delete customer');
       }
     }
   };
@@ -113,7 +113,7 @@ const Customers = () => {
   const handleDeleteSelected = async () => {
     if (selectedCustomers.size === 0) return;
     
-    if (window.confirm(`Er du sikker på at du vil slette ${selectedCustomers.size} valgte kunder?`)) {
+    if (window.confirm(`Are you sure you want to delete ${selectedCustomers.size} selected customers?`)) {
       try {
         const deletePromises = Array.from(selectedCustomers).map(id => deleteCustomer(id));
         await Promise.all(deletePromises);
@@ -121,7 +121,7 @@ const Customers = () => {
         loadCustomers();
       } catch (error) {
         console.error('Failed to delete customers:', error);
-        alert('Kunne ikke slette alle kunder');
+        alert('Could not delete all customers');
       }
     }
   };
@@ -189,7 +189,7 @@ const Customers = () => {
     if (!file) return;
 
     if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
-      alert('Vennligst velg en Excel-fil (.xlsx eller .xls)');
+      alert('Please select an Excel file (.xlsx or .xls)');
       return;
     }
 
@@ -209,15 +209,15 @@ const Customers = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Import feilet');
+        throw new Error('Import failed');
       }
 
       const result = await response.json();
-      alert(`Import fullført! ${result.imported_count} kunder importert.`);
+      alert(`Import completed! ${result.imported_count} customers imported.`);
       loadCustomers();
     } catch (error) {
       console.error('Import failed:', error);
-      alert('Kunne ikke importere kunder. Sjekk at filen har riktig format.');
+      alert('Could not import customers. Check that the file has the correct format.');
     } finally {
       setImporting(false);
       e.target.value = '';
@@ -236,8 +236,8 @@ const Customers = () => {
     <div data-testid="customers-page">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold">Kunder</h1>
-          <p className="text-sm text-gray-400 mt-1">{customers.length} kunder totalt</p>
+          <h1 className="text-3xl font-bold">Customers</h1>
+          <p className="text-sm text-gray-400 mt-1">{customers.length} customers total</p>
         </div>
         <div className="flex gap-3">
           {selectedCustomers.size > 0 && (
@@ -247,7 +247,7 @@ const Customers = () => {
               className="flex items-center gap-2 px-4 py-2 bg-red-700 hover:bg-red-600 rounded transition-colors"
             >
               <Trash2 size={20} />
-              Slett valgte ({selectedCustomers.size})
+              Delete selected ({selectedCustomers.size})
             </button>
           )}
           <input
@@ -264,7 +264,7 @@ const Customers = () => {
             className="flex items-center gap-2 px-4 py-2 bg-green-700 hover:bg-green-600 rounded transition-colors disabled:opacity-50"
           >
             <Upload size={20} />
-            {importing ? 'Importerer...' : 'Importer Excel'}
+            {importing ? 'Importing...' : 'Import Excel'}
           </button>
           <button
             onClick={openNewCustomerModal}
@@ -272,7 +272,7 @@ const Customers = () => {
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded transition-colors"
           >
             <Plus size={20} />
-            Ny kunde
+            New Customer
           </button>
         </div>
       </div>
@@ -283,7 +283,7 @@ const Customers = () => {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
           <input
             type="text"
-            placeholder="Søk etter kunde (navn, anleggsnr, postnr, poststed...)"
+            placeholder="Search for customer (name, facility number, postal code, city...)"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             data-testid="search-customers-input"
@@ -304,10 +304,10 @@ const Customers = () => {
             ) : (
               <Square size={18} />
             )}
-            Velg alle
+            Select all
           </button>
           {selectedCustomers.size > 0 && (
-            <span className="text-sm text-gray-500">({selectedCustomers.size} valgt)</span>
+            <span className="text-sm text-gray-500">({selectedCustomers.size} selected)</span>
           )}
         </div>
       )}
@@ -316,11 +316,11 @@ const Customers = () => {
       <div className="space-y-2">
         {loading ? (
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-8 text-center text-gray-400">
-            Laster...
+            Loading...
           </div>
         ) : customers.length === 0 ? (
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-8 text-center text-gray-400">
-            Ingen kunder funnet
+            No customers found
           </div>
         ) : (
           customers.map((customer) => (
@@ -437,7 +437,7 @@ const Customers = () => {
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">
-                {editingCustomer ? 'Rediger kunde' : 'Ny kunde'}
+                {editingCustomer ? 'Edit Customer' : 'New Customer'}
               </h2>
               <button
                 onClick={() => { setShowModal(false); setEditingCustomer(null); }}
@@ -471,7 +471,7 @@ const Customers = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Kunde *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Customer *</label>
                   <input
                     type="text"
                     value={formData.kundnavn}
@@ -482,7 +482,7 @@ const Customers = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Type nr.</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Type no.</label>
                   <input
                     type="text"
                     value={formData.typenr}
@@ -491,7 +491,7 @@ const Customers = () => {
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Type navn</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Type name</label>
                   <input
                     type="text"
                     value={formData.typenavn}
@@ -500,7 +500,7 @@ const Customers = () => {
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Kommune *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Municipality *</label>
                   <input
                     type="text"
                     value={formData.kommune}
@@ -510,7 +510,7 @@ const Customers = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Adresse *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Address *</label>
                   <input
                     type="text"
                     value={formData.adresse}
@@ -520,7 +520,7 @@ const Customers = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Postnr *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Postal code *</label>
                   <input
                     type="text"
                     value={formData.postnr}
@@ -530,7 +530,7 @@ const Customers = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Sted *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">City *</label>
                   <input
                     type="text"
                     value={formData.poststed}
@@ -540,7 +540,7 @@ const Customers = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Service intervall</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Service interval</label>
                   <input
                     type="text"
                     value={formData.service_intervall}
@@ -549,7 +549,7 @@ const Customers = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Uke</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Week</label>
                   <input
                     type="text"
                     value={formData.uke}
@@ -558,7 +558,7 @@ const Customers = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Serviceansvarlig</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Service responsible</label>
                   <input
                     type="text"
                     value={formData.serviceansvarlig}
@@ -567,7 +567,7 @@ const Customers = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Tlf 1</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Phone 1</label>
                   <input
                     type="text"
                     value={formData.telefon1}
@@ -576,7 +576,7 @@ const Customers = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Tlf 2</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Phone 2</label>
                   <input
                     type="text"
                     value={formData.telefon2}
@@ -594,7 +594,7 @@ const Customers = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Startdato</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Start date</label>
                   <input
                     type="text"
                     value={formData.startdato}
@@ -603,7 +603,7 @@ const Customers = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Styreenhet</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Control unit</label>
                   <input
                     type="text"
                     value={formData.styreenhet}
@@ -612,7 +612,7 @@ const Customers = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Tjeneste nr.</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Service no.</label>
                   <input
                     type="text"
                     value={formData.tjeneste_nr}
@@ -621,7 +621,7 @@ const Customers = () => {
                   />
                 </div>
                 <div className="col-span-full">
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Kundeinfo</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Customer info</label>
                   <textarea
                     value={formData.kundeinfo}
                     onChange={(e) => setFormData({ ...formData, kundeinfo: e.target.value })}
@@ -630,7 +630,7 @@ const Customers = () => {
                   />
                 </div>
                 <div className="col-span-full">
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Kommentar / Adgangsinformasjon</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Comment / Access information</label>
                   <textarea
                     value={formData.kommentar}
                     onChange={(e) => setFormData({ ...formData, kommentar: e.target.value })}
@@ -650,14 +650,14 @@ const Customers = () => {
                   data-testid="cancel-customer-button"
                   className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
                 >
-                  Avbryt
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   data-testid="save-customer-button"
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded transition-colors"
                 >
-                  {editingCustomer ? 'Oppdater' : 'Opprett'}
+                  {editingCustomer ? 'Update' : 'Create'}
                 </button>
               </div>
             </form>

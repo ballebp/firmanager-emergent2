@@ -153,7 +153,7 @@ const HMS = () => {
       loadData();
     } catch (error) {
       console.error('Failed to create HMS entry:', error);
-      alert('Kunne ikke opprette registrering');
+      alert('Could not create entry');
     }
   };
 
@@ -161,16 +161,16 @@ const HMS = () => {
   const openIncidents = incidents.filter(i => i.status === 'åpen' || i.status === 'undersøkes');
 
   const tabs = [
-    { id: 'overview', label: 'Oversikt' },
-    { id: 'risk', label: 'Risikovurdering' },
-    { id: 'incidents', label: 'Hendelser' },
-    { id: 'training', label: 'Opplæring' },
-    { id: 'equipment', label: 'Utstyr' }
+    { id: 'overview', label: 'Overview' },
+    { id: 'risk', label: 'Risk Assessment' },
+    { id: 'incidents', label: 'Incidents' },
+    { id: 'training', label: 'Training' },
+    { id: 'equipment', label: 'Equipment' }
   ];
 
   return (
     <div data-testid="hms-page">
-      <h1 className="text-3xl font-bold mb-6">HMS - Helse, miljø og sikkerhet</h1>
+      <h1 className="text-3xl font-bold mb-6">HMS - Health, Environment and Safety</h1>
 
       {/* Tabs */}
       <div className="flex gap-2 mb-6 border-b border-gray-800">
@@ -201,7 +201,7 @@ const HMS = () => {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{activeRiskAssessments.length}</p>
-                  <p className="text-sm text-gray-400">Aktive risikovurderinger</p>
+                  <p className="text-sm text-gray-400">Active risk assessments</p>
                 </div>
               </div>
             </div>
@@ -212,7 +212,7 @@ const HMS = () => {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{openIncidents.length}</p>
-                  <p className="text-sm text-gray-400">Åpne hendelser</p>
+                  <p className="text-sm text-gray-400">Open incidents</p>
                 </div>
               </div>
             </div>
@@ -223,7 +223,7 @@ const HMS = () => {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{training.length}</p>
-                  <p className="text-sm text-gray-400">Opplæringer</p>
+                  <p className="text-sm text-gray-400">Training sessions</p>
                 </div>
               </div>
             </div>
@@ -234,7 +234,7 @@ const HMS = () => {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{equipment.length}</p>
-                  <p className="text-sm text-gray-400">Utstyr registrert</p>
+                  <p className="text-sm text-gray-400">Equipment registered</p>
                 </div>
               </div>
             </div>
@@ -242,7 +242,7 @@ const HMS = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-4">Siste hendelser</h3>
+              <h3 className="text-lg font-semibold mb-4">Latest incidents</h3>
               {incidents.slice(0, 5).map(incident => (
                 <div key={incident.id} className="mb-3 pb-3 border-b border-gray-800 last:border-0">
                   <p className="font-medium">{incident.beskrivelse}</p>
@@ -251,11 +251,11 @@ const HMS = () => {
               ))}
             </div>
             <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-4">Høyrisiko aktiviteter</h3>
+              <h3 className="text-lg font-semibold mb-4">High risk activities</h3>
               {riskAssessments.filter(r => r.alvorlighetsgrad === 'høy').slice(0, 5).map(risk => (
                 <div key={risk.id} className="mb-3 pb-3 border-b border-gray-800 last:border-0">
                   <p className="font-medium">{risk.tittel}</p>
-                  <p className="text-sm text-red-400">Høy alvorlighetsgrad</p>
+                  <p className="text-sm text-red-400">High severity</p>
                 </div>
               ))}
             </div>
@@ -267,14 +267,14 @@ const HMS = () => {
       {activeTab === 'risk' && (
         <div>
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold">Risikovurderinger</h2>
+            <h2 className="text-xl font-semibold">Risk Assessments</h2>
             <button
               onClick={() => openModal('risk')}
               data-testid="add-risk-assessment-button"
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded transition-colors"
             >
               <Plus size={20} />
-              Ny risikovurdering
+              New Risk Assessment
             </button>
           </div>
           <div className="space-y-3">
@@ -419,10 +419,10 @@ const HMS = () => {
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">
-                {modalType === 'risk' && 'Ny risikovurdering'}
-                {modalType === 'incident' && 'Rapporter hendelse'}
-                {modalType === 'training' && 'Ny opplæring'}
-                {modalType === 'equipment' && 'Registrer utstyr'}
+                {modalType === 'risk' && 'New Risk Assessment'}
+                {modalType === 'incident' && 'Report Incident'}
+                {modalType === 'training' && 'New Training'}
+                {modalType === 'equipment' && 'Register Equipment'}
               </h2>
               <button onClick={closeModal} className="text-gray-400 hover:text-white">
                 <X size={24} />
@@ -434,7 +434,7 @@ const HMS = () => {
               {modalType === 'risk' && (
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Tittel *</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Title *</label>
                     <input
                       type="text"
                       value={riskFormData.tittel}
@@ -444,7 +444,7 @@ const HMS = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Beskrivelse *</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Description *</label>
                     <textarea
                       value={riskFormData.beskrivelse}
                       onChange={(e) => setRiskFormData({ ...riskFormData, beskrivelse: e.target.value })}
@@ -455,7 +455,7 @@ const HMS = () => {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Dato *</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Date *</label>
                       <input
                         type="date"
                         value={riskFormData.dato}
@@ -465,7 +465,7 @@ const HMS = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Alvorlighetsgrad *</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Severity *</label>
                       <select
                         value={riskFormData.alvorlighetsgrad}
                         onChange={(e) => setRiskFormData({ ...riskFormData, alvorlighetsgrad: e.target.value })}
@@ -485,12 +485,12 @@ const HMS = () => {
                         className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
                         required
                       >
-                        <option value="aktiv">Aktiv</option>
-                        <option value="lukket">Lukket</option>
+                        <option value="aktiv">Active</option>
+                        <option value="lukket">Closed</option>
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Ansvarlig</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Responsible</label>
                       <input
                         type="text"
                         value={riskFormData.ansvarlig}
@@ -506,7 +506,7 @@ const HMS = () => {
               {modalType === 'incident' && (
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Beskrivelse *</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Description *</label>
                     <textarea
                       value={incidentFormData.beskrivelse}
                       onChange={(e) => setIncidentFormData({ ...incidentFormData, beskrivelse: e.target.value })}
@@ -517,7 +517,7 @@ const HMS = () => {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Dato *</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Date *</label>
                       <input
                         type="date"
                         value={incidentFormData.dato}
@@ -534,9 +534,9 @@ const HMS = () => {
                         className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
                         required
                       >
-                        <option value="ulykke">Ulykke</option>
-                        <option value="nestenulykke">Nesten-ulykke</option>
-                        <option value="observasjon">Observasjon</option>
+                        <option value="ulykke">Accident</option>
+                        <option value="nestenulykke">Near miss</option>
+                        <option value="observasjon">Observation</option>
                       </select>
                     </div>
                     <div>
@@ -547,9 +547,9 @@ const HMS = () => {
                         className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
                         required
                       >
-                        <option value="åpen">Åpen</option>
-                        <option value="undersøkes">Undersøkes</option>
-                        <option value="lukket">Lukket</option>
+                        <option value="åpen">Open</option>
+                        <option value="undersøkes">Investigating</option>
+                        <option value="lukket">Closed</option>
                       </select>
                     </div>
                     <div>
@@ -573,7 +573,7 @@ const HMS = () => {
               {modalType === 'training' && (
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Navn *</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Name *</label>
                     <input
                       type="text"
                       value={trainingFormData.navn}
@@ -583,7 +583,7 @@ const HMS = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Beskrivelse *</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Description *</label>
                     <textarea
                       value={trainingFormData.beskrivelse}
                       onChange={(e) => setTrainingFormData({ ...trainingFormData, beskrivelse: e.target.value })}
@@ -604,7 +604,7 @@ const HMS = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Utløper dato</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Expires date</label>
                       <input
                         type="date"
                         value={trainingFormData.expires_at}
@@ -631,7 +631,7 @@ const HMS = () => {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Kontrolldato *</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Control date *</label>
                       <input
                         type="date"
                         value={equipmentFormData.control_date}
@@ -641,7 +641,7 @@ const HMS = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Neste kontroll *</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Next control *</label>
                       <input
                         type="date"
                         value={equipmentFormData.next_control}
@@ -660,8 +660,8 @@ const HMS = () => {
                       required
                     >
                       <option value="ok">OK</option>
-                      <option value="trenger_kontroll">Trenger kontroll</option>
-                      <option value="utrangert">Utrangert</option>
+                      <option value="trenger_kontroll">Needs control</option>
+                      <option value="utrangert">Decommissioned</option>
                     </select>
                   </div>
                 </div>
@@ -673,14 +673,14 @@ const HMS = () => {
                   onClick={closeModal}
                   className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors"
                 >
-                  Avbryt
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   data-testid={`save-${modalType}-button`}
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded transition-colors"
                 >
-                  Opprett
+                  Create
                 </button>
               </div>
             </form>
