@@ -246,7 +246,7 @@ const Invoicing = () => {
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded transition-colors"
           >
             <Plus size={20} />
-            Registrer nytt
+            Register new
           </button>
         </div>
       </div>
