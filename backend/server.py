@@ -20,12 +20,14 @@ ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
-mongo_url = os.environ['MONGO_URL']
+mongo_url = os.environ.get('MONGODB_URL', os.environ.get('MONGO_URL', 'mongodb://localhost:27017'))
 client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+# Extract database name from connection string or use default
+db_name = mongo_url.split('/')[-1].split('?')[0] if '/' in mongo_url else 'firmanager'
+db = client[db_name]
 
 # Security setup
-SECRET_KEY = os.environ.get('SECRET_KEY', 'your-secret-key-change-in-production')
+SECRET_KEY = os.environ.get('JWT_SECRET', os.environ.get('SECRET_KEY', 'your-secret-key-change-in-production'))
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 hours
 
@@ -340,6 +342,29 @@ class PayoutCreate(BaseModel):
     type: str
     amount: float
     date: datetime
+
+class Task(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    organization_id: str
+    user_id: str
+    title: str
+    description: Optional[str] = None
+    status: str = "todo"  # todo, in_progress, done
+    priority: str = "medium"  # low, medium, high
+    due_date: Optional[datetime] = None
+    tags: List[str] = []
+    position: int = 0  # For drag-and-drop ordering
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class TaskCreate(BaseModel):
+    title: str
+    description: Optional[str] = None
+    status: str = "todo"
+    priority: str = "medium"
+    due_date: Optional[datetime] = None
+    tags: List[str] = []
 
 class Service(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -1691,6 +1716,114 @@ async def seed_database_endpoint(secret: str):
         logging.error(f"Seed error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Seed failed: {str(e)}")
 
+# ==================== TASK ENDPOINTS ====================
+
+@api_router.get("/tasks", response_model=List[Task])
+async def get_tasks(current_user: User = Depends(get_current_user)):
+    tasks = await db.tasks.find(
+        {"organization_id": current_user.organization_id},
+        {"_id": 0}
+    ).sort("position", 1).to_list(None)
+    
+    for task in tasks:
+        if isinstance(task.get('created_at'), str):
+            task['created_at'] = datetime.fromisoformat(task['created_at'])
+        if isinstance(task.get('updated_at'), str):
+            task['updated_at'] = datetime.fromisoformat(task['updated_at'])
+        if task.get('due_date') and isinstance(task['due_date'], str):
+            task['due_date'] = datetime.fromisoformat(task['due_date'])
+    
+    return tasks
+
+@api_router.post("/tasks", response_model=Task)
+async def create_task(task_input: TaskCreate, current_user: User = Depends(get_current_user)):
+    # Get max position
+    last_task = await db.tasks.find_one(
+        {"organization_id": current_user.organization_id, "status": task_input.status},
+        sort=[("position", -1)]
+    )
+    position = (last_task['position'] + 1) if last_task else 0
+    
+    task = Task(
+        organization_id=current_user.organization_id,
+        user_id=current_user.id,
+        title=task_input.title,
+        description=task_input.description,
+        status=task_input.status,
+        priority=task_input.priority,
+        due_date=task_input.due_date,
+        tags=task_input.tags,
+        position=position
+    )
+    
+    task_doc = task.model_dump()
+    task_doc['created_at'] = task_doc['created_at'].isoformat()
+    task_doc['updated_at'] = task_doc['updated_at'].isoformat()
+    if task_doc.get('due_date'):
+        task_doc['due_date'] = task_doc['due_date'].isoformat()
+    
+    await db.tasks.insert_one(task_doc)
+    return task
+
+@api_router.put("/tasks/{task_id}", response_model=Task)
+async def update_task(task_id: str, task_input: TaskCreate, current_user: User = Depends(get_current_user)):
+    task_doc = await db.tasks.find_one({"id": task_id, "organization_id": current_user.organization_id})
+    if not task_doc:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    update_data = task_input.model_dump()
+    update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    if update_data.get('due_date'):
+        update_data['due_date'] = update_data['due_date'].isoformat()
+    
+    await db.tasks.update_one(
+        {"id": task_id},
+        {"$set": update_data}
+    )
+    
+    updated_task = await db.tasks.find_one({"id": task_id}, {"_id": 0})
+    if isinstance(updated_task['created_at'], str):
+        updated_task['created_at'] = datetime.fromisoformat(updated_task['created_at'])
+    if isinstance(updated_task['updated_at'], str):
+        updated_task['updated_at'] = datetime.fromisoformat(updated_task['updated_at'])
+    if updated_task.get('due_date') and isinstance(updated_task['due_date'], str):
+        updated_task['due_date'] = datetime.fromisoformat(updated_task['due_date'])
+    
+    return Task(**updated_task)
+
+@api_router.patch("/tasks/{task_id}/status")
+async def update_task_status(task_id: str, status: str, current_user: User = Depends(get_current_user)):
+    task_doc = await db.tasks.find_one({"id": task_id, "organization_id": current_user.organization_id})
+    if not task_doc:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    await db.tasks.update_one(
+        {"id": task_id},
+        {"$set": {"status": status, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"success": True}
+
+@api_router.patch("/tasks/{task_id}/position")
+async def update_task_position(task_id: str, position: int, current_user: User = Depends(get_current_user)):
+    task_doc = await db.tasks.find_one({"id": task_id, "organization_id": current_user.organization_id})
+    if not task_doc:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    await db.tasks.update_one(
+        {"id": task_id},
+        {"$set": {"position": position, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"success": True}
+
+@api_router.delete("/tasks/{task_id}")
+async def delete_task(task_id: str, current_user: User = Depends(get_current_user)):
+    result = await db.tasks.delete_one({"id": task_id, "organization_id": current_user.organization_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return {"success": True}
+
 # ==================== APP SETUP ====================
 
 @app.get("/")
@@ -1700,6 +1833,226 @@ async def root():
 @app.get("/health")
 async def health():
     return {"status": "healthy", "database": "connected"}
+
+# Export all data endpoint
+@api_router.get("/export/all")
+async def export_all_data(current_user: User = Depends(get_current_user)):
+    try:
+        organization_id = current_user.organization_id
+        
+        # Gather all data from all collections
+        export_data = {
+            "export_date": datetime.now(timezone.utc).isoformat(),
+            "organization_id": organization_id,
+            "customers": [],
+            "products": [],
+            "employees": [],
+            "services": [],
+            "supplier_pricing": [],
+            "workorders": [],
+            "internalorders": [],
+            "hms_risk_assessments": [],
+            "hms_incidents": [],
+            "hms_training": [],
+            "hms_equipment": [],
+            "tasks": []
+        }
+        
+        # Export customers
+        customers = await db.customers.find({"organization_id": organization_id}).to_list(None)
+        for customer in customers:
+            customer['_id'] = str(customer['_id'])
+            export_data["customers"].append(customer)
+        
+        # Export products
+        products = await db.products.find({"organization_id": organization_id}).to_list(None)
+        for product in products:
+            product['_id'] = str(product['_id'])
+            export_data["products"].append(product)
+        
+        # Export employees
+        employees = await db.employees.find({"organization_id": organization_id}).to_list(None)
+        for employee in employees:
+            employee['_id'] = str(employee['_id'])
+            export_data["employees"].append(employee)
+        
+        # Export services
+        services = await db.services.find({"organization_id": organization_id}).to_list(None)
+        for service in services:
+            service['_id'] = str(service['_id'])
+            export_data["services"].append(service)
+        
+        # Export supplier pricing
+        supplier_pricing = await db.supplier_pricing.find({"organization_id": organization_id}).to_list(None)
+        for pricing in supplier_pricing:
+            pricing['_id'] = str(pricing['_id'])
+            export_data["supplier_pricing"].append(pricing)
+        
+        # Export workorders
+        workorders = await db.workorders.find({"organization_id": organization_id}).to_list(None)
+        for workorder in workorders:
+            workorder['_id'] = str(workorder['_id'])
+            export_data["workorders"].append(workorder)
+        
+        # Export internal orders
+        internalorders = await db.internalorders.find({"organization_id": organization_id}).to_list(None)
+        for order in internalorders:
+            order['_id'] = str(order['_id'])
+            export_data["internalorders"].append(order)
+        
+        # Export HMS data
+        risk_assessments = await db.hms_risk_assessments.find({"organization_id": organization_id}).to_list(None)
+        for risk in risk_assessments:
+            risk['_id'] = str(risk['_id'])
+            export_data["hms_risk_assessments"].append(risk)
+        
+        incidents = await db.hms_incidents.find({"organization_id": organization_id}).to_list(None)
+        for incident in incidents:
+            incident['_id'] = str(incident['_id'])
+            export_data["hms_incidents"].append(incident)
+        
+        training = await db.hms_training.find({"organization_id": organization_id}).to_list(None)
+        for train in training:
+            train['_id'] = str(train['_id'])
+            export_data["hms_training"].append(train)
+        
+        equipment = await db.hms_equipment.find({"organization_id": organization_id}).to_list(None)
+        for equip in equipment:
+            equip['_id'] = str(equip['_id'])
+            export_data["hms_equipment"].append(equip)
+        
+        # Export tasks
+        tasks = await db.tasks.find({"organization_id": organization_id}).to_list(None)
+        for task in tasks:
+            task['_id'] = str(task['_id'])
+            export_data["tasks"].append(task)
+        
+        return export_data
+        
+    except Exception as e:
+        logger.error(f"Error exporting data: {str(e)}")
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Import all data endpoint
+@api_router.post("/import/all")
+async def import_all_data(file: UploadFile = File(...), current_user: User = Depends(get_current_user)):
+    try:
+        import json
+        organization_id = current_user.organization_id
+        
+        # Read the uploaded file
+        content = await file.read()
+        import_data = json.loads(content.decode('utf-8'))
+        
+        # Validate it's an export from this system
+        if 'export_date' not in import_data:
+            raise HTTPException(status_code=400, detail="Invalid import file format")
+        
+        imported_counts = {}
+        
+        # Import customers
+        if 'customers' in import_data and import_data['customers']:
+            for customer in import_data['customers']:
+                customer['organization_id'] = organization_id
+                customer.pop('_id', None)
+            result = await db.customers.insert_many(import_data['customers'])
+            imported_counts['customers'] = len(result.inserted_ids)
+        
+        # Import products
+        if 'products' in import_data and import_data['products']:
+            for product in import_data['products']:
+                product['organization_id'] = organization_id
+                product.pop('_id', None)
+            result = await db.products.insert_many(import_data['products'])
+            imported_counts['products'] = len(result.inserted_ids)
+        
+        # Import employees
+        if 'employees' in import_data and import_data['employees']:
+            for employee in import_data['employees']:
+                employee['organization_id'] = organization_id
+                employee.pop('_id', None)
+            result = await db.employees.insert_many(import_data['employees'])
+            imported_counts['employees'] = len(result.inserted_ids)
+        
+        # Import services
+        if 'services' in import_data and import_data['services']:
+            for service in import_data['services']:
+                service['organization_id'] = organization_id
+                service.pop('_id', None)
+            result = await db.services.insert_many(import_data['services'])
+            imported_counts['services'] = len(result.inserted_ids)
+        
+        # Import supplier pricing
+        if 'supplier_pricing' in import_data and import_data['supplier_pricing']:
+            for pricing in import_data['supplier_pricing']:
+                pricing['organization_id'] = organization_id
+                pricing.pop('_id', None)
+            result = await db.supplier_pricing.insert_many(import_data['supplier_pricing'])
+            imported_counts['supplier_pricing'] = len(result.inserted_ids)
+        
+        # Import workorders
+        if 'workorders' in import_data and import_data['workorders']:
+            for workorder in import_data['workorders']:
+                workorder['organization_id'] = organization_id
+                workorder.pop('_id', None)
+            result = await db.workorders.insert_many(import_data['workorders'])
+            imported_counts['workorders'] = len(result.inserted_ids)
+        
+        # Import internal orders
+        if 'internalorders' in import_data and import_data['internalorders']:
+            for order in import_data['internalorders']:
+                order['organization_id'] = organization_id
+                order.pop('_id', None)
+            result = await db.internalorders.insert_many(import_data['internalorders'])
+            imported_counts['internalorders'] = len(result.inserted_ids)
+        
+        # Import HMS data
+        if 'hms_risk_assessments' in import_data and import_data['hms_risk_assessments']:
+            for risk in import_data['hms_risk_assessments']:
+                risk['organization_id'] = organization_id
+                risk.pop('_id', None)
+            result = await db.hms_risk_assessments.insert_many(import_data['hms_risk_assessments'])
+            imported_counts['hms_risk_assessments'] = len(result.inserted_ids)
+        
+        if 'hms_incidents' in import_data and import_data['hms_incidents']:
+            for incident in import_data['hms_incidents']:
+                incident['organization_id'] = organization_id
+                incident.pop('_id', None)
+            result = await db.hms_incidents.insert_many(import_data['hms_incidents'])
+            imported_counts['hms_incidents'] = len(result.inserted_ids)
+        
+        if 'hms_training' in import_data and import_data['hms_training']:
+            for train in import_data['hms_training']:
+                train['organization_id'] = organization_id
+                train.pop('_id', None)
+            result = await db.hms_training.insert_many(import_data['hms_training'])
+            imported_counts['hms_training'] = len(result.inserted_ids)
+        
+        if 'hms_equipment' in import_data and import_data['hms_equipment']:
+            for equip in import_data['hms_equipment']:
+                equip['organization_id'] = organization_id
+                equip.pop('_id', None)
+            result = await db.hms_equipment.insert_many(import_data['hms_equipment'])
+            imported_counts['hms_equipment'] = len(result.inserted_ids)
+        
+        # Import tasks
+        if 'tasks' in import_data and import_data['tasks']:
+            for task in import_data['tasks']:
+                task['organization_id'] = organization_id
+                task.pop('_id', None)
+            result = await db.tasks.insert_many(import_data['tasks'])
+            imported_counts['tasks'] = len(result.inserted_ids)
+        
+        return {
+            "message": "Data imported successfully",
+            "imported_counts": imported_counts
+        }
+        
+    except Exception as e:
+        logger.error(f"Error importing data: {str(e)}")
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
 
 app.include_router(api_router)
 
